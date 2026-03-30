@@ -2001,19 +2001,53 @@ ${state.context.concern}
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
+        generationConfig: {
+          maxOutputTokens: 2000,
+          temperature: 0.9,
+          responseMimeType: 'application/json'
+        }
       })
     });
 
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('[Gemini] HTTP Error:', res.status, errBody);
+      throw new Error('API HTTP error: ' + res.status);
+    }
+
     const data = await res.json();
+    console.log('[Gemini] Raw response:', data);
+
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!text) {
+      console.error('[Gemini] Empty response text. Full data:', JSON.stringify(data));
+      throw new Error('Empty response');
+    }
+
     const clean = text.replace(/```json|```/g, '').trim();
-    state.result = JSON.parse(clean);
+    console.log('[Gemini] Parsed text:', clean.slice(0, 200));
+
+    let parsed;
+    try {
+      parsed = JSON.parse(clean);
+    } catch(parseErr) {
+      console.error('[Gemini] JSON parse error:', parseErr, '\nText was:', clean);
+      throw parseErr;
+    }
+
+    state.result = parsed;
+    state.resultSource = 'gemini';
     renderResult();
     goScreen(7);
+
   } catch (e) {
-    // Fallback mock result
+    console.error('[Gemini] Fallback to mock. Error:', e);
+    // 에러 발생 시 분석 화면에 알림 표시
+    const stepEl = document.getElementById('astep4');
+    if (stepEl) stepEl.textContent = '⚠ AI 연결 실패 — 기본 분석으로 대체합니다';
+    await new Promise(r => setTimeout(r, 1200));
     state.result = mockResult(job, limited);
+    state.resultSource = 'mock';
     renderResult();
     goScreen(7);
   }
@@ -2103,7 +2137,18 @@ function renderResult() {
 
   <!-- ══ HERO: 준비도 스코어 ══ -->
   <div style="text-align:center;padding:32px 0 28px;">
-    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:'Syne',sans-serif;margin-bottom:20px;">AI 전환 준비도 진단 결과</div>
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:'Syne',sans-serif;margin-bottom:12px;">AI 전환 준비도 진단 결과</div>
+
+    <!-- AI 분석 여부 표시 -->
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;margin-bottom:16px;
+      ${state.resultSource === 'gemini'
+        ? 'background:rgba(46,168,126,.1);border:1px solid rgba(46,168,126,.3);'
+        : 'background:rgba(212,148,59,.08);border:1px solid rgba(212,148,59,.25);'}">
+      <span style="width:7px;height:7px;border-radius:50%;background:${state.resultSource === 'gemini' ? '#2ea87e' : '#d4943b'};"></span>
+      <span style="font-size:11px;font-family:'Syne',sans-serif;letter-spacing:1px;color:${state.resultSource === 'gemini' ? '#2ea87e' : '#d4943b'};">
+        ${state.resultSource === 'gemini' ? 'Gemini AI 분석 완료' : '기본 분석 (AI 연결 실패)'}
+      </span>
+    </div>
 
     <!-- 도넛 링 -->
     <div style="position:relative;display:inline-block;margin-bottom:20px;">
