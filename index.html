@@ -1992,8 +1992,10 @@ ${state.context.concern}
   "next_step": <즉시 실행 가능한 첫 번째 액션. 가능하면 구체적 태스크명 포함>
 }`;
 
-  const GEMINI_KEY = 'AIzaSyBeH31W5z55VJJz6Jk7dvLT1ZoRyUH9qKg';
+  const GEMINI_KEY = 'AIzaSyCwwLK2g_4knw23OwDUCsa6LK26IYU-6u0';
   const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+
+  let apiSuccess = false;
 
   try {
     const res = await fetch(GEMINI_URL, {
@@ -2003,54 +2005,47 @@ ${state.context.concern}
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           maxOutputTokens: 2000,
-          temperature: 0.9,
-          responseMimeType: 'application/json'
+          temperature: 0.85
         }
       })
     });
 
     if (!res.ok) {
-      const errBody = await res.text();
-      console.error('[Gemini] HTTP Error:', res.status, errBody);
-      throw new Error('API HTTP error: ' + res.status);
+      const errText = await res.text();
+      console.error('[Gemini] HTTP', res.status, errText);
+      throw new Error('HTTP ' + res.status);
     }
 
     const data = await res.json();
-    console.log('[Gemini] Raw response:', data);
+    console.log('[Gemini] status OK, candidates:', data.candidates?.length);
 
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    if (!text) {
-      console.error('[Gemini] Empty response text. Full data:', JSON.stringify(data));
-      throw new Error('Empty response');
+    // 안전한 응답 추출
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    if (!rawText) {
+      console.error('[Gemini] 빈 응답. data:', JSON.stringify(data).slice(0, 300));
+      throw new Error('empty response');
     }
 
-    const clean = text.replace(/```json|```/g, '').trim();
-    console.log('[Gemini] Parsed text:', clean.slice(0, 200));
-
-    let parsed;
-    try {
-      parsed = JSON.parse(clean);
-    } catch(parseErr) {
-      console.error('[Gemini] JSON parse error:', parseErr, '\nText was:', clean);
-      throw parseErr;
+    // JSON 블록 추출 (```json ... ``` 또는 { ... } 직접 파싱)
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('[Gemini] JSON 블록 없음. rawText:', rawText.slice(0, 200));
+      throw new Error('no JSON block');
     }
 
-    state.result = parsed;
+    state.result = JSON.parse(jsonMatch[0]);
     state.resultSource = 'gemini';
-    renderResult();
-    goScreen(7);
+    apiSuccess = true;
+    console.log('[Gemini] 분석 성공. score:', state.result.readiness_score);
 
   } catch (e) {
-    console.error('[Gemini] Fallback to mock. Error:', e);
-    // 에러 발생 시 분석 화면에 알림 표시
-    const stepEl = document.getElementById('astep4');
-    if (stepEl) stepEl.textContent = '⚠ AI 연결 실패 — 기본 분석으로 대체합니다';
-    await new Promise(r => setTimeout(r, 1200));
+    console.error('[Gemini] 실패 →', e.message);
     state.result = mockResult(job, limited);
     state.resultSource = 'mock';
-    renderResult();
-    goScreen(7);
   }
+
+  renderResult();
+  goScreen(7);
 }
 
 function mockResult(job, tasks) {
