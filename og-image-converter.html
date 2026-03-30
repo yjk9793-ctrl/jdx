@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>OG Image 변환</title>
+<style>
+body{margin:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;color:#fff;gap:20px;}
+canvas{border:1px solid rgba(255,255,255,.1);max-width:100%;}
+button{padding:12px 28px;background:#4a7cff;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
+p{font-size:13px;color:#8a9ab5;text-align:center;}
+</style>
+</head>
+<body>
+<p>아래 캔버스를 확인하고 버튼을 눌러 PNG를 다운로드하세요</p>
+<canvas id="c" width="1200" height="630"></canvas>
+<button onclick="download()">⬇ og-image.png 다운로드</button>
+<p>다운로드된 파일을 GitHub 레포 루트에 og-image.png 로 올려주세요</p>
+<script>
+const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#05060a"/>
+      <stop offset="100%" stop-color="#0a0c14"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4a7cff"/>
+      <stop offset="100%" stop-color="#00c9a7"/>
+    </linearGradient>
+    <linearGradient id="ring1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4a7cff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#00c9a7" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.04" stroke="#4a7cff" stroke-width="0.8">
+    <line x1="0" y1="60" x2="1200" y2="60"/><line x1="0" y1="120" x2="1200" y2="120"/><line x1="0" y1="180" x2="1200" y2="180"/><line x1="0" y1="240" x2="1200" y2="240"/><line x1="0" y1="300" x2="1200" y2="300"/><line x1="0" y1="360" x2="1200" y2="360"/><line x1="0" y1="420" x2="1200" y2="420"/><line x1="0" y1="480" x2="1200" y2="480"/><line x1="0" y1="540" x2="1200" y2="540"/>
+    <line x1="60" y1="0" x2="60" y2="630"/><line x1="120" y1="0" x2="120" y2="630"/><line x1="180" y1="0" x2="180" y2="630"/><line x1="240" y1="0" x2="240" y2="630"/><line x1="300" y1="0" x2="300" y2="630"/><line x1="360" y1="0" x2="360" y2="630"/><line x1="420" y1="0" x2="420" y2="630"/><line x1="480" y1="0" x2="480" y2="630"/><line x1="540" y1="0" x2="540" y2="630"/><line x1="600" y1="0" x2="600" y2="630"/><line x1="660" y1="0" x2="660" y2="630"/><line x1="720" y1="0" x2="720" y2="630"/><line x1="780" y1="0" x2="780" y2="630"/><line x1="840" y1="0" x2="840" y2="630"/><line x1="900" y1="0" x2="900" y2="630"/><line x1="960" y1="0" x2="960" y2="630"/><line x1="1020" y1="0" x2="1020" y2="630"/><line x1="1080" y1="0" x2="1080" y2="630"/><line x1="1140" y1="0" x2="1140" y2="630"/>
+  </g>
+  <circle cx="980" cy="315" r="280" fill="url(#ring1)"/>
+  <circle cx="980" cy="315" r="180" fill="none" stroke="#4a7cff" stroke-width="0.5" opacity="0.15"/>
+  <circle cx="980" cy="315" r="120" fill="none" stroke="#00c9a7" stroke-width="0.5" opacity="0.12"/>
+  <rect x="850" y="195" width="220" height="52" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-width="0.8" stroke-opacity="0.4"/>
+  <text x="870" y="217" font-family="Helvetica Neue,sans-serif" font-size="11" font-weight="600" fill="#ef4444" fill-opacity="0.8" letter-spacing="1">LAYER 1</text>
+  <text x="870" y="235" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#ffffff" fill-opacity="0.7">에이전트 자동 실행</text>
+  <rect x="850" y="263" width="220" height="52" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="#f59e0b" stroke-width="0.8" stroke-opacity="0.4"/>
+  <text x="870" y="285" font-family="Helvetica Neue,sans-serif" font-size="11" font-weight="600" fill="#f59e0b" fill-opacity="0.8" letter-spacing="1">LAYER 2</text>
+  <text x="870" y="303" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#ffffff" fill-opacity="0.7">에이전트 + 인간 협력</text>
+  <rect x="850" y="331" width="220" height="52" rx="8" fill="#00c9a7" fill-opacity="0.12" stroke="#00c9a7" stroke-width="0.8" stroke-opacity="0.4"/>
+  <text x="870" y="353" font-family="Helvetica Neue,sans-serif" font-size="11" font-weight="600" fill="#00c9a7" fill-opacity="0.8" letter-spacing="1">LAYER 3</text>
+  <text x="870" y="371" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#ffffff" fill-opacity="0.7">인간 전담 판단</text>
+  <rect x="80" y="80" width="3" height="44" rx="1.5" fill="url(#accent)"/>
+  <rect x="96" y="80" width="170" height="28" rx="14" fill="rgba(74,124,255,0.12)" stroke="rgba(74,124,255,0.3)" stroke-width="0.8"/>
+  <text x="181" y="99" font-family="Helvetica Neue,sans-serif" font-size="12" font-weight="600" fill="#7aabf0" text-anchor="middle" letter-spacing="1.5">AI 시대 직무 전환 진단</text>
+  <text x="80" y="170" font-family="Helvetica Neue,sans-serif" font-size="52" font-weight="800" fill="#eeeae0" letter-spacing="-1.5">AI가 일하는 방식을</text>
+  <text x="80" y="234" font-family="Helvetica Neue,sans-serif" font-size="52" font-weight="800" fill="#eeeae0" letter-spacing="-1.5">바꾸고 있는 지금,</text>
+  <text x="80" y="308" font-family="Helvetica Neue,sans-serif" font-size="52" font-weight="800" letter-spacing="-1.5"><tspan fill="#eeeae0">당신은 </tspan><tspan fill="#4a7cff">준비됐나요?</tspan></text>
+  <text x="80" y="368" font-family="Helvetica Neue,sans-serif" font-size="18" font-weight="300" fill="#8a9ab5">내 직무의 AI 전환 준비도를 진단하고,</text>
+  <text x="80" y="394" font-family="Helvetica Neue,sans-serif" font-size="18" font-weight="300" fill="#8a9ab5">AI 시대 나의 새로운 역할과 JD를 만듭니다.</text>
+  <rect x="80" y="430" width="1" height="36" fill="rgba(255,255,255,0.15)"/>
+  <text x="96" y="449" font-family="Helvetica Neue,sans-serif" font-size="22" font-weight="700" fill="#eeeae0">10분</text>
+  <text x="96" y="469" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#6b7a99">소요 시간</text>
+  <rect x="200" y="430" width="1" height="36" fill="rgba(255,255,255,0.15)"/>
+  <text x="216" y="449" font-family="Helvetica Neue,sans-serif" font-size="22" font-weight="700" fill="#eeeae0">무료</text>
+  <text x="216" y="469" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#6b7a99">기본 진단</text>
+  <rect x="300" y="430" width="1" height="36" fill="rgba(255,255,255,0.15)"/>
+  <text x="316" y="449" font-family="Helvetica Neue,sans-serif" font-size="22" font-weight="700" fill="#eeeae0">5막</text>
+  <text x="316" y="469" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#6b7a99">진단 구조</text>
+  <rect x="0" y="560" width="1200" height="70" fill="rgba(255,255,255,0.02)"/>
+  <line x1="0" y1="560" x2="1200" y2="560" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+  <text x="80" y="603" font-family="Helvetica Neue,sans-serif" font-size="16" font-weight="800" fill="#eeeae0" letter-spacing="3">JDXWORK</text>
+  <text x="188" y="603" font-family="Helvetica Neue,sans-serif" font-size="12" fill="#6b7a99" letter-spacing="1">by Deeploy</text>
+  <text x="1120" y="603" font-family="Helvetica Neue,sans-serif" font-size="13" fill="#6b7a99" text-anchor="end" letter-spacing="0.5">www.jdxwork.com</text>
+  <rect x="80" y="615" width="120" height="2" rx="1" fill="#4a7cff"/>
+</svg>`;
+
+const img = new Image();
+const blob = new Blob([svg], {type:'image/svg+xml'});
+const url  = URL.createObjectURL(blob);
+img.onload = () => {
+  const c = document.getElementById('c');
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  URL.revokeObjectURL(url);
+};
+img.src = url;
+
+function download() {
+  const c = document.getElementById('c');
+  const a = document.createElement('a');
+  a.download = 'og-image.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
