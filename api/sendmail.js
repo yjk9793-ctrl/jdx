@@ -98,7 +98,7 @@ module.exports = async function handler(req, res) {
 
     <!-- CTA -->
     <div style="background:#fff;padding:0 32px 32px;text-align:center;border-radius:0 0 12px 12px;">
-      <a href="https://www.jdxwork.com?action=jd"
+      <a href="https://www.jdxwork.com/jd"
          style="display:inline-block;padding:14px 32px;background:#3b6fd4;color:#fff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:700;">
         AI 시대 새로운 역할 JD 만들기 →
       </a>
