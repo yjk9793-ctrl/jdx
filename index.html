@@ -657,600 +657,239 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- ══ SCREEN 5b: 일의 구조·판단·미래 ══ -->
+<!-- ══ SCREEN 5b-1: 핵심 고민 ══ -->
 <div class="screen hidden" id="screen5b">
-  <span class="screen-label">3막·4막·5막 — 일의 깊이</span>
-  <h2 class="screen-title">일이 어떻게<br>흘러가는지<br>볼게요</h2>
-  <p class="screen-desc">협업 구조, 판단 방식, 그리고 미래를 함께 봅니다.</p>
+  <span class="screen-label">3막 1/5 — 핵심 고민</span>
+  <h2 class="screen-title">지금 가장<br>마음에 걸리는 것</h2>
+  <p class="screen-desc">이 직무에서 뭔가 바꾸고 싶다는 느낌, 있으신가요?</p>
 
-  <!-- 섹션 진행 위저드 -->
-  <div class="step-wizard" id="ctxWizard">
-    <div class="wz-item active" id="wz1">
-      <div class="wz-dot">1</div>
-      <div class="wz-label">핵심 고민</div>
-    </div>
-    <div class="wz-item" id="wz2">
-      <div class="wz-dot">2</div>
-      <div class="wz-label">일의 흐름</div>
-    </div>
-    <div class="wz-item" id="wz3">
-      <div class="wz-dot">3</div>
-      <div class="wz-label">내 판단</div>
-    </div>
-    <div class="wz-item" id="wz4">
-      <div class="wz-dot">4</div>
-      <div class="wz-label">장벽·우려</div>
-    </div>
-    <div class="wz-item" id="wz5">
-      <div class="wz-dot">5</div>
-      <div class="wz-label">미래의 나</div>
+  <textarea class="free-textarea" id="ctx_pain"
+    placeholder="예: 반복적인 서류 검토에 하루가 다 가서, 정작 중요한 채용 전략을 고민할 시간이 없어요."
+    oninput="countChars(this,'ctx_pain_count',200)"></textarea>
+  <div class="char-count"><span id="ctx_pain_count">0</span> / 200자</div>
+
+  <div style="margin-top:24px;">
+    <div class="context-label" style="margin-bottom:12px;"><strong>이 직무, 몇 명이 함께 하나요?</strong></div>
+    <div class="options cols2" id="teamSizeOpts" style="max-width:400px;">
+      <div class="opt" data-val="1" onclick="selectOpt(this,'teamSize')"><span class="opt-label">나 혼자</span></div>
+      <div class="opt" data-val="2" onclick="selectOpt(this,'teamSize')"><span class="opt-label">2 ~ 3명</span></div>
+      <div class="opt" data-val="4" onclick="selectOpt(this,'teamSize')"><span class="opt-label">4 ~ 6명</span></div>
+      <div class="opt" data-val="7" onclick="selectOpt(this,'teamSize')"><span class="opt-label">7명 이상</span></div>
     </div>
   </div>
 
-  <!-- ── 섹션 1: 핵심 고민 ── -->
-  <div class="ctx-section" id="ctxSec1">
-    <div class="ctx-section-head">
-      <div class="ctx-section-num">1</div>
-      <div>
-        <div class="ctx-section-title">지금 가장 마음에 걸리는 것</div>
-        <div class="ctx-section-desc">이 직무에서 뭔가 바꾸고 싶다는 느낌, 있으신가요?</div>
-      </div>
-    </div>
-    <textarea class="free-textarea" id="ctx_pain"
-      placeholder="예: 반복적인 서류 검토에 하루가 다 가서, 정작 중요한 채용 전략을 고민할 시간이 없어요."
-      oninput="countChars(this,'ctx_pain_count',200);syncWizard()"></textarea>
-    <div class="char-count"><span id="ctx_pain_count">0</span> / 200자</div>
+  <div class="btn-row" style="margin-top:32px;">
+    <button class="btn btn-ghost" onclick="goScreen(5)">← 이전</button>
+    <button class="btn btn-primary" onclick="goScreen('5b2')">다음 →</button>
+  </div>
+</div>
 
-    <div style="margin-top:20px;">
-      <div class="context-label" style="margin-bottom:10px;">
-        <strong style="font-size:13px;">이 직무, 몇 명이 함께 하나요?</strong>
-      </div>
-      <div class="options cols2" id="teamSizeOpts" style="max-width:400px;">
-        <div class="opt" data-val="1" onclick="selectOpt(this,'teamSize');syncWizard()"><span class="opt-label">나 혼자</span></div>
-        <div class="opt" data-val="2" onclick="selectOpt(this,'teamSize');syncWizard()"><span class="opt-label">2 ~ 3명</span></div>
-        <div class="opt" data-val="4" onclick="selectOpt(this,'teamSize');syncWizard()"><span class="opt-label">4 ~ 6명</span></div>
-        <div class="opt" data-val="7" onclick="selectOpt(this,'teamSize');syncWizard()"><span class="opt-label">7명 이상</span></div>
-      </div>
+<!-- ══ SCREEN 5b-2: 일의 흐름 ══ -->
+<div class="screen hidden" id="screen5b2">
+  <span class="screen-label">3막 2/5 — 일의 흐름</span>
+  <h2 class="screen-title">이 일, 어디서<br>시작해서 어디로<br>가나요?</h2>
+  <p class="screen-desc">일의 흐름을 보면 어디에 기회가 있는지 보입니다.</p>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>이 일을 시작하려면 무엇이 필요한가요?</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+  <div class="options" id="inputSourceOpts" style="gap:8px;margin-bottom:28px;">
+    <div class="opt multi-opt" data-val="self" onclick="toggleMulti(this,'inputSources')">내가 직접 찾고 만드는 것</div>
+    <div class="opt multi-opt" data-val="leader" onclick="toggleMulti(this,'inputSources')">팀장·리더에게서 전달받는 것</div>
+    <div class="opt multi-opt" data-val="crossteam" onclick="toggleMulti(this,'inputSources')">다른 팀에서 요청하는 것</div>
+    <div class="opt multi-opt" data-val="system" onclick="toggleMulti(this,'inputSources')">시스템·DB에서 자동으로 오는 것</div>
+    <div class="opt multi-opt" data-val="external" onclick="toggleMulti(this,'inputSources')">외부(고객·파트너)에서 오는 것</div>
+  </div>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>이 일이 끝나면 누구의 손에 닿나요?</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+  <div class="options" id="outputReceiverOpts" style="gap:8px;margin-bottom:28px;">
+    <div class="opt multi-opt" data-val="self" onclick="toggleMulti(this,'outputReceivers')">나 자신 (내부 참고용)</div>
+    <div class="opt multi-opt" data-val="leader" onclick="toggleMulti(this,'outputReceivers')">직속 팀장·리더</div>
+    <div class="opt multi-opt" data-val="crossteam" onclick="toggleMulti(this,'outputReceivers')">다른 팀 담당자</div>
+    <div class="opt multi-opt" data-val="exec" onclick="toggleMulti(this,'outputReceivers')">경영진·최종 결정권자</div>
+    <div class="opt multi-opt" data-val="external" onclick="toggleMulti(this,'outputReceivers')">외부(고객·기관·파트너)</div>
+  </div>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>흐름이 자주 막히는 구간이 있다면?</strong></div>
+  <div class="options" id="bottleneckOpts" style="gap:8px;">
+    <div class="opt multi-opt" data-val="wait_data" onclick="toggleMulti(this,'bottlenecks')">다른 팀 자료를 기다릴 때</div>
+    <div class="opt multi-opt" data-val="wait_approval" onclick="toggleMulti(this,'bottlenecks')">결재·승인을 기다릴 때</div>
+    <div class="opt multi-opt" data-val="wait_align" onclick="toggleMulti(this,'bottlenecks')">여러 사람의 의견을 모을 때</div>
+    <div class="opt multi-opt" data-val="wait_external" onclick="toggleMulti(this,'bottlenecks')">외부 응답을 기다릴 때</div>
+    <div class="opt multi-opt" data-val="none" onclick="toggleMulti(this,'bottlenecks')">특별히 막히는 구간 없음</div>
+  </div>
+
+  <div class="btn-row" style="margin-top:32px;">
+    <button class="btn btn-ghost" onclick="goScreen('5b')">← 이전</button>
+    <button class="btn btn-primary" onclick="goScreen('5b3')">다음 →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 5b-3: 내 판단 ══ -->
+<div class="screen hidden" id="screen5b3">
+  <span class="screen-label">4막 3/5 — 내 판단</span>
+  <h2 class="screen-title">당신만이<br>할 수 있는 것</h2>
+  <p class="screen-desc">어떤 순간에 당신의 경험이 가장 빛나나요?</p>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>중요한 결정을 내릴 때, 주로 어떻게 판단하시나요?</strong></div>
+  <div class="options" id="decisionStyleOpts" style="gap:8px;margin-bottom:28px;">
+    <div class="opt" data-val="data" onclick="selectOpt(this,'decisionStyle')">
+      <span class="opt-label">수치와 데이터를 보고 결정한다</span>
+      <span class="opt-sub">명확한 지표가 판단의 근거</span>
     </div>
-    <div class="ctx-nav-row">
-      <div></div>
-      <button class="btn btn-primary" onclick="goCtxSection(2)">다음 →</button>
+    <div class="opt" data-val="experience" onclick="selectOpt(this,'decisionStyle')">
+      <span class="opt-label">경험에서 나온 감각으로 결정한다</span>
+      <span class="opt-sub">데이터보다 노하우와 직관이 중요</span>
+    </div>
+    <div class="opt" data-val="consensus" onclick="selectOpt(this,'decisionStyle')">
+      <span class="opt-label">관계자들과 충분히 논의 후 결정한다</span>
+      <span class="opt-sub">합의 과정이 결과만큼 중요</span>
+    </div>
+    <div class="opt" data-val="mixed" onclick="selectOpt(this,'decisionStyle')">
+      <span class="opt-label">상황에 따라 다르게 판단한다</span>
+      <span class="opt-sub">데이터·맥락·관계를 동시에 고려</span>
     </div>
   </div>
 
-  <!-- ── 섹션 2: 일의 흐름 (3막) ── -->
-  <div class="ctx-section hidden" id="ctxSec2">
-    <div class="ctx-section-head">
-      <div class="ctx-section-num">2</div>
-      <div>
-        <div class="ctx-section-title">이 일, 어디서 시작해서 어디로 가나요?</div>
-        <div class="ctx-section-desc">일의 흐름을 보면 어디에 기회가 있는지 보입니다</div>
-      </div>
+  <div class="context-label" style="margin-bottom:8px;"><strong>직접 최종 결론을 내리는 일이 얼마나 되나요?</strong></div>
+  <div class="slider-wrap" style="margin-bottom:28px;">
+    <input type="range" min="0" max="10" value="5" step="1" oninput="updateDecisionSlider(this)" id="slider_decision">
+    <div class="slider-labels"><span>대부분 협의로 결정</span><span>대부분 내가 결정</span></div>
+    <div class="slider-value" id="val_decision">절반 정도 단독 결정 (5/10)</div>
+  </div>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>가장 어려운 순간은 언제인가요?</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+  <div class="options" id="hardJudgmentOpts" style="gap:8px;margin-bottom:28px;">
+    <div class="opt multi-opt" data-val="ambiguous" onclick="toggleMulti(this,'hardJudgments')">정보가 불완전하거나 서로 엇갈릴 때</div>
+    <div class="opt multi-opt" data-val="stakeholder" onclick="toggleMulti(this,'hardJudgments')">여러 사람의 입장이 충돌할 때</div>
+    <div class="opt multi-opt" data-val="nostandard" onclick="toggleMulti(this,'hardJudgments')">전례가 없어 기준을 새로 만들어야 할 때</div>
+    <div class="opt multi-opt" data-val="risk" onclick="toggleMulti(this,'hardJudgments')">결과의 파급력이 크고 책임이 클 때</div>
+    <div class="opt multi-opt" data-val="time" onclick="toggleMulti(this,'hardJudgments')">시간이 촉박해 충분히 생각하기 어려울 때</div>
+  </div>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>AI가 이 일을 도와준다면, 어떤 부분이 가장 유용할 것 같나요?</strong></div>
+  <div class="options" id="aiJudgmentOpts" style="gap:8px;">
+    <div class="opt multi-opt" data-val="pattern" onclick="toggleMulti(this,'aiJudgmentHelp')">패턴을 찾고 이상한 점을 알려주는 것</div>
+    <div class="opt multi-opt" data-val="option" onclick="toggleMulti(this,'aiJudgmentHelp')">선택지를 정리해서 비교해주는 것</div>
+    <div class="opt multi-opt" data-val="draft" onclick="toggleMulti(this,'aiJudgmentHelp')">초안을 먼저 만들어서 검토하게 해주는 것</div>
+    <div class="opt multi-opt" data-val="risk" onclick="toggleMulti(this,'aiJudgmentHelp')">놓칠 수 있는 리스크를 미리 알려주는 것</div>
+    <div class="opt multi-opt" data-val="none" onclick="toggleMulti(this,'aiJudgmentHelp')">판단은 내가 직접 하고 싶다</div>
+  </div>
+
+  <div class="btn-row" style="margin-top:32px;">
+    <button class="btn btn-ghost" onclick="goScreen('5b2')">← 이전</button>
+    <button class="btn btn-primary" onclick="goScreen('5b4')">다음 →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 5b-4: 장벽·우려 ══ -->
+<div class="screen hidden" id="screen5b4">
+  <span class="screen-label">4막 4/5 — 장벽·우려</span>
+  <h2 class="screen-title">솔직하게<br>털어놓아도<br>괜찮아요</h2>
+  <p class="screen-desc">AI 전환에서 실제로 걱정되는 것을 알아야 더 정확한 분석이 가능합니다.</p>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>AI 전환을 가로막는 현실적인 장벽은?</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+  <div class="options" id="blockerOpts" style="gap:8px;margin-bottom:28px;">
+    <div class="opt multi-opt" data-val="nodata" onclick="toggleMulti(this,'blockers')">필요한 데이터나 정보가 부족함</div>
+    <div class="opt multi-opt" data-val="conflict" onclick="toggleMulti(this,'blockers')">관계자들 간 의견이 충돌함</div>
+    <div class="opt multi-opt" data-val="nostandard" onclick="toggleMulti(this,'blockers')">어떻게 해야 할지 기준이 없음</div>
+    <div class="opt multi-opt" data-val="repeat" onclick="toggleMulti(this,'blockers')">반복 업무가 너무 많아 여유가 없음</div>
+    <div class="opt multi-opt" data-val="approval" onclick="toggleMulti(this,'blockers')">결재·승인 절차가 느림</div>
+  </div>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>에이전트 도입, 가장 우려되는 점은?</strong></div>
+  <div class="options" id="concernOpts" style="gap:8px;">
+    <div class="opt" data-val="quality" onclick="selectOpt(this,'concern')">
+      <span class="opt-label">결과물 품질을 믿을 수 없다</span>
+      <span class="opt-sub">AI가 틀려도 모를 수 있음</span>
     </div>
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 일을 시작하려면 무엇이 필요한가요?</strong>
-        주로 어디서 정보나 요청이 오나요? (복수 선택)
-      </div>
-      <div class="options" id="inputSourceOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="self" onclick="toggleMulti(this,'inputSources')">내가 직접 찾고 만드는 것</div>
-        <div class="opt multi-opt" data-val="leader" onclick="toggleMulti(this,'inputSources')">팀장·리더에게서 전달받는 것</div>
-        <div class="opt multi-opt" data-val="crossteam" onclick="toggleMulti(this,'inputSources')">다른 팀에서 요청하는 것</div>
-        <div class="opt multi-opt" data-val="system" onclick="toggleMulti(this,'inputSources')">시스템·DB에서 자동으로 오는 것</div>
-        <div class="opt multi-opt" data-val="external" onclick="toggleMulti(this,'inputSources')">외부(고객·파트너)에서 오는 것</div>
-      </div>
+    <div class="opt" data-val="job" onclick="selectOpt(this,'concern')">
+      <span class="opt-label">내 역할이 줄어들 것 같다</span>
+      <span class="opt-sub">직무 가치와 고용 안정성 우려</span>
     </div>
-
-    <hr class="context-divider">
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 일이 끝나면 누구의 손에 닿나요?</strong>
-        결과물을 받는 사람은? (복수 선택)
-      </div>
-      <div class="options" id="outputReceiverOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="self" onclick="toggleMulti(this,'outputReceivers')">나 자신 (내부 참고용)</div>
-        <div class="opt multi-opt" data-val="leader" onclick="toggleMulti(this,'outputReceivers')">직속 팀장·리더</div>
-        <div class="opt multi-opt" data-val="crossteam" onclick="toggleMulti(this,'outputReceivers')">다른 팀 담당자</div>
-        <div class="opt multi-opt" data-val="exec" onclick="toggleMulti(this,'outputReceivers')">경영진·최종 결정권자</div>
-        <div class="opt multi-opt" data-val="external" onclick="toggleMulti(this,'outputReceivers')">외부(고객·기관·파트너)</div>
-      </div>
+    <div class="opt" data-val="control" onclick="selectOpt(this,'concern')">
+      <span class="opt-label">통제권을 잃을 것 같다</span>
+      <span class="opt-sub">프로세스 주도권이 약해지는 것</span>
     </div>
-
-    <hr class="context-divider">
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>흐름이 자주 막히는 구간이 있다면?</strong>
-      </div>
-      <div class="options" id="bottleneckOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="wait_data" onclick="toggleMulti(this,'bottlenecks')">다른 팀 자료를 기다릴 때</div>
-        <div class="opt multi-opt" data-val="wait_approval" onclick="toggleMulti(this,'bottlenecks')">결재·승인을 기다릴 때</div>
-        <div class="opt multi-opt" data-val="wait_align" onclick="toggleMulti(this,'bottlenecks')">여러 사람의 의견을 모을 때</div>
-        <div class="opt multi-opt" data-val="wait_external" onclick="toggleMulti(this,'bottlenecks')">외부 응답을 기다릴 때</div>
-        <div class="opt multi-opt" data-val="none" onclick="toggleMulti(this,'bottlenecks')">특별히 막히는 구간 없음</div>
-      </div>
-    </div>
-
-    <div class="ctx-nav-row">
-      <button class="btn btn-ghost" onclick="goCtxSection(1)">← 이전</button>
-      <button class="btn btn-primary" onclick="goCtxSection(3)">다음 →</button>
+    <div class="opt" data-val="noconcern" onclick="selectOpt(this,'concern')">
+      <span class="opt-label">크게 우려되지 않는다</span>
+      <span class="opt-sub">전환에 열려 있음</span>
     </div>
   </div>
 
-  <!-- ── 섹션 3: 내 판단 (4막) ── -->
-  <div class="ctx-section hidden" id="ctxSec3">
-    <div class="ctx-section-head">
-      <div class="ctx-section-num">3</div>
-      <div>
-        <div class="ctx-section-title">당신만이 할 수 있는 것</div>
-        <div class="ctx-section-desc">어떤 순간에 당신의 경험이 가장 빛나나요?</div>
-      </div>
+  <div class="btn-row" style="margin-top:32px;">
+    <button class="btn btn-ghost" onclick="goScreen('5b3')">← 이전</button>
+    <button class="btn btn-primary" onclick="goScreen('5b5')">다음 →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 5b-5: 미래의 나 ══ -->
+<div class="screen hidden" id="screen5b5">
+  <span class="screen-label">5막 5/5 — 미래의 나</span>
+  <h2 class="screen-title">에이전트 이후,<br>나의 하루</h2>
+  <p class="screen-desc">2분만 더 투자하면 업종 비교와 5년 후 변화 예측까지 보여드립니다.</p>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>이 직무, 조직 안에서 어느 위치에 있나요?</strong></div>
+  <div class="options cols2" id="orgLayerOpts" style="max-width:480px;margin-bottom:24px;">
+    <div class="opt" data-val="c-level" onclick="selectOpt(this,'orgLayer')">
+      <span class="opt-label">임원·경영진 직속</span><span class="opt-sub">최상위 의사결정 인접</span>
     </div>
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 직무에서 중요한 결정을 내릴 때, 주로 어떻게 판단하시나요?</strong>
-      </div>
-      <div class="options" id="decisionStyleOpts" style="gap:8px;">
-        <div class="opt" data-val="data" onclick="selectOpt(this,'decisionStyle')">
-          <span class="opt-label">수치와 데이터를 보고 결정한다</span>
-          <span class="opt-sub">명확한 지표가 판단의 근거</span>
-        </div>
-        <div class="opt" data-val="experience" onclick="selectOpt(this,'decisionStyle')">
-          <span class="opt-label">경험에서 나온 감각으로 결정한다</span>
-          <span class="opt-sub">데이터보다 노하우와 직관이 중요</span>
-        </div>
-        <div class="opt" data-val="consensus" onclick="selectOpt(this,'decisionStyle')">
-          <span class="opt-label">관계자들과 충분히 논의 후 결정한다</span>
-          <span class="opt-sub">합의 과정이 결과만큼 중요</span>
-        </div>
-        <div class="opt" data-val="mixed" onclick="selectOpt(this,'decisionStyle')">
-          <span class="opt-label">상황에 따라 다르게 판단한다</span>
-          <span class="opt-sub">데이터·맥락·관계를 동시에 고려</span>
-        </div>
-      </div>
+    <div class="opt" data-val="manager" onclick="selectOpt(this,'orgLayer')">
+      <span class="opt-label">팀장·매니저급</span><span class="opt-sub">팀 리더</span>
     </div>
-
-    <hr class="context-divider">
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>직접 최종 결론을 내리는 일이 얼마나 되나요?</strong>
-      </div>
-      <div class="slider-wrap">
-        <input type="range" min="0" max="10" value="5" step="1"
-          oninput="updateDecisionSlider(this)" id="slider_decision">
-        <div class="slider-labels"><span>대부분 협의로 결정</span><span>대부분 내가 결정</span></div>
-        <div class="slider-value" id="val_decision">절반 정도 단독 결정 (5/10)</div>
-      </div>
+    <div class="opt" data-val="practitioner" onclick="selectOpt(this,'orgLayer')">
+      <span class="opt-label">실무 담당자</span><span class="opt-sub">직접 수행</span>
     </div>
-
-    <hr class="context-divider">
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>가장 어려운 순간은 언제인가요?</strong>
-        당신의 경험이 가장 필요한 상황은? (복수 선택)
-      </div>
-      <div class="options" id="hardJudgmentOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="ambiguous" onclick="toggleMulti(this,'hardJudgments')">정보가 불완전하거나 서로 엇갈릴 때</div>
-        <div class="opt multi-opt" data-val="stakeholder" onclick="toggleMulti(this,'hardJudgments')">여러 사람의 입장이 충돌할 때</div>
-        <div class="opt multi-opt" data-val="nostandard" onclick="toggleMulti(this,'hardJudgments')">전례가 없어 기준을 새로 만들어야 할 때</div>
-        <div class="opt multi-opt" data-val="risk" onclick="toggleMulti(this,'hardJudgments')">결과의 파급력이 크고 책임이 클 때</div>
-        <div class="opt multi-opt" data-val="time" onclick="toggleMulti(this,'hardJudgments')">시간이 촉박해 충분히 생각하기 어려울 때</div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>AI가 이 일을 도와준다면, 어떤 부분이 가장 유용할 것 같나요?</strong>
-      </div>
-      <div class="options" id="aiJudgmentOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="pattern" onclick="toggleMulti(this,'aiJudgmentHelp')">패턴을 찾고 이상한 점을 알려주는 것</div>
-        <div class="opt multi-opt" data-val="option" onclick="toggleMulti(this,'aiJudgmentHelp')">선택지를 정리해서 비교해주는 것</div>
-        <div class="opt multi-opt" data-val="draft" onclick="toggleMulti(this,'aiJudgmentHelp')">초안을 먼저 만들어서 검토하게 해주는 것</div>
-        <div class="opt multi-opt" data-val="risk" onclick="toggleMulti(this,'aiJudgmentHelp')">놓칠 수 있는 리스크를 미리 알려주는 것</div>
-        <div class="opt multi-opt" data-val="none" onclick="toggleMulti(this,'aiJudgmentHelp')">판단은 내가 직접 하고 싶다</div>
-      </div>
-    </div>
-
-    <div class="ctx-nav-row">
-      <button class="btn btn-ghost" onclick="goCtxSection(2)">← 이전</button>
-      <button class="btn btn-primary" onclick="goCtxSection(4)">다음 →</button>
+    <div class="opt" data-val="ic" onclick="selectOpt(this,'orgLayer')">
+      <span class="opt-label">개인 기여자</span><span class="opt-sub">독립적 실행</span>
     </div>
   </div>
 
-  <!-- ── 섹션 4: 장애 & 우려 ── -->
-  <div class="ctx-section hidden" id="ctxSec4">
-    <div class="ctx-section-head">
-      <div class="ctx-section-num">4</div>
-      <div>
-        <div class="ctx-section-title">장애 요인 & 도입 우려</div>
-        <div class="ctx-section-desc">현실적인 장벽과 우려를 솔직하게 알려주세요</div>
-      </div>
+  <div class="context-label" style="margin-bottom:10px;"><strong>이 일을 잘했는지, 어떻게 알 수 있나요?</strong></div>
+  <div class="options" id="kpiTypeOpts" style="gap:8px;margin-bottom:24px;">
+    <div class="opt" data-val="quantitative" onclick="selectOpt(this,'kpiType')">
+      <span class="opt-label">숫자로 보인다</span><span class="opt-sub">달성률·건수·속도 등 명확한 수치</span>
     </div>
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 직무에서 자주 막히는 상황은?</strong>
-        해당되는 것 모두 선택해주세요.
-      </div>
-      <div class="options" id="blockerOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="nodata" onclick="toggleMulti(this,'blockers')">정보나 데이터가 없거나 불완전할 때</div>
-        <div class="opt multi-opt" data-val="conflict" onclick="toggleMulti(this,'blockers')">관련자들의 의견이 충돌할 때</div>
-        <div class="opt multi-opt" data-val="nostandard" onclick="toggleMulti(this,'blockers')">기준이 없어서 내가 새로 만들어야 할 때</div>
-        <div class="opt multi-opt" data-val="repeat" onclick="toggleMulti(this,'blockers')">반복 작업이 너무 많아서 지칠 때</div>
-        <div class="opt multi-opt" data-val="approval" onclick="toggleMulti(this,'blockers')">결재·승인 대기가 길어질 때</div>
-      </div>
+    <div class="opt" data-val="qualitative" onclick="selectOpt(this,'kpiType')">
+      <span class="opt-label">상사·동료의 평가로 안다</span><span class="opt-sub">기여도·영향력·태도 중심</span>
     </div>
-
-    <hr class="context-divider">
-
-    <div class="context-block">
-      <div class="context-label">
-        <strong>에이전트 도입 시 가장 우려되는 점은?</strong>
-      </div>
-      <div class="options" id="concernOpts" style="gap:8px;">
-        <div class="opt" data-val="context" onclick="selectOpt(this,'concern')">
-          <span class="opt-label">맥락을 이해하지 못할 것 같아서</span>
-          <span class="opt-sub">조직 문화, 히스토리, 관계를 모름</span>
-        </div>
-        <div class="opt" data-val="accountability" onclick="selectOpt(this,'concern')">
-          <span class="opt-label">실수했을 때 책임 소재가 불명확해서</span>
-          <span class="opt-sub">결과에 대한 책임을 누가 지는가</span>
-        </div>
-        <div class="opt" data-val="trust" onclick="selectOpt(this,'concern')">
-          <span class="opt-label">구성원들이 수용하지 않을 것 같아서</span>
-          <span class="opt-sub">변화에 대한 저항, 신뢰 문제</span>
-        </div>
-        <div class="opt" data-val="quality" onclick="selectOpt(this,'concern')">
-          <span class="opt-label">품질이 떨어질 것 같아서</span>
-          <span class="opt-sub">미묘한 차이, 섬세함의 부재</span>
-        </div>
-        <div class="opt" data-val="noconcern" onclick="selectOpt(this,'concern')">
-          <span class="opt-label">크게 우려되지 않는다</span>
-          <span class="opt-sub">전환에 열려 있음</span>
-        </div>
-      </div>
+    <div class="opt" data-val="mixed" onclick="selectOpt(this,'kpiType')">
+      <span class="opt-label">숫자와 평가 둘 다</span><span class="opt-sub">두 가지 기준이 함께 적용</span>
     </div>
-
-    <div class="ctx-nav-row">
-      <button class="btn btn-ghost" onclick="goCtxSection(3)">← 이전</button>
-      <button class="btn btn-primary" onclick="goCtxSection(5)">다음 →</button>
+    <div class="opt" data-val="none" onclick="selectOpt(this,'kpiType')">
+      <span class="opt-label">솔직히 잘 모르겠다</span><span class="opt-sub">암묵적 기대치만 있음</span>
     </div>
   </div>
 
-  <!-- ── 섹션 5: 미래의 나 (5막) ── -->
-  <div class="ctx-section hidden" id="ctxSec5">
-    <div class="ctx-section-head">
-      <div class="ctx-section-num" style="background:rgba(212,148,59,.15);border-color:rgba(212,148,59,.3);color:var(--amber);">5</div>
-      <div>
-        <div class="ctx-section-title">에이전트 이후, 나의 하루</div>
-        <div class="ctx-section-desc">2분만 더 투자하면 업종 비교와 5년 후 변화 예측까지 보여드립니다</div>
-      </div>
+  <div class="context-label" style="margin-bottom:8px;"><strong>에이전트가 도와준다면, 가장 먼저 맡기고 싶은 것은?</strong></div>
+  <textarea class="free-textarea" id="ctx_vanish"
+    placeholder="예: 이력서 1차 검토, 면접 일정 잡는 것처럼 반복적인 행정 업무"
+    oninput="countCharsCtx(this,'ctx_vanish_count',150)"
+    style="min-height:80px;margin-bottom:4px;"></textarea>
+  <div class="char-count" style="margin-bottom:24px;"><span id="ctx_vanish_count">0</span> / 150자</div>
+
+  <div class="context-label" style="margin-bottom:10px;"><strong>5년 후 당신은 어떤 판단을 내리는 사람이 되어 있을까요?</strong></div>
+  <div class="options" id="futureJobOpts" style="gap:8px;">
+    <div class="opt" data-val="same" onclick="selectOpt(this,'futureJob')">
+      <span class="opt-label">지금과 비슷한 판단을 하고 있을 것</span>
+      <span class="opt-sub">도구만 바뀌고 일의 본질은 유지</span>
     </div>
-
-    <!-- Q1: 조직 레이어 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 직무, 조직 안에서 어느 위치에 있나요?</strong>
-      </div>
-      <div class="options cols2" id="orgLayerOpts" style="max-width:480px;">
-        <div class="opt" data-val="c-level" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">임원·경영진 직속</span>
-          <span class="opt-sub">최상위 의사결정 인접</span>
-        </div>
-        <div class="opt" data-val="manager" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">팀장·매니저급</span>
-          <span class="opt-sub">팀 리더</span>
-        </div>
-        <div class="opt" data-val="practitioner" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">실무 담당자</span>
-          <span class="opt-sub">직접 수행</span>
-        </div>
-        <div class="opt" data-val="ic" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">개인 기여자</span>
-          <span class="opt-sub">독립적 실행</span>
-        </div>
-      </div>
+    <div class="opt" data-val="evolved" onclick="selectOpt(this,'futureJob')">
+      <span class="opt-label">더 큰 판단에 집중하고 있을 것</span>
+      <span class="opt-sub">에이전트가 루틴을 맡고 나는 전략으로</span>
     </div>
-
-    <hr class="context-divider">
-
-    <!-- Q2: 협업 팀 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>가장 자주 함께 일하는 팀은?</strong> (복수 선택)
-      </div>
-      <div class="options" id="collabTeamOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="ceo" onclick="toggleMulti(this,'collabTeams')">경영진·대표실</div>
-        <div class="opt multi-opt" data-val="biz" onclick="toggleMulti(this,'collabTeams')">현업 사업부</div>
-        <div class="opt multi-opt" data-val="it" onclick="toggleMulti(this,'collabTeams')">IT·개발팀</div>
-        <div class="opt multi-opt" data-val="finance" onclick="toggleMulti(this,'collabTeams')">재무·법무</div>
-        <div class="opt multi-opt" data-val="marketing" onclick="toggleMulti(this,'collabTeams')">마케팅·영업</div>
-      </div>
+    <div class="opt" data-val="redefined" onclick="selectOpt(this,'futureJob')">
+      <span class="opt-label">지금과는 전혀 다른 역할을 하고 있을 것</span>
+      <span class="opt-sub">직무 자체가 재정의됨</span>
     </div>
-
-    <hr class="context-divider">
-
-    <!-- Q3: KPI -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 일을 잘했는지, 어떻게 알 수 있나요?</strong>
-      </div>
-      <div class="options" id="kpiTypeOpts" style="gap:8px;">
-        <div class="opt" data-val="quantitative" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">숫자로 보인다</span>
-          <span class="opt-sub">달성률·건수·속도 등 명확한 수치</span>
-        </div>
-        <div class="opt" data-val="qualitative" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">상사·동료의 평가로 안다</span>
-          <span class="opt-sub">기여도·영향력·태도 중심</span>
-        </div>
-        <div class="opt" data-val="mixed" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">숫자와 평가 둘 다</span>
-          <span class="opt-sub">두 가지 기준이 함께 적용</span>
-        </div>
-        <div class="opt" data-val="none" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">솔직히 잘 모르겠다</span>
-          <span class="opt-sub">암묵적 기대치만 있음</span>
-        </div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q4: 성과 리뷰 주기 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>성과를 공식적으로 돌아보는 주기는?</strong>
-      </div>
-      <div class="options cols2" id="reviewCycleOpts" style="max-width:480px;">
-        <div class="opt" data-val="monthly" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">매월</span></div>
-        <div class="opt" data-val="quarterly" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">분기별</span></div>
-        <div class="opt" data-val="biannual" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">반기·연간</span></div>
-        <div class="opt" data-val="irregular" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">비정기</span></div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q5: 먼저 사라질 태스크 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>에이전트가 내 일을 도와준다면, 가장 먼저 맡기고 싶은 것은?</strong>
-        솔직하게 1~2개만 적어주세요.
-      </div>
-      <textarea class="free-textarea" id="ctx_vanish"
-        placeholder="예: 이력서 1차 검토, 면접 일정 잡는 것처럼 반복적인 행정 업무"
-        oninput="countCharsCtx(this,'ctx_vanish_count',150)"
-        style="min-height:80px;"></textarea>
-      <div class="char-count"><span id="ctx_vanish_count">0</span> / 150자</div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q6: 살아남는 이유 (리프레임) -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>에이전트가 많은 걸 해줘도, 이 일에서 나만이 줄 수 있는 것은?</strong>
-      </div>
-      <div class="options" id="surviveReasonOpts" style="gap:8px;">
-        <div class="opt" data-val="trust" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">신뢰와 관계에서 나오는 것</span>
-          <span class="opt-sub">사람과 사람 사이의 연결</span>
-        </div>
-        <div class="opt" data-val="accountability" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">책임을 지는 것</span>
-          <span class="opt-sub">결과에 내 이름이 붙는 것</span>
-        </div>
-        <div class="opt" data-val="creativity" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">맥락을 읽는 창의적 판단</span>
-          <span class="opt-sub">데이터만으론 풀 수 없는 것</span>
-        </div>
-        <div class="opt" data-val="stakeholder" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">상대방이 사람을 원하는 것</span>
-          <span class="opt-sub">고객·후보자가 기대하는 온기</span>
-        </div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q7: 5년 후 (리프레임) -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>5년 후 당신은 어떤 판단을 내리는 사람이 되어 있을까요?</strong>
-      </div>
-      <div class="options" id="futureJobOpts" style="gap:8px;">
-        <div class="opt" data-val="same" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">지금과 비슷한 판단을 하고 있을 것</span>
-          <span class="opt-sub">도구만 바뀌고 일의 본질은 유지</span>
-        </div>
-        <div class="opt" data-val="evolved" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">더 큰 판단에 집중하고 있을 것</span>
-          <span class="opt-sub">에이전트가 루틴을 맡고 나는 전략으로</span>
-        </div>
-        <div class="opt" data-val="redefined" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">지금과는 전혀 다른 역할을 하고 있을 것</span>
-          <span class="opt-sub">직무 자체가 재정의됨</span>
-        </div>
-        <div class="opt" data-val="extinct" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">솔직히 이 직무는 많이 줄어들 것 같다</span>
-          <span class="opt-sub">에이전트 대체 가능성이 높음</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="ctx-nav-row">
-      <button class="btn btn-ghost" onclick="goCtxSection(4)">← 이전</button>
-      <button class="btn btn-primary" onclick="runAnalysis()">내 일 분석하기 →</button>
+    <div class="opt" data-val="extinct" onclick="selectOpt(this,'futureJob')">
+      <span class="opt-label">솔직히 이 직무는 많이 줄어들 것 같다</span>
+      <span class="opt-sub">에이전트 대체 가능성이 높음</span>
     </div>
   </div>
 
-    <!-- Q1: 조직 레이어 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 직무는 조직에서 몇 번째 레이어인가요?</strong>
-      </div>
-      <div class="options cols2" id="orgLayerOpts" style="max-width:480px;">
-        <div class="opt" data-val="c-level" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">C레벨·임원 직속</span>
-          <span class="opt-sub">1레이어</span>
-        </div>
-        <div class="opt" data-val="manager" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">팀장·매니저급</span>
-          <span class="opt-sub">2레이어</span>
-        </div>
-        <div class="opt" data-val="practitioner" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">실무 담당자</span>
-          <span class="opt-sub">3레이어</span>
-        </div>
-        <div class="opt" data-val="ic" onclick="selectOpt(this,'orgLayer')">
-          <span class="opt-label">개인 기여자 (IC)</span>
-          <span class="opt-sub">독립적 실행</span>
-        </div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q2: 협업 팀 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>가장 많이 협업하는 내부 팀은?</strong>
-        해당되는 것 모두 선택해주세요.
-      </div>
-      <div class="options" id="collabTeamOpts" style="gap:8px;">
-        <div class="opt multi-opt" data-val="ceo" onclick="toggleMulti(this,'collabTeams')">경영진·대표실</div>
-        <div class="opt multi-opt" data-val="biz" onclick="toggleMulti(this,'collabTeams')">현업 사업부</div>
-        <div class="opt multi-opt" data-val="it" onclick="toggleMulti(this,'collabTeams')">IT·개발팀</div>
-        <div class="opt multi-opt" data-val="finance" onclick="toggleMulti(this,'collabTeams')">재무·법무</div>
-        <div class="opt multi-opt" data-val="marketing" onclick="toggleMulti(this,'collabTeams')">마케팅·영업</div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q3: KPI 구조 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>이 직무의 성과는 주로 어떻게 측정되나요?</strong>
-      </div>
-      <div class="options" id="kpiTypeOpts" style="gap:8px;">
-        <div class="opt" data-val="quantitative" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">명확한 정량 KPI</span>
-          <span class="opt-sub">수치·달성률·목표값</span>
-        </div>
-        <div class="opt" data-val="qualitative" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">상사의 정성 평가</span>
-          <span class="opt-sub">기여도·역량·태도</span>
-        </div>
-        <div class="opt" data-val="mixed" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">정량 + 정성 혼합</span>
-          <span class="opt-sub">두 가지 기준 병행</span>
-        </div>
-        <div class="opt" data-val="none" onclick="selectOpt(this,'kpiType')">
-          <span class="opt-label">명확한 기준 없음</span>
-          <span class="opt-sub">암묵적 기대치만 존재</span>
-        </div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q4: 성과 리뷰 주기 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>성과 리뷰 주기는?</strong>
-      </div>
-      <div class="options cols2" id="reviewCycleOpts" style="max-width:480px;">
-        <div class="opt" data-val="monthly" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">월별</span></div>
-        <div class="opt" data-val="quarterly" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">분기별</span></div>
-        <div class="opt" data-val="biannual" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">반기·연간</span></div>
-        <div class="opt" data-val="irregular" onclick="selectOpt(this,'reviewCycle')"><span class="opt-label">비정기</span></div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q5: 가장 먼저 사라질 태스크 (단답) -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>에이전트 전환 후 이 직무에서 가장 먼저 사라질 것 같은 태스크는?</strong>
-        솔직하게 1~2개만 적어주세요.
-      </div>
-      <textarea class="free-textarea" id="ctx_vanish"
-        placeholder="예: 이력서 1차 검토, 면접 일정 조율 등 반복적인 행정 업무"
-        oninput="countCharsCtx(this,'ctx_vanish_count',150)"
-        style="min-height:80px;"></textarea>
-      <div class="char-count"><span id="ctx_vanish_count">0</span> / 150자</div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q6: 사라지지 않는 이유 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>에이전트 전환 후에도 이 직무가 절대 사라지지 않을 것 같은 이유는?</strong>
-      </div>
-      <div class="options" id="surviveReasonOpts" style="gap:8px;">
-        <div class="opt" data-val="trust" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">조직 내 관계·신뢰가 필요해서</span>
-          <span class="opt-sub">사람만이 줄 수 있는 신뢰와 연결</span>
-        </div>
-        <div class="opt" data-val="accountability" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">법적·윤리적 책임이 있어서</span>
-          <span class="opt-sub">결과에 대한 책임을 사람이 져야 함</span>
-        </div>
-        <div class="opt" data-val="creativity" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">창의적·맥락적 판단이 필요해서</span>
-          <span class="opt-sub">데이터만으론 풀 수 없는 문제</span>
-        </div>
-        <div class="opt" data-val="stakeholder" onclick="selectOpt(this,'surviveReason')">
-          <span class="opt-label">외부 이해관계자가 사람을 원해서</span>
-          <span class="opt-sub">고객·파트너·후보자의 기대</span>
-        </div>
-      </div>
-    </div>
-
-    <hr class="context-divider">
-
-    <!-- Q7: 5년 후 직무 인식 -->
-    <div class="context-block">
-      <div class="context-label">
-        <strong>5년 후 이 직무, 어떻게 변할 것 같으세요?</strong>
-      </div>
-      <div class="options" id="futureJobOpts" style="gap:8px;">
-        <div class="opt" data-val="same" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">지금과 거의 같을 것</span>
-          <span class="opt-sub">AI 도입에도 본질은 유지</span>
-        </div>
-        <div class="opt" data-val="evolved" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">역할은 같되 방식이 크게 바뀔 것</span>
-          <span class="opt-sub">에이전트와 협업하며 생산성 향상</span>
-        </div>
-        <div class="opt" data-val="redefined" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">직무 자체가 재정의될 것</span>
-          <span class="opt-sub">완전히 새로운 역할로 전환</span>
-        </div>
-        <div class="opt" data-val="extinct" onclick="selectOpt(this,'futureJob')">
-          <span class="opt-label">이 직무는 사라질 것</span>
-          <span class="opt-sub">에이전트가 대부분 대체</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="ctx-nav-row">
-      <button class="btn btn-ghost" onclick="goCtxSection(4)">← 이전</button>
-      <button class="btn btn-primary" onclick="runAnalysis()">AI 분석 시작 →</button>
-    </div>
+  <div class="btn-row" style="margin-top:32px;">
+    <button class="btn btn-ghost" onclick="goScreen('5b4')">← 이전</button>
+    <button class="btn btn-primary" onclick="runAnalysis()">내 일 분석하기 →</button>
   </div>
-
 </div>
 
 <!-- ══ SCREEN 6: 분석 중 ══ -->
@@ -1417,11 +1056,19 @@ const state = {
 // ══════════════════════════════════════════
 // 네비게이션
 // ══════════════════════════════════════════
-const SCREEN_PROGRESS = {0:0, 'Reg':10, 1:22, 2:34, 3:48, 4:60, 5:72, '5b':84, 6:93, 7:98, 8:100};
+const SCREEN_PROGRESS = {
+  0:0, 'Reg':8, 1:16, 2:24, 3:34, 4:44, '4b':50,
+  5:56, '5b':62, '5b2':68, '5b3':74, '5b4':80, '5b5':86,
+  6:93, 7:98, 8:100
+};
 const SCREEN_LABELS = {
   0:'', 'Reg':'정보 입력',
-  1:'Step 1 / 4', 2:'Step 1 / 4', 3:'Step 2 / 4',
-  4:'Step 2 / 4', 5:'Step 3 / 4', '5b':'Step 4 / 4',
+  1:'1막 — 내 일의 배경', 2:'1막 — 내 일의 배경',
+  3:'1막 — 직무 선택', 4:'1막 — 태스크 선택', '4b':'1막 완료',
+  5:'2막 — 시간의 무게',
+  '5b':'3막 — 핵심 고민', '5b2':'3막 — 일의 흐름',
+  '5b3':'4막 — 내 판단', '5b4':'4막 — 장벽·우려',
+  '5b5':'5막 — 미래의 나',
   6:'분석 중', 7:'진단 결과', 8:'완료'
 };
 
@@ -1525,23 +1172,6 @@ function countCharsCtx(el, countId, max) {
 }
 
 // ── 5b 섹션 내 이동 ──
-function goCtxSection(n) {
-  document.getElementById('ctxSec' + currentCtxSection).classList.add('hidden');
-  document.getElementById('ctxSec' + n).classList.remove('hidden');
-  currentCtxSection = n;
-  syncWizard();
-  window.scrollTo({top: document.getElementById('screen5b').offsetTop - 80, behavior:'smooth'});
-}
-
-function syncWizard() {
-  for (let i = 1; i <= 5; i++) {
-    const item = document.getElementById('wz' + i);
-    if (!item) continue;
-    item.classList.remove('active', 'done');
-    if (i < currentCtxSection) item.classList.add('done');
-    else if (i === currentCtxSection) item.classList.add('active');
-  }
-}
 
 function updateDecisionSlider(el) {
   state.context.decisionAutonomy = parseInt(el.value);
