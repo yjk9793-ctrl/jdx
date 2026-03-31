@@ -1,1 +1,1496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deeploy JD 에이전트 — 온톨로지 기반 직무기술서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07080a;--surface:#0f1114;--surface2:#161920;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --white:#f0eee8;--muted:#8a9ab5;
+  --blue:#3b6fd4;--blue-light:#7aabf0;--blue-dim:rgba(59,111,212,.12);
+  --green:#2ea87e;--amber:#d4943b;--red:#c0392b;
+}
+html,body{background:var(--bg);color:var(--white);font-family:'Noto Sans KR',sans-serif;min-height:100vh;font-size:14px;line-height:1.7;}
 
+/* ── HEADER ── */
+.header{padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(7,8,10,.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
+.logo{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;letter-spacing:3px;}
+.logo-badge{font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--blue-light);background:var(--blue-dim);border:1px solid rgba(59,111,212,.3);padding:3px 9px;border-radius:4px;margin-left:10px;}
+.header-nav{display:flex;gap:20px;align-items:center;}
+.header-link{font-size:12px;color:var(--muted);cursor:pointer;transition:color .2s;}
+.header-link:hover{color:var(--white);}
+
+/* ── LAYOUT ── */
+.wrap{display:grid;grid-template-columns:1fr 480px;gap:0;min-height:calc(100vh - 53px);}
+
+/* ── LEFT: STEP FORM ── */
+.form-side{padding:40px;overflow-y:auto;border-right:1px solid var(--border);}
+.form-progress{display:flex;gap:0;margin-bottom:40px;background:var(--surface);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.fp-step{flex:1;padding:12px 8px;text-align:center;font-size:10px;font-family:'Syne',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;border-right:1px solid var(--border);position:relative;}
+.fp-step:last-child{border-right:none;}
+.fp-step.active{background:var(--blue-dim);color:var(--blue-light);}
+.fp-step.done{color:var(--green);}
+.fp-step.done::after{content:'✓';position:absolute;top:4px;right:6px;font-size:9px;}
+
+/* ── STEP BLOCKS ── */
+.step-block{display:none;animation:fadeUp .3s ease;}
+.step-block.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.step-header{margin-bottom:28px;}
+.step-num{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue-light);margin-bottom:6px;}
+.step-title{font-size:22px;font-weight:900;margin-bottom:6px;}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+
+/* ── FORM ELEMENTS ── */
+.fg{margin-bottom:20px;}
+.fl{font-size:12px;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.fl strong{color:var(--white);font-weight:500;font-size:13px;}
+.fl .req{color:var(--red);font-size:11px;}
+.fi{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--white);font-size:13px;outline:none;font-family:'Noto Sans KR',sans-serif;transition:border-color .2s;}
+.fi:focus{border-color:var(--blue);}
+.fi::placeholder{color:rgba(138,154,181,.4);}
+.fs{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--white);font-size:13px;outline:none;font-family:'Noto Sans KR',sans-serif;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238a9ab5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.fs option{background:var(--surface2);}
+
+/* ── LAYER CARDS ── */
+.layer-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.layer-card-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.layer-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;}
+.lb1{background:rgba(192,57,43,.2);color:#e07070;}
+.lb2{background:rgba(212,148,59,.2);color:var(--amber);}
+.lb3{background:rgba(46,168,126,.2);color:var(--green);}
+.layer-card-title{font-size:13px;font-weight:700;}
+.layer-card-subtitle{font-size:11px;color:var(--muted);margin-top:1px;}
+.layer-card-body{padding:16px 18px;}
+
+/* ── TASK INPUT ── */
+.task-input-row{display:flex;gap:8px;margin-bottom:8px;}
+.task-input-row .fi{flex:1;}
+.task-remove{padding:0 10px;background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--muted);cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0;}
+.task-remove:hover{border-color:var(--red);color:#e07070;}
+.add-task-btn{padding:8px 14px;background:transparent;border:1px dashed var(--border2);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer;width:100%;transition:all .2s;font-family:'Noto Sans KR',sans-serif;}
+.add-task-btn:hover{border-color:var(--blue);color:var(--blue-light);}
+
+/* ── CHIP MULTI SELECT ── */
+.chip-group{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
+.chip{padding:6px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border2);color:var(--muted);transition:all .15s;font-family:'Noto Sans KR',sans-serif;user-select:none;}
+.chip:hover{border-color:var(--border2);color:var(--white);}
+.chip.selected{border-color:var(--blue);background:var(--blue-dim);color:var(--blue-light);}
+.chip.selected-green{border-color:rgba(46,168,126,.5);background:rgba(46,168,126,.08);color:var(--green);}
+.chip.selected-amber{border-color:rgba(212,148,59,.5);background:rgba(212,148,59,.08);color:var(--amber);}
+
+/* ── SLIDER ── */
+.slider-wrap{margin-top:6px;}
+.slider-row{display:flex;align-items:center;gap:12px;}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--border2);outline:none;cursor:pointer;}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue-light);border:2px solid var(--bg);cursor:pointer;}
+.slider-val{font-size:12px;font-weight:700;color:var(--blue-light);min-width:80px;text-align:right;font-family:'Syne',sans-serif;}
+.slider-labels{display:flex;justify-content:space-between;margin-top:5px;}
+.slider-labels span{font-size:10px;color:var(--muted);}
+
+/* ── RADIO GROUP ── */
+.radio-cards{display:flex;flex-direction:column;gap:7px;margin-top:6px;}
+.radio-card{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;}
+.radio-card:hover{border-color:var(--border2);}
+.radio-card.selected{border-color:rgba(59,111,212,.5);background:var(--blue-dim);}
+.radio-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;margin-top:1px;transition:all .2s;}
+.radio-card.selected .radio-dot{background:var(--blue-light);border-color:var(--blue-light);}
+.radio-card-text{}
+.radio-card-label{font-size:13px;font-weight:500;color:var(--white);}
+.radio-card.selected .radio-card-label{color:var(--blue-light);}
+.radio-card-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+
+/* ── FLOW DIAGRAM ── */
+.flow-row{display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;align-items:center;gap:0;margin-bottom:14px;}
+.flow-node{padding:10px 12px;border-radius:7px;border:1px solid var(--border);font-size:12px;text-align:center;color:var(--muted);}
+.flow-node.filled{border-color:rgba(59,111,212,.4);background:var(--blue-dim);color:var(--blue-light);}
+.flow-arrow{text-align:center;color:var(--border2);font-size:14px;}
+
+/* ── DIVIDER ── */
+.section-divider{border:none;border-top:1px solid var(--border);margin:24px 0;}
+
+/* ── NAV BUTTONS ── */
+.step-nav{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--border);}
+.btn-prev{padding:11px 24px;background:transparent;border:1px solid var(--border2);border-radius:7px;color:var(--muted);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;}
+.btn-prev:hover{border-color:var(--white);color:var(--white);}
+.btn-next{padding:11px 28px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;}
+.btn-next:hover{background:#2d5db8;}
+.btn-generate{padding:13px 32px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;gap:8px;}
+.btn-generate:hover{background:#2d5db8;}
+.btn-generate:disabled{opacity:.5;cursor:not-allowed;}
+.gen-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none;}
+.btn-generate.loading .gen-spinner{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── RIGHT: RESULT ── */
+.result-side{background:var(--surface);display:flex;flex-direction:column;height:calc(100vh - 53px);position:sticky;top:53px;}
+.result-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.result-header-title{font-size:14px;font-weight:700;}
+.result-header-meta{font-size:11px;color:var(--muted);}
+.result-actions{display:flex;gap:8px;}
+.btn-sm{padding:6px 14px;border-radius:5px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;transition:all .2s;border:1px solid var(--border2);background:transparent;color:var(--muted);}
+.btn-sm:hover{border-color:var(--blue);color:var(--blue-light);}
+.version-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.vtab{flex:1;padding:11px;text-align:center;font-size:11px;font-family:'Syne',sans-serif;letter-spacing:1px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;}
+.vtab.active{color:var(--blue-light);border-bottom-color:var(--blue-light);}
+.result-body{flex:1;overflow-y:auto;padding:24px;}
+
+/* 빈 상태 */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.5;}
+.empty-title{font-size:15px;font-weight:700;margin-bottom:8px;}
+.empty-desc{font-size:12px;color:var(--muted);line-height:1.7;max-width:280px;}
+
+/* JD 결과 */
+.jd-meta-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.jd-meta-chip{padding:4px 10px;border-radius:20px;font-size:10px;font-family:'Syne',sans-serif;letter-spacing:1px;border:1px solid var(--border2);color:var(--muted);}
+.jd-meta-chip.green{border-color:rgba(46,168,126,.4);color:var(--green);background:rgba(46,168,126,.06);}
+.jd-section{margin-bottom:22px;}
+.jd-section-label{font-size:10px;font-family:'Syne',sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--blue-light);margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(59,111,212,.15);}
+.jd-text{font-size:13px;color:var(--muted);line-height:1.85;white-space:pre-wrap;}
+.jd-text strong{color:var(--white);}
+.jd-highlight{background:rgba(46,168,126,.06);border-left:2px solid var(--green);padding:10px 14px;border-radius:0 6px 6px 0;margin:10px 0;}
+.jd-hl-label{font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:4px;}
+.jd-hl-text{font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* 스켈레톤 */
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,.04) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;height:13px;margin-bottom:9px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* 온톨로지 연동 표시 */
+.ontology-indicator{display:flex;align-items:center;gap:8px;padding:10px 24px;background:rgba(46,168,126,.04);border-top:1px solid rgba(46,168,126,.1);font-size:11px;color:var(--green);flex-shrink:0;}
+.oi-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+/* ── AUTH OVERLAY ── */
+.auth-overlay{position:fixed;inset:0;background:rgba(7,8,10,.96);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.auth-box{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:40px;width:380px;max-width:90vw;}
+.auth-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;margin-bottom:4px;}
+.auth-sub{font-size:12px;color:var(--muted);margin-bottom:28px;}
+.auth-tabs{display:flex;gap:0;margin-bottom:24px;background:var(--surface2);border-radius:7px;padding:3px;}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border-radius:5px;color:var(--muted);transition:all .2s;}
+.auth-tab.active{background:var(--blue);color:#fff;}
+.auth-field{margin-bottom:14px;}
+.auth-label{font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:1px;font-family:'Syne',sans-serif;text-transform:uppercase;}
+.auth-input{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--white);font-size:13px;outline:none;font-family:'Noto Sans KR',sans-serif;transition:border-color .2s;}
+.auth-input:focus{border-color:var(--blue);}
+.auth-btn{width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:4px;transition:background .2s;}
+.auth-btn:hover{background:#2d5db8;}
+.auth-error{font-size:12px;color:#e07070;margin-top:8px;display:none;}
+.auth-skip{text-align:center;margin-top:16px;font-size:12px;color:var(--muted);cursor:pointer;}
+.auth-skip span{color:var(--blue-light);text-decoration:underline;}
+
+/* ── MY JD DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;}
+.drawer-overlay.open{display:block;}
+.drawer{position:fixed;top:0;right:0;width:400px;height:100vh;background:var(--surface);border-left:1px solid var(--border2);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;}
+.drawer.open{transform:translateX(0);}
+.drawer-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.drawer-title{font-size:15px;font-weight:700;}
+.drawer-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px;}
+.drawer-body{flex:1;overflow-y:auto;padding:16px;}
+.jd-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;}
+.jd-card:hover{border-color:var(--border2);}
+.jd-card-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.jd-card-meta{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.jd-card-actions{display:flex;gap:8px;}
+.jd-card-btn{padding:5px 12px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .2s;}
+.jd-card-btn:hover{border-color:var(--blue);color:var(--blue-light);}
+.jd-card-btn.del:hover{border-color:rgba(192,57,43,.5);color:#e07070;}
+.drawer-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+
+/* ── USER MENU ── */
+.user-btn{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:12px;color:var(--white);transition:all .2s;}
+.user-btn:hover{border-color:var(--blue);}
+.user-avatar{width:24px;height:24px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(59,111,212,.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue-light);}
+
+/* ── SAVE + DOWNLOAD BAR ── */
+.action-bar{display:flex;gap:8px;padding:12px 24px;border-top:1px solid var(--border);background:var(--surface2);flex-shrink:0;}
+.action-bar-btn{flex:1;padding:9px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;border:none;display:flex;align-items:center;justify-content:center;gap:6px;}
+.ab-save{background:var(--blue);color:#fff;}
+.ab-save:hover{background:#2d5db8;}
+.ab-download{background:var(--surface);border:1px solid var(--border2);color:var(--white);}
+.ab-download:hover{border-color:var(--blue);color:var(--blue-light);}
+
+@media(max-width:960px){
+  .drawer{width:100vw;}
+}
+
+@media(max-width:960px){
+  .wrap{grid-template-columns:1fr;}
+  .result-side{position:static;height:auto;min-height:500px;}
+  .form-side{padding:28px 20px;}
+  .header{padding:14px 20px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div style="display:flex;align-items:center;">
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:2px;color:var(--white);">JD Agent</div>
+    <span style="font-size:10px;font-family:'Syne',sans-serif;letter-spacing:1px;color:var(--muted);margin-left:10px;">by Deeploy</span>
+  </div>
+  <div class="header-nav">
+    <span class="header-link" onclick="openDrawer()" style="color:var(--blue-light);">내 JD 목록</span>
+    <div id="authBtnArea">
+      <button onclick="showAuth()" style="padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">로그인</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── AUTH OVERLAY ── -->
+<div class="auth-overlay" id="authOverlay" style="display:none;">
+  <div class="auth-box">
+    <div class="auth-logo">JD Agent</div>
+    <div class="auth-sub">by Deeploy · 온톨로지 기반 직무기술서</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">로그인</div>
+      <div class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">회원가입</div>
+    </div>
+    <div id="authLoginForm">
+      <div class="auth-field">
+        <div class="auth-label">이메일</div>
+        <input type="email" class="auth-input" id="loginEmail" placeholder="name@company.com">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">비밀번호</div>
+        <input type="password" class="auth-input" id="loginPw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="auth-error" id="loginError">이메일 또는 비밀번호를 확인해주세요</div>
+      <button class="auth-btn" onclick="doLogin()">로그인</button>
+    </div>
+    <div id="authSignupForm" style="display:none;">
+      <div class="auth-field">
+        <div class="auth-label">이름</div>
+        <input type="text" class="auth-input" id="signupName" placeholder="홍길동">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">이메일</div>
+        <input type="email" class="auth-input" id="signupEmail" placeholder="name@company.com">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">회사명</div>
+        <input type="text" class="auth-input" id="signupCompany" placeholder="(주)디플로이">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">비밀번호</div>
+        <input type="password" class="auth-input" id="signupPw" placeholder="8자 이상" onkeydown="if(event.key==='Enter')doSignup()">
+      </div>
+      <div class="auth-error" id="signupError">입력 내용을 확인해주세요</div>
+      <button class="auth-btn" onclick="doSignup()">가입하기</button>
+    </div>
+    <div class="auth-skip" onclick="closeAuth()">지금은 건너뛰기 <span>(저장 기능 미사용)</span></div>
+  </div>
+</div>
+
+<!-- ── MY JD DRAWER ── -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-title">내 JD 목록</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <div class="drawer-empty">저장된 JD가 없습니다</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ 좌측: 입력 ══ -->
+  <div class="form-side">
+
+    <!-- 진행 단계 -->
+    <div class="form-progress">
+      <div class="fp-step active" id="fp1" onclick="goStep(1)">기본 정보</div>
+      <div class="fp-step" id="fp2" onclick="goStep(2)">3층 구조</div>
+      <div class="fp-step" id="fp3" onclick="goStep(3)">데이터 흐름</div>
+      <div class="fp-step" id="fp4" onclick="goStep(4)">판단 구조</div>
+      <div class="fp-step" id="fp5" onclick="goStep(5)">협업·도구</div>
+    </div>
+
+    <!-- ══ STEP 1: 기본 정보 ══ -->
+    <div class="step-block active" id="step1">
+      <div class="step-header">
+        <div class="step-num">Step 1 / 5 — 기본 정보</div>
+        <div class="step-title">어떤 직무의<br>JD를 만들까요?</div>
+        <div class="step-desc">직무의 기본 맥락을 입력합니다. 이후 단계에서 온톨로지 기반으로 구체화됩니다.</div>
+      </div>
+
+      <div class="fg">
+        <div class="fl"><strong>직무명</strong> <span class="req">*</span></div>
+        <input type="text" class="fi" id="jobTitle" placeholder="예: 채용담당자, HR 매니저, People Partner">
+      </div>
+      <div class="fg">
+        <div class="fl"><strong>산업군</strong> <span class="req">*</span></div>
+        <select class="fs" id="industry">
+          <option value="">선택해주세요</option>
+          <option value="it">IT · 소프트웨어</option>
+          <option value="finance">금융 · 보험</option>
+          <option value="manufacturing">제조 · 물류</option>
+          <option value="retail">유통 · 커머스</option>
+          <option value="healthcare">헬스케어</option>
+          <option value="edu">교육</option>
+          <option value="consulting">전문 서비스</option>
+          <option value="other">기타</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg">
+          <div class="fl"><strong>조직 규모</strong></div>
+          <select class="fs" id="orgSize">
+            <option value="small">10명 이하</option>
+            <option value="mid" selected>10~50명</option>
+            <option value="large">50~200명</option>
+            <option value="enterprise">200명 이상</option>
+          </select>
+        </div>
+        <div class="fg">
+          <div class="fl"><strong>경력 수준</strong></div>
+          <select class="fs" id="seniority">
+            <option value="junior">주니어 (1~3년)</option>
+            <option value="mid" selected>미드 (4~7년)</option>
+            <option value="senior">시니어 (8년+)</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fl"><strong>채용 목적</strong></div>
+        <div class="radio-cards" id="purposeGroup">
+          <div class="radio-card selected" onclick="selectRadio('purposeGroup',this,'new')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">신규 포지션 오픈</div>
+              <div class="radio-card-desc">기존에 없던 역할을 새로 만드는 경우</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('purposeGroup',this,'replace')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">기존 담당자 교체 · 재정의</div>
+              <div class="radio-card-desc">AI 전환에 맞게 직무 자체를 재설계하는 경우</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('purposeGroup',this,'expand')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">팀 확장</div>
+              <div class="radio-card-desc">기존 직무 구조를 유지하며 인원을 늘리는 경우</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <div></div>
+        <button class="btn-next" onclick="goStep(2)">다음 →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2: 3층 의사결정 구조 ══ -->
+    <div class="step-block" id="step2">
+      <div class="step-header">
+        <div class="step-num">Step 2 / 5 — 3층 의사결정 구조</div>
+        <div class="step-title">이 직무의 태스크를<br>3층으로 분류하세요</div>
+        <div class="step-desc">각 층에 실제 태스크를 입력하면 JD에 그대로 반영됩니다.</div>
+      </div>
+
+      <!-- 3층 구조 설명 -->
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:24px;">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleFrameworkGuide()">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:14px;">💡</span>
+            <span style="font-size:12px;font-weight:700;color:var(--blue-light);">3층 구조란 무엇인가요?</span>
+          </div>
+          <span style="font-size:12px;color:var(--muted);" id="guideToggleIcon">펼치기 ▾</span>
+        </div>
+        <div id="frameworkGuide" style="display:none;">
+          <div style="padding:20px 18px;">
+            <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+              AI 에이전트 시대에 모든 직무는 세 가지 층으로 재분류됩니다.<br>
+              <strong style="color:var(--white);">어떤 태스크를 에이전트에게 맡기고, 인간은 어떤 판단에 집중할 것인가</strong>를 정의하는 프레임워크입니다.
+            </p>
+
+            <!-- Layer 1 설명 -->
+            <div style="display:flex;gap:12px;margin-bottom:14px;padding:14px;background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.2);border-radius:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(192,57,43,.2);color:#e07070;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;">1</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#e07070;margin-bottom:4px;">에이전트 자동 실행</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.7;">규칙이 명확하고 패턴이 반복되는 태스크. 에이전트가 기준에 따라 자동으로 처리합니다.<br>
+                <span style="color:rgba(224,112,112,.7);">예: 이력서 1차 스크리닝, 면접 일정 자동 조율, 데이터 수집·정리, 정기 리포트 생성</span></div>
+              </div>
+            </div>
+
+            <!-- Layer 2 설명 -->
+            <div style="display:flex;gap:12px;margin-bottom:14px;padding:14px;background:rgba(212,148,59,.06);border:1px solid rgba(212,148,59,.2);border-radius:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(212,148,59,.2);color:var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;">2</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:4px;">에이전트 + 인간 협력</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.7;">에이전트가 초안·분석을 제시하고, 인간이 맥락을 보완해 최종 판단하는 태스크.<br>
+                <span style="color:rgba(212,148,59,.7);">예: 채용 공고 초안 작성, 후보자 평가 리포트 생성, 면접 질문 세트 제안, 보상 시뮬레이션</span></div>
+              </div>
+            </div>
+
+            <!-- Layer 3 설명 -->
+            <div style="display:flex;gap:12px;padding:14px;background:rgba(46,168,126,.06);border:1px solid rgba(46,168,126,.2);border-radius:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(46,168,126,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;">3</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px;">인간 전담 판단</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.7;">이해관계자의 감정, 조직 정치, 책임 귀속이 개입되어 반드시 사람이 담당해야 하는 판단.<br>
+                <span style="color:rgba(46,168,126,.7);">예: 최종 합격 결정, 연봉 협상, 채용 전략 수립, 조직 문화 적합성 판단</span></div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;padding:12px 14px;background:var(--blue-dim);border-radius:6px;font-size:12px;color:var(--blue-light);line-height:1.7;">
+              💬 <strong>핵심 원칙:</strong> 직무의 가치는 "무엇을 하는가"가 아닌 <strong>"어떤 판단을 책임지는가"</strong>로 정의됩니다. Layer 3에 입력하는 내용이 이 직무의 본질입니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 1 -->
+      <div class="layer-card">
+        <div class="layer-card-header">
+          <div class="layer-badge lb1">1</div>
+          <div>
+            <div class="layer-card-title" style="color:#e07070;">에이전트 자동 실행</div>
+            <div class="layer-card-subtitle">데이터 명확 · 패턴 일정 · 판단 기준 사전 정의 가능한 태스크</div>
+          </div>
+        </div>
+        <div class="layer-card-body">
+          <div id="layer1Tasks">
+            <div class="task-input-row">
+              <input type="text" class="fi" placeholder="예: 이력서 1차 스크리닝 · 면접 일정 자동 조율" style="font-size:12px;">
+              <button class="task-remove" onclick="removeTask(this)">×</button>
+            </div>
+          </div>
+          <button class="add-task-btn" onclick="addTask('layer1Tasks')">+ 태스크 추가</button>
+        </div>
+      </div>
+
+      <!-- Layer 2 -->
+      <div class="layer-card">
+        <div class="layer-card-header">
+          <div class="layer-badge lb2">2</div>
+          <div>
+            <div class="layer-card-title" style="color:var(--amber);">에이전트 + 인간 협력</div>
+            <div class="layer-card-subtitle">에이전트가 초안·분석 제시 → 인간이 최종 판단하는 태스크</div>
+          </div>
+        </div>
+        <div class="layer-card-body">
+          <div id="layer2Tasks">
+            <div class="task-input-row">
+              <input type="text" class="fi" placeholder="예: 채용 공고 초안 작성 · 후보자 리포트 생성" style="font-size:12px;">
+              <button class="task-remove" onclick="removeTask(this)">×</button>
+            </div>
+          </div>
+          <button class="add-task-btn" onclick="addTask('layer2Tasks')">+ 태스크 추가</button>
+        </div>
+      </div>
+
+      <!-- Layer 3 -->
+      <div class="layer-card">
+        <div class="layer-card-header">
+          <div class="layer-badge lb3">3</div>
+          <div>
+            <div class="layer-card-title" style="color:var(--green);">인간 전담 판단</div>
+            <div class="layer-card-subtitle">이해관계자 감정 · 조직 정치 · 책임 귀속이 개입되는 태스크</div>
+          </div>
+        </div>
+        <div class="layer-card-body">
+          <div id="layer3Tasks">
+            <div class="task-input-row">
+              <input type="text" class="fi" placeholder="예: 최종 합격 결정 · 연봉 협상 · 채용 전략 수립" style="font-size:12px;">
+              <button class="task-remove" onclick="removeTask(this)">×</button>
+            </div>
+          </div>
+          <button class="add-task-btn" onclick="addTask('layer3Tasks')">+ 태스크 추가</button>
+        </div>
+      </div>
+
+      <!-- AI 전환 준비도 -->
+      <div class="fg" style="margin-top:20px;">
+        <div class="fl"><strong>현재 AI 전환 준비도</strong> <span style="font-size:11px;color:var(--muted);">(Deeploy 진단 점수 또는 체감)</span></div>
+        <div class="slider-wrap">
+          <div class="slider-row">
+            <input type="range" min="0" max="100" value="60" step="5" id="readinessScore" oninput="updateReadiness(this)">
+            <span class="slider-val" id="readinessVal">60점</span>
+          </div>
+          <div class="slider-labels"><span>초기 단계</span><span>적극 전환 가능</span></div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(1)">← 이전</button>
+        <button class="btn-next" onclick="goStep(3)">다음 →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3: 태스크-데이터-판단 체인 ══ -->
+    <div class="step-block" id="step3">
+      <div class="step-header">
+        <div class="step-num">Step 3 / 5 — 데이터 흐름</div>
+        <div class="step-title">직무의 데이터<br>흐름을 정의하세요</div>
+        <div class="step-desc">태스크 → 데이터 → 의사결정의 흐름이 이 직무의 온톨로지 체인입니다. 핵심 데이터 흐름을 입력해주세요.</div>
+      </div>
+
+      <!-- 흐름 시각화 -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">온톨로지 체인 구조</div>
+        <div class="flow-row">
+          <div class="flow-node filled" id="fn-task">태스크 수행</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node filled" id="fn-data">데이터 발생</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node filled" id="fn-decision">의사결정</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;">에이전트가 1층 태스크를 수행 → 데이터 생성 → 인간이 판단 기반으로 활용</div>
+      </div>
+
+      <div class="fg">
+        <div class="fl"><strong>이 직무에서 주로 생성되는 핵심 데이터는?</strong></div>
+        <div class="chip-group" id="dataOutputChips">
+          <div class="chip" onclick="toggleChip(this)">지원자 정보·이력서</div>
+          <div class="chip" onclick="toggleChip(this)">면접 평가 데이터</div>
+          <div class="chip" onclick="toggleChip(this)">채용 파이프라인 현황</div>
+          <div class="chip" onclick="toggleChip(this)">인력 계획 데이터</div>
+          <div class="chip" onclick="toggleChip(this)">성과·평가 데이터</div>
+          <div class="chip" onclick="toggleChip(this)">교육 이수 현황</div>
+          <div class="chip" onclick="toggleChip(this)">급여·보상 데이터</div>
+          <div class="chip" onclick="toggleChip(this)">조직 구조 데이터</div>
+          <div class="chip" onclick="toggleChip(this)">이탈·유지 신호</div>
+        </div>
+        <input type="text" class="fi" id="dataOutputCustom" placeholder="위에 없다면 직접 입력" style="margin-top:10px;font-size:12px;">
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>이 데이터를 기반으로 이루어지는 핵심 의사결정은?</strong></div>
+        <div class="chip-group" id="decisionChips">
+          <div class="chip" onclick="toggleChip(this)">합격·불합격 판단</div>
+          <div class="chip" onclick="toggleChip(this)">채용 전략 방향 설정</div>
+          <div class="chip" onclick="toggleChip(this)">연봉·오퍼 결정</div>
+          <div class="chip" onclick="toggleChip(this)">조직 문화 적합성 판단</div>
+          <div class="chip" onclick="toggleChip(this)">인력 충원 우선순위</div>
+          <div class="chip" onclick="toggleChip(this)">성과 평가·보상 결정</div>
+          <div class="chip" onclick="toggleChip(this)">교육·개발 방향</div>
+          <div class="chip" onclick="toggleChip(this)">조직 구조 변경</div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>판단 시 가장 어려운 상황은?</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+        <div class="chip-group" id="hardJudgmentChips">
+          <div class="chip" onclick="toggleChip(this)">정보 불완전 · 데이터 충돌</div>
+          <div class="chip" onclick="toggleChip(this)">이해관계자 의견 충돌</div>
+          <div class="chip" onclick="toggleChip(this)">전례 없는 상황</div>
+          <div class="chip" onclick="toggleChip(this)">시간 촉박</div>
+          <div class="chip" onclick="toggleChip(this)">책임 무거운 결정</div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(2)">← 이전</button>
+        <button class="btn-next" onclick="goStep(4)">다음 →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 4: 판단 구조 ══ -->
+    <div class="step-block" id="step4">
+      <div class="step-header">
+        <div class="step-num">Step 4 / 5 — 판단 구조</div>
+        <div class="step-title">이 직무의 판단과<br>의사결정 방식은?</div>
+        <div class="step-desc">판단 구조가 JD의 역량 요건과 우대사항을 결정합니다. 이 직무에서 인간이 담당하는 판단의 성격을 정의하세요.</div>
+      </div>
+
+      <div class="fg">
+        <div class="fl"><strong>주된 판단 방식</strong></div>
+        <div class="radio-cards" id="decisionStyleGroup">
+          <div class="radio-card selected" onclick="selectRadio('decisionStyleGroup',this,'data')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">데이터 기반 판단</div>
+              <div class="radio-card-desc">명확한 지표와 수치를 보고 결정. 기준이 상대적으로 명확함</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('decisionStyleGroup',this,'experience')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">경험 · 직관 기반 판단</div>
+              <div class="radio-card-desc">데이터보다 도메인 노하우와 감각이 중요. 암묵지가 핵심</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('decisionStyleGroup',this,'consensus')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">합의 · 조율 기반 판단</div>
+              <div class="radio-card-desc">이해관계자들과의 협의를 통해 결정. 관계 관리가 핵심</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('decisionStyleGroup',this,'mixed')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">복합적 (상황에 따라 다름)</div>
+              <div class="radio-card-desc">데이터 + 맥락 + 관계를 동시에 고려</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>단독 결정 비중</strong></div>
+        <div class="slider-wrap">
+          <div class="slider-row">
+            <input type="range" min="0" max="10" value="5" step="1" id="autonomySlider" oninput="updateAutonomy(this)">
+            <span class="slider-val" id="autonomyVal">절반 단독</span>
+          </div>
+          <div class="slider-labels"><span>모두 협의로 결정</span><span>대부분 단독 결정</span></div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>AI가 판단을 보조하면 좋을 영역</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+        <div class="chip-group" id="aiHelpChips">
+          <div class="chip" onclick="toggleChip(this)">패턴 분석 · 이상 감지</div>
+          <div class="chip" onclick="toggleChip(this)">선택지 정리 · 비교</div>
+          <div class="chip" onclick="toggleChip(this)">초안 · 시뮬레이션 제공</div>
+          <div class="chip" onclick="toggleChip(this)">리스크 사전 감지</div>
+          <div class="chip" onclick="toggleChip(this)">보고서 자동 생성</div>
+          <div class="chip" onclick="toggleChip(this)">일정 · 프로세스 자동화</div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>이 직무에서 가장 중요한 역량</strong> (JD에 반영됩니다)</div>
+        <div class="radio-cards" id="priorityGroup">
+          <div class="radio-card selected" onclick="selectRadio('priorityGroup',this,'execution')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">실행력 — 빠르고 정확하게 해내는 능력</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('priorityGroup',this,'strategy')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">전략적 사고 — 방향을 잡고 설계하는 능력</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('priorityGroup',this,'ai_native')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">에이전트 협업 — AI와 함께 일하는 능력 (AI 네이티브)</div>
+            </div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('priorityGroup',this,'relationship')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text">
+              <div class="radio-card-label">관계 관리 — 이해관계자를 조율하는 능력</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(3)">← 이전</button>
+        <button class="btn-next" onclick="goStep(5)">다음 →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 5: 협업·도구 ══ -->
+    <div class="step-block" id="step5">
+      <div class="step-header">
+        <div class="step-num">Step 5 / 5 — 협업 구조 · 도구</div>
+        <div class="step-title">어떤 환경에서<br>일하는 직무인가요?</div>
+        <div class="step-desc">협업 구조와 도구가 JD의 자격요건과 근무환경 설명에 반영됩니다.</div>
+      </div>
+
+      <div class="fg">
+        <div class="fl"><strong>주요 인풋 출처</strong> — 정보·데이터를 주로 어디서 받나요?</div>
+        <div class="chip-group" id="inputSourceChips">
+          <div class="chip" onclick="toggleChip(this)">직접 수집·생성</div>
+          <div class="chip" onclick="toggleChip(this)">현업 팀장 전달</div>
+          <div class="chip" onclick="toggleChip(this)">타 부서 요청</div>
+          <div class="chip" onclick="toggleChip(this)">시스템 자동 수신</div>
+          <div class="chip" onclick="toggleChip(this)">외부 (고객·파트너)</div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <div class="fl"><strong>주요 아웃풋 수신자</strong> — 결과물을 누가 받나요?</div>
+        <div class="chip-group" id="outputReceiverChips">
+          <div class="chip" onclick="toggleChip(this)">내부 참고용</div>
+          <div class="chip" onclick="toggleChip(this)">직속 팀장</div>
+          <div class="chip" onclick="toggleChip(this)">타 부서 담당자</div>
+          <div class="chip" onclick="toggleChip(this)">경영진</div>
+          <div class="chip" onclick="toggleChip(this)">외부 (고객·기관)</div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>주로 사용하는 도구</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+        <div class="chip-group" id="toolChips">
+          <div class="chip" onclick="toggleChip(this)">엑셀 · 구글시트</div>
+          <div class="chip" onclick="toggleChip(this)">사내 ERP · HRM</div>
+          <div class="chip" onclick="toggleChip(this)">ATS (채용관리)</div>
+          <div class="chip" onclick="toggleChip(this)">Slack · Teams</div>
+          <div class="chip" onclick="toggleChip(this)">노션 · Confluence</div>
+          <div class="chip" onclick="toggleChip(this)">ChatGPT · Claude</div>
+          <div class="chip" onclick="toggleChip(this)">데이터 분석 툴</div>
+          <div class="chip" onclick="toggleChip(this)">화상회의 툴</div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fg">
+        <div class="fl"><strong>JD 톤 & 스타일</strong></div>
+        <div class="radio-cards" id="toneGroup">
+          <div class="radio-card selected" onclick="selectRadio('toneGroup',this,'professional')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text"><div class="radio-card-label">공식적 · 전문적</div></div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('toneGroup',this,'friendly')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text"><div class="radio-card-label">친근하고 직접적</div></div>
+          </div>
+          <div class="radio-card" onclick="selectRadio('toneGroup',this,'startup')">
+            <div class="radio-dot"></div>
+            <div class="radio-card-text"><div class="radio-card-label">스타트업 스타일</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(4)">← 이전</button>
+        <button class="btn-generate" id="generateBtn" onclick="generateJD()">
+          <div class="gen-spinner"></div>
+          <span class="gen-text">✦ JD 생성하기</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ 우측: 결과 ══ -->
+  <div class="result-side">
+    <div class="result-header">
+      <div>
+        <div class="result-header-title" id="resultTitle">JD 결과</div>
+        <div class="result-header-meta" id="resultMeta">온톨로지 기반으로 생성됩니다</div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-sm" onclick="copyJD()">복사</button>
+        <button class="btn-sm" onclick="generateJD()" style="color:var(--blue-light);border-color:rgba(59,111,212,.4);">↻</button>
+      </div>
+    </div>
+
+    <div class="version-tabs" id="versionTabs" style="display:none;">
+      <div class="vtab active" onclick="switchTab('recruit',this)">채용공고용</div>
+      <div class="vtab" onclick="switchTab('internal',this)">내부 문서</div>
+      <div class="vtab" onclick="switchTab('social',this)">소셜</div>
+    </div>
+
+    <div class="result-body" id="resultBody">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">온톨로지 기반 JD</div>
+        <div class="empty-desc">
+          5단계 입력을 완료하고<br>생성하기를 누르면<br>
+          <span style="color:var(--blue-light);">3층 구조가 반영된 JD</span>가<br>자동으로 만들어집니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="ontology-indicator" id="ontologyIndicator" style="display:none;">
+      <span class="oi-dot"></span>
+      Deeploy 직무 온톨로지 프레임워크 기반으로 생성된 JD
+    </div>
+
+    <div class="action-bar" id="actionBar" style="display:none;">
+      <button class="action-bar-btn ab-save" onclick="saveJD()">💾 저장하기</button>
+      <button class="action-bar-btn ab-download" onclick="downloadJD()">⬇ 다운로드</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// 상태
+// ══════════════════════════════════════════
+const state = {
+  currentStep: 1,
+  jd: { recruit:'', internal:'', social:'' },
+  currentTab: 'recruit',
+  radioValues: {
+    purposeGroup: 'new',
+    decisionStyleGroup: 'data',
+    priorityGroup: 'execution',
+    toneGroup: 'professional'
+  }
+};
+
+// ══════════════════════════════════════════
+// 단계 이동
+// ══════════════════════════════════════════
+function toggleFrameworkGuide() {
+  const guide = document.getElementById('frameworkGuide');
+  const icon  = document.getElementById('guideToggleIcon');
+  const open  = guide.style.display === 'none';
+  guide.style.display = open ? 'block' : 'none';
+  icon.textContent = open ? '접기 ▴' : '펼치기 ▾';
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-block').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.fp-step').forEach((s,i) => {
+    s.classList.remove('active');
+    if (i+1 < n) s.classList.add('done');
+    else s.classList.remove('done');
+  });
+  document.getElementById('step'+n).classList.add('active');
+  document.getElementById('fp'+n).classList.add('active');
+  state.currentStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════
+// UI 인터랙션
+// ══════════════════════════════════════════
+function selectRadio(groupId, el, val) {
+  document.querySelectorAll(`#${groupId} .radio-card`).forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.radioValues[groupId] = val;
+}
+
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+
+function addTask(containerId) {
+  const div = document.createElement('div');
+  div.className = 'task-input-row';
+  div.innerHTML = `<input type="text" class="fi" placeholder="태스크 입력" style="font-size:12px;"><button class="task-remove" onclick="removeTask(this)">×</button>`;
+  document.getElementById(containerId).appendChild(div);
+}
+
+function removeTask(btn) {
+  const row = btn.parentElement;
+  const container = row.parentElement;
+  if (container.querySelectorAll('.task-input-row').length > 1) row.remove();
+}
+
+function updateReadiness(el) {
+  const v = parseInt(el.value);
+  const label = v < 30 ? '초기 단계' : v < 50 ? '준비 단계' : v < 70 ? '전환 가능' : '적극 전환 가능';
+  document.getElementById('readinessVal').textContent = `${v}점 · ${label}`;
+}
+
+function updateAutonomy(el) {
+  const v = parseInt(el.value);
+  const txt = v <= 2 ? '거의 협의' : v <= 4 ? '주로 협의' : v <= 6 ? '절반 단독' : v <= 8 ? '주로 단독' : '대부분 단독';
+  document.getElementById('autonomyVal').textContent = txt;
+}
+
+// ══════════════════════════════════════════
+// 데이터 수집
+// ══════════════════════════════════════════
+function getLayerTasks(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} input`))
+    .map(i => i.value.trim()).filter(Boolean);
+}
+
+function getChips(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} .chip.selected`))
+    .map(c => c.textContent.trim());
+}
+
+// ══════════════════════════════════════════
+// JD 생성
+// ══════════════════════════════════════════
+async function generateJD() {
+  const jobTitle = document.getElementById('jobTitle').value.trim();
+  if (!jobTitle) { showToast('직무명을 입력해주세요'); goStep(1); return; }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.gen-text').textContent = '생성 중...';
+
+  // 스켈레톤 표시
+  document.getElementById('versionTabs').style.display = 'none';
+  document.getElementById('ontologyIndicator').style.display = 'none';
+  document.getElementById('resultBody').innerHTML = `
+    <div style="padding:4px 0;">
+      <div class="skeleton" style="width:50%;height:18px;margin-bottom:20px;"></div>
+      ${Array(6).fill('<div class="skeleton"></div>').join('')}
+      <div class="skeleton" style="width:70%;margin-bottom:20px;"></div>
+      ${Array(4).fill('<div class="skeleton"></div>').join('')}
+      <div class="skeleton" style="width:60%;"></div>
+    </div>`;
+
+  // 데이터 수집
+  const industry   = document.getElementById('industry').value;
+  const orgSize    = document.getElementById('orgSize').value;
+  const seniority  = document.getElementById('seniority').value;
+  const score      = document.getElementById('readinessScore').value;
+  const autonomy   = document.getElementById('autonomySlider').value;
+
+  const layer1 = getLayerTasks('layer1Tasks');
+  const layer2 = getLayerTasks('layer2Tasks');
+  const layer3 = getLayerTasks('layer3Tasks');
+  const dataOutputs    = getChips('dataOutputChips');
+  const decisions      = getChips('decisionChips');
+  const hardJudgments  = getChips('hardJudgmentChips');
+  const aiHelps        = getChips('aiHelpChips');
+  const inputSources   = getChips('inputSourceChips');
+  const outputReceivers= getChips('outputReceiverChips');
+  const tools          = getChips('toolChips');
+  const dataCustom     = document.getElementById('dataOutputCustom').value.trim();
+
+  const indMap   = {it:'IT·소프트웨어',finance:'금융·보험',manufacturing:'제조·물류',retail:'유통·커머스',healthcare:'헬스케어',edu:'교육',consulting:'전문서비스',other:'기타'};
+  const sizeMap  = {small:'10명 이하',mid:'10~50명',large:'50~200명',enterprise:'200명 이상'};
+  const senMap   = {junior:'주니어(1~3년)',mid:'미드(4~7년)',senior:'시니어(8년+)'};
+  const styleMap = {data:'데이터 기반',experience:'경험·직관',consensus:'합의·조율',mixed:'복합적'};
+  const priMap   = {execution:'실행력',strategy:'전략적 사고',ai_native:'에이전트 협업(AI 네이티브)',relationship:'관계 관리'};
+  const toneMap  = {professional:'공식적·전문적',friendly:'친근하고 직접적',startup:'스타트업 스타일'};
+  const purMap   = {new:'신규 포지션',replace:'기존 직무 재정의',expand:'팀 확장'};
+
+  // 진단 연동 데이터
+  const d = state.diagnosisData;
+  const diagCtx = d ? `
+[Deeploy 진단 연동 데이터 — 최우선 반영]
+진단자: ${d.reg?.name||''}님 (${d.reg?.company||''})
+현재 직무: ${d.job?.title} | AI 전환 준비도: ${d.score}점 (${d.label})
+새로운 역할 제안: ${d.newTitle||''} — ${d.newDesc||''}
+에이전트 위임 태스크(Layer1): ${(d.layer1||[]).join(', ')}
+인간 전담 판단(Layer3): ${(d.layer3||[]).join(', ')}
+협업구조: 인풋=${(d.context?.inputSources||[]).join('·')} / 아웃풋=${(d.context?.outputReceivers||[]).join('·')}
+판단방식: ${d.context?.decisionStyle} / 단독결정: ${d.context?.decisionAutonomy}/10
+AI보조희망: ${(d.context?.aiJudgmentHelp||[]).join('·')}
+핵심고민: ${d.context?.pain||''}
+조직임팩트: ${d.impact||''} | 다음액션: ${d.nextStep||''}
+태스크 상세: ${(d.taskDetails||[]).map(t=>`${t.name}(주${t.hours}h·${t.frequency}·${t.tools}·전환=${t.agentRisk})`).join(' / ')}
+` : '';
+
+  const prompt = `당신은 Deeploy의 JD 에이전트입니다.
+Deeploy 직무 온톨로지 프레임워크를 기반으로 AI 에이전트 시대에 맞는 직무기술서를 작성합니다.
+${diagCtx}
+[Deeploy 온톨로지 프레임워크 원칙]
+1. 직무 = Σ(태스크). 태스크는 3층으로 분류됩니다.
+2. Layer 1 (에이전트 자동 실행): 반복·패턴 명확·기준 사전 정의 가능
+3. Layer 2 (에이전트+인간 협력): 초안은 에이전트, 최종은 인간
+4. Layer 3 (인간 전담 판단): 이해관계자·조직정치·책임귀속 개입
+5. 직무의 가치 = 데이터를 기반으로 어떤 판단을 책임지는가
+6. JD는 "무엇을 하는 사람"이 아닌 "어떤 판단을 책임지는 사람"으로 정의
+
+[입력된 온톨로지 데이터]
+직무명: ${jobTitle}
+산업: ${indMap[industry]||industry} | 규모: ${sizeMap[orgSize]} | 경력: ${senMap[seniority]}
+채용목적: ${purMap[state.radioValues.purposeGroup]}
+AI전환준비도: ${score}점
+
+■ 3층 의사결정 구조
+Layer 1 (에이전트 자동): ${layer1.join(', ')||'미입력'}
+Layer 2 (에이전트+인간): ${layer2.join(', ')||'미입력'}
+Layer 3 (인간 전담 판단): ${layer3.join(', ')||'미입력'}
+
+■ 데이터 흐름 체인
+생성 데이터: ${[...dataOutputs, dataCustom].filter(Boolean).join(', ')||'미입력'}
+핵심 의사결정: ${decisions.join(', ')||'미입력'}
+판단이 어려운 상황: ${hardJudgments.join(', ')||'미입력'}
+
+■ 판단 구조
+판단 방식: ${styleMap[state.radioValues.decisionStyleGroup]}
+단독결정 비중: ${autonomy}/10
+AI 보조 희망 영역: ${aiHelps.join(', ')||'미입력'}
+핵심 역량: ${priMap[state.radioValues.priorityGroup]}
+
+■ 협업·도구
+인풋 출처: ${inputSources.join(', ')||'미입력'}
+아웃풋 수신: ${outputReceivers.join(', ')||'미입력'}
+사용 도구: ${tools.join(', ')||'미입력'}
+
+JD 톤: ${toneMap[state.radioValues.toneGroup]}
+
+위 온톨로지 데이터를 기반으로 아래 3가지 버전을 작성하세요.
+기존 JD와 달리 "에이전트가 담당하는 것"과 "인간이 집중하는 판단"을 명시하는 것이 핵심입니다.
+
+===채용공고용===
+[포지션 소개]
+(2~3줄. AI 시대 이 직무의 의미, Layer 3 판단의 가치를 담아서)
+
+[이 직무에서 에이전트가 담당합니다]
+(Layer 1, 2 태스크를 "에이전트가 ~을 처리합니다" 형식으로 3~4개. 지원자가 이 회사의 AI 활용 수준을 느낄 수 있게)
+
+[당신이 집중할 판단 영역]
+(Layer 3 태스크를 "당신은 ~에 대한 최종 판단을 담당합니다" 형식으로 3~4개)
+
+[자격요건]
+(4~5개. 판단 방식과 협업 구조 반영)
+
+[우대사항]
+(3~4개. AI·에이전트 협업 역량 반드시 포함)
+
+[우리가 제공하는 환경]
+(사용 도구, AI 환경 포함 2~3줄)
+
+===내부 직무기술서===
+[직무 정의]
+(이 역할의 본질: "에이전트가 ~를 담당하는 환경에서, 이 직무는 ~을 판단·책임지는 역할입니다")
+
+[3층 업무 구조]
+Layer 1 — 에이전트 자동 처리:
+(구체적 목록)
+Layer 2 — 에이전트+인간 협력:
+(구체적 목록)
+Layer 3 — 인간 전담 판단:
+(구체적 목록)
+
+[핵심 데이터 흐름]
+(태스크→데이터→의사결정 체인을 2~3줄로)
+
+[성과 기준]
+(3~4개. 판단의 질로 측정되는 기준)
+
+[필요 역량]
+(기술·태도·AI협업역량 구분해서)
+
+===소셜미디어용===
+(링크드인 최적화, 150자 내외, 훅+핵심+지원유도)
+
+각 버전을 ===구분자===로 정확히 구분해주세요.`;
+
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 2500, temperature: 0.8 }
+      })
+    });
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!text) throw new Error('empty');
+    parseAndRender(text, jobTitle, industry);
+  } catch(e) {
+    console.error('JD API error:', e.message);
+    renderFallback(jobTitle, layer1, layer2, layer3);
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  btn.querySelector('.gen-text').textContent = '✦ 재생성';
+}
+
+// ══════════════════════════════════════════
+// 파싱 · 렌더
+// ══════════════════════════════════════════
+const indMap2 = {it:'IT·소프트웨어',finance:'금융·보험',manufacturing:'제조·물류',retail:'유통·커머스',healthcare:'헬스케어',edu:'교육',consulting:'전문서비스',other:'기타'};
+
+function parseAndRender(text, jobTitle, industry) {
+  const separators = text.match(/===(.*?)===/g) || [];
+  const parts = text.split(/===.*?===/);
+
+  const ri = separators.findIndex(s => s.includes('채용'));
+  const ii = separators.findIndex(s => s.includes('내부'));
+  const si = separators.findIndex(s => s.includes('소셜'));
+
+  state.jd.recruit  = (parts[ri+1] || parts[1] || text).trim();
+  state.jd.internal = (parts[ii+1] || parts[2] || text).trim();
+  state.jd.social   = (parts[si+1] || parts[3] || text.slice(0,300)).trim();
+
+  finalizeResult(jobTitle, industry);
+}
+
+function renderFallback(jobTitle, l1, l2, l3) {
+  state.jd.recruit = `[포지션 소개]
+AI 에이전트와 협업하며 핵심 판단에 집중하는 ${jobTitle}를 찾습니다.
+반복 업무는 에이전트가 처리하고, 당신은 조직에 실질적 영향을 미치는 판단에 집중할 수 있는 환경입니다.
+
+[이 직무에서 에이전트가 담당합니다]
+${l1.slice(0,3).map(t=>`• ${t}`).join('\n') || '• 반복적 데이터 수집 및 정리\n• 1차 스크리닝 및 분류\n• 정기 리포트 자동 생성'}
+
+[당신이 집중할 판단 영역]
+${l3.slice(0,3).map(t=>`• ${t}`).join('\n') || '• 최종 의사결정 및 방향 설정\n• 이해관계자 조율\n• 전략적 판단'}
+
+[자격요건]
+• 관련 업무 경험 보유자
+• 데이터 기반 의사결정 역량
+• AI 도구 활용에 적극적인 분
+• 변화하는 업무 환경 적응력`;
+
+  state.jd.internal = state.jd.recruit;
+  state.jd.social   = `AI 에이전트와 함께 일하는 ${jobTitle}를 찾습니다. 반복은 에이전트에게, 판단은 당신에게. 지금 지원하세요.`;
+
+  finalizeResult(jobTitle);
+}
+
+function finalizeResult(jobTitle, industry) {
+  document.getElementById('resultTitle').textContent = jobTitle;
+  document.getElementById('resultMeta').textContent = `${indMap2[industry]||''} · Deeploy 온톨로지 기반`;
+  document.getElementById('versionTabs').style.display = 'flex';
+  document.getElementById('ontologyIndicator').style.display = 'flex';
+  document.getElementById('actionBar').style.display = 'flex';
+  switchTab('recruit', document.querySelector('.vtab'));
+  showToast('✓ JD 생성 완료');
+}
+
+function switchTab(key, el) {
+  state.currentTab = key;
+  document.querySelectorAll('.vtab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderContent(state.jd[key] || '');
+}
+
+function renderContent(text) {
+  if (!text) { document.getElementById('resultBody').innerHTML = '<p style="color:var(--muted);font-size:13px;padding:20px;">내용이 없습니다.</p>'; return; }
+
+  const lines = text.trim().split('\n');
+  let html = '';
+  let secTitle = '';
+  let secLines = [];
+
+  const flush = () => {
+    if (!secTitle && !secLines.length) return;
+    const body = secLines.join('\n').trim();
+    if (secTitle) {
+      const isHighlight = secTitle.includes('에이전트') || secTitle.includes('판단');
+      if (isHighlight) {
+        html += `<div class="jd-section">
+          <div class="jd-section-label">${secTitle}</div>
+          <div class="jd-highlight">
+            <div class="jd-hl-text">${fmt(body)}</div>
+          </div>
+        </div>`;
+      } else {
+        html += `<div class="jd-section">
+          <div class="jd-section-label">${secTitle}</div>
+          <div class="jd-text">${fmt(body)}</div>
+        </div>`;
+      }
+    } else if (body) {
+      html += `<div class="jd-section"><div class="jd-text">${fmt(body)}</div></div>`;
+    }
+    secTitle = ''; secLines = [];
+  };
+
+  lines.forEach(line => {
+    const t = line.trim();
+    if (t.startsWith('[') && t.endsWith(']')) { flush(); secTitle = t.slice(1,-1); }
+    else if (t) secLines.push(t);
+  });
+  flush();
+
+  if (!html) html = `<div class="jd-text">${fmt(text)}</div>`;
+  document.getElementById('resultBody').innerHTML = html;
+}
+
+function fmt(text) {
+  return text
+    .replace(/^(Layer [123].*?:)/gm, '<strong style="color:var(--white);display:block;margin:8px 0 4px;">$1</strong>')
+    .replace(/^[•·-]\s*/gm, '<span style="color:var(--blue-light);margin-right:5px;">·</span>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
+function copyJD() {
+  const text = state.jd[state.currentTab] || '';
+  if (!text) { showToast('생성된 JD가 없습니다'); return; }
+  navigator.clipboard.writeText(text).then(() => showToast('✓ 복사됐습니다')).catch(() => showToast('복사 실패'));
+}
+
+// ══════════════════════════════════════════
+// 인증 (localStorage 기반 MVP)
+// ══════════════════════════════════════════
+const AUTH_KEY = 'deeploy_jd_users';
+const SESSION_KEY = 'deeploy_jd_session';
+
+function getUsers() { try { return JSON.parse(localStorage.getItem(AUTH_KEY)||'[]'); } catch { return []; } }
+function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); } catch { return null; } }
+
+function showAuth() { document.getElementById('authOverlay').style.display='flex'; }
+function closeAuth() { document.getElementById('authOverlay').style.display='none'; }
+
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
+  document.getElementById('authLoginForm').style.display  = tab==='login'  ? 'block' : 'none';
+  document.getElementById('authSignupForm').style.display = tab==='signup' ? 'block' : 'none';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('signupError').style.display = 'none';
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pw    = document.getElementById('loginPw').value;
+  const users = getUsers();
+  const user  = users.find(u => u.email===email && u.pw===btoa(pw));
+  if (!user) { document.getElementById('loginError').style.display='block'; return; }
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ email:user.email, name:user.name, company:user.company }));
+  closeAuth();
+  updateAuthUI();
+  showToast(`✓ ${user.name}님, 환영합니다!`);
+}
+
+function doSignup() {
+  const name    = document.getElementById('signupName').value.trim();
+  const email   = document.getElementById('signupEmail').value.trim().toLowerCase();
+  const company = document.getElementById('signupCompany').value.trim();
+  const pw      = document.getElementById('signupPw').value;
+  const err     = document.getElementById('signupError');
+  if (!name||!email||!pw||pw.length<8) { err.textContent='모든 항목을 입력하고 비밀번호는 8자 이상이어야 합니다'; err.style.display='block'; return; }
+  const users = getUsers();
+  if (users.find(u=>u.email===email)) { err.textContent='이미 가입된 이메일입니다'; err.style.display='block'; return; }
+  users.push({ email, name, company, pw:btoa(pw), jds:[] });
+  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ email, name, company }));
+  closeAuth();
+  updateAuthUI();
+  showToast(`✓ 가입 완료! ${name}님 환영합니다.`);
+}
+
+function doLogout() {
+  localStorage.removeItem(SESSION_KEY);
+  updateAuthUI();
+  showToast('로그아웃됐습니다');
+}
+
+function updateAuthUI() {
+  const session = getSession();
+  const area    = document.getElementById('authBtnArea');
+  if (session) {
+    const initials = session.name.slice(0,1);
+    area.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="user-btn" onclick="openDrawer()">
+          <div class="user-avatar">${initials}</div>
+          <span>${session.name}</span>
+        </div>
+        <button onclick="doLogout()" style="padding:6px 12px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;">로그아웃</button>
+      </div>`;
+  } else {
+    area.innerHTML = `<button onclick="showAuth()" style="padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">로그인</button>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// JD 저장
+// ══════════════════════════════════════════
+function saveJD() {
+  const session = getSession();
+  if (!session) { showAuth(); return; }
+
+  const jobTitle = document.getElementById('jobTitle').value.trim() || '제목 없음';
+  const users    = getUsers();
+  const userIdx  = users.findIndex(u => u.email===session.email);
+  if (userIdx === -1) { showAuth(); return; }
+
+  if (!users[userIdx].jds) users[userIdx].jds = [];
+  const newJD = {
+    id:    'jd_' + Date.now(),
+    title: jobTitle,
+    industry: document.getElementById('industry').value,
+    createdAt: new Date().toLocaleDateString('ko-KR'),
+    recruit:  state.jd.recruit,
+    internal: state.jd.internal,
+    social:   state.jd.social
+  };
+  users[userIdx].jds.unshift(newJD);
+  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+  showToast('✓ JD가 저장됐습니다');
+}
+
+// ══════════════════════════════════════════
+// JD 다운로드
+// ══════════════════════════════════════════
+function downloadJD() {
+  const jobTitle = document.getElementById('jobTitle').value.trim() || 'JD';
+  const content  = [
+    `===== ${jobTitle} — 채용공고용 =====\n${state.jd.recruit||''}`,
+    `\n\n===== ${jobTitle} — 내부 직무기술서 =====\n${state.jd.internal||''}`,
+    `\n\n===== ${jobTitle} — 소셜미디어용 =====\n${state.jd.social||''}`
+  ].join('');
+
+  const blob = new Blob([content], { type:'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${jobTitle}_JD_Deeploy.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ 다운로드 완료');
+}
+
+// ══════════════════════════════════════════
+// 드로어 — 내 JD 목록
+// ══════════════════════════════════════════
+const indMap3 = {it:'IT·소프트웨어',finance:'금융·보험',manufacturing:'제조·물류',retail:'유통·커머스',healthcare:'헬스케어',edu:'교육',consulting:'전문서비스',other:'기타'};
+
+function openDrawer() {
+  const session = getSession();
+  if (!session) { showAuth(); return; }
+
+  const users   = getUsers();
+  const user    = users.find(u => u.email===session.email);
+  const jds     = user?.jds || [];
+  const body    = document.getElementById('drawerBody');
+
+  if (jds.length === 0) {
+    body.innerHTML = '<div class="drawer-empty">저장된 JD가 없습니다<br><br><span style="color:var(--blue-light);font-size:12px;">JD를 생성하고 저장해보세요</span></div>';
+  } else {
+    body.innerHTML = jds.map(jd => `
+      <div class="jd-card">
+        <div class="jd-card-title">${jd.title}</div>
+        <div class="jd-card-meta">${indMap3[jd.industry]||''} · ${jd.createdAt}</div>
+        <div class="jd-card-actions">
+          <button class="jd-card-btn" onclick="loadJD('${jd.id}')">불러오기</button>
+          <button class="jd-card-btn" onclick="downloadSavedJD('${jd.id}')">⬇ 다운로드</button>
+          <button class="jd-card-btn del" onclick="deleteJD('${jd.id}')">삭제</button>
+        </div>
+      </div>`).join('');
+  }
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+function loadJD(id) {
+  const session = getSession();
+  const users   = getUsers();
+  const user    = users.find(u => u.email===session?.email);
+  const jd      = user?.jds?.find(j => j.id===id);
+  if (!jd) return;
+  state.jd.recruit  = jd.recruit;
+  state.jd.internal = jd.internal;
+  state.jd.social   = jd.social;
+  finalizeResult(jd.title, jd.industry);
+  closeDrawer();
+  showToast('✓ JD를 불러왔습니다');
+}
+
+function downloadSavedJD(id) {
+  const session = getSession();
+  const users   = getUsers();
+  const user    = users.find(u => u.email===session?.email);
+  const jd      = user?.jds?.find(j => j.id===id);
+  if (!jd) return;
+  const content = `===== ${jd.title} — 채용공고용 =====\n${jd.recruit||''}\n\n===== ${jd.title} — 내부 직무기술서 =====\n${jd.internal||''}\n\n===== ${jd.title} — 소셜미디어용 =====\n${jd.social||''}`;
+  const blob = new Blob([content],{type:'text/plain;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`${jd.title}_JD_Deeploy.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function deleteJD(id) {
+  const session = getSession();
+  const users   = getUsers();
+  const idx     = users.findIndex(u => u.email===session?.email);
+  if (idx===-1) return;
+  users[idx].jds = users[idx].jds.filter(j => j.id!==id);
+  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+  openDrawer();
+  showToast('삭제됐습니다');
+}
+
+// 초기화
+updateAuthUI();
+loadFromDiagnosis(); // 진단 연동 자동 체크
+
+function loadFromDiagnosis() {
+  const raw      = sessionStorage.getItem('deeploy_diagnosis_result');
+  const verified = sessionStorage.getItem('deeploy_payment_verified');
+  if (!raw || !verified) return;
+
+  try {
+    const d = JSON.parse(raw);
+    sessionStorage.removeItem('deeploy_diagnosis_result');
+    sessionStorage.removeItem('deeploy_payment_verified');
+
+    // Step1 자동 채우기
+    document.getElementById('jobTitle').value   = d.job?.title || '';
+    document.getElementById('industry').value   = d.industry  || '';
+    document.getElementById('orgSize').value    = d.size === 'enterprise' ? 'enterprise' : d.size === 'large' ? 'large' : d.size === 'mid' ? 'mid' : 'small';
+
+    // 3층 태스크 자동 채우기
+    if (d.layer1?.length) {
+      const c1 = document.getElementById('layer1Tasks');
+      c1.innerHTML = '';
+      d.layer1.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'task-input-row';
+        div.innerHTML = `<input type="text" class="fi" value="${t}" style="font-size:12px;"><button class="task-remove" onclick="removeTask(this)">×</button>`;
+        c1.appendChild(div);
+      });
+    }
+    if (d.layer3?.length) {
+      const c3 = document.getElementById('layer3Tasks');
+      c3.innerHTML = '';
+      d.layer3.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'task-input-row';
+        div.innerHTML = `<input type="text" class="fi" value="${t}" style="font-size:12px;"><button class="task-remove" onclick="removeTask(this)">×</button>`;
+        c3.appendChild(div);
+      });
+    }
+
+    // 준비도 슬라이더
+    if (d.score) {
+      document.getElementById('readinessScore').value = d.score;
+      updateReadiness(document.getElementById('readinessScore'));
+    }
+
+    // 진단 데이터를 state에 저장 (프롬프트에 활용)
+    state.diagnosisData = d;
+
+    // 알림 + 자동 Step2로 이동
+    showToast('✓ 진단 결과가 자동으로 반영됐습니다');
+    setTimeout(() => goStep(2), 800);
+
+    // 상단에 연동 배너 표시
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:rgba(46,168,126,.08);border:1px solid rgba(46,168,126,.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;color:#2ea87e;';
+    banner.innerHTML = `<span style="animation:pulse 2s infinite;display:inline-block;width:8px;height:8px;border-radius:50%;background:#2ea87e;flex-shrink:0;"></span>
+      <span><strong style="color:#2ea87e;">${d.reg?.name || ''}님의 진단 결과 연동됨</strong> · ${d.job?.title} · 준비도 ${d.score}점 · 일부 항목이 자동 입력됐습니다</span>`;
+    document.querySelector('.form-side').insertBefore(banner, document.querySelector('.form-progress'));
+
+  } catch(e) { console.error('진단 데이터 로드 오류', e); }
+}
+
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = color === 'error' ? 'rgba(192,57,43,.6)' : 'var(--green)';
+  t.style.color = color === 'error' ? '#e07070' : 'var(--green)';
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
+</script>
+</body>
+</html>
