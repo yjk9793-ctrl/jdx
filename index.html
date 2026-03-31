@@ -2547,8 +2547,26 @@ function checkPaymentResult() {
   const params   = new URLSearchParams(window.location.search);
   const payment  = params.get('payment');
   const orderId  = params.get('orderId');
+  const action   = params.get('action');
+
+  if (action === 'jd') {
+    // 이메일에서 JD 만들기 버튼 클릭 → 결과 화면으로 이동
+    window.history.replaceState({}, '', window.location.pathname);
+    // 결과가 있으면 바로 결과 화면, 없으면 랜딩으로
+    if (state.result) {
+      goScreen(7);
+      setTimeout(() => {
+        const jdBtn = document.querySelector('.ty-action-card');
+        if (jdBtn) jdBtn.scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+    } else {
+      // 결과 없으면 감사 페이지의 JD CTA 섹션으로 유도
+      openPaymentModal();
+    }
+    return;
+  }
+
   if (payment === 'success' && orderId) {
-    // URL 클린업
     window.history.replaceState({}, '', window.location.pathname);
     handlePaymentSuccess(orderId);
   } else if (payment === 'fail') {
