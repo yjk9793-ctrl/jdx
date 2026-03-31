@@ -8,7 +8,6 @@ module.exports = async function handler(req, res) {
 
   const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_KEY) {
-    console.error('ANTHROPIC_API_KEY not set');
     return res.status(500).json({ error: 'API key not configured' });
   }
 
