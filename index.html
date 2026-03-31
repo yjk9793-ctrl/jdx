@@ -419,19 +419,69 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 }
 .hidden{display:none!important;}
 @media(max-width:600px){
-  .screen{padding:32px 20px;}
-  .header{padding:14px 20px;}
+  /* 기본 레이아웃 */
+  .screen{padding:28px 16px 100px;}
+  .header{padding:12px 16px;}
+  .logo{font-size:14px;letter-spacing:2px;}
+  .step-indicator{font-size:9px;letter-spacing:2px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  /* 타이틀·텍스트 */
+  .screen-title{font-size:clamp(22px,6vw,30px);}
+  .screen-desc{font-size:13px;margin-bottom:28px;}
+
+  /* 폼 */
   .options.cols2,.options.cols3,.job-grid,.layer-row{grid-template-columns:1fr;}
   .form-grid{grid-template-columns:1fr;}
-  .form-group.full{grid-column:span 1;}
-  .form-divider{grid-column:span 1;}
-  .btn-row{gap:10px;}
-  .btn{padding:13px 20px;font-size:14px;}
+  .form-group.full,.form-divider{grid-column:span 1;}
+  .form-input{font-size:14px;padding:12px 14px;}
+
+  /* 직무 그리드 */
+  .job-grid{grid-template-columns:1fr 1fr;}
+
+  /* 버튼 */
+  .btn-row{gap:8px;}
+  .btn{padding:13px 16px;font-size:13px;}
+  .btn-row .btn-ghost{padding:13px 12px;}
+
+  /* 결과 화면 */
   .win-card{grid-template-columns:1fr;}
-  .win-meta{flex-direction:row;align-items:center;margin-top:8px;}
-  .newjob-box .newjob-header{padding:20px 16px 0;}
-  .newjob-card{padding:14px 16px;}
-  .ty-action-card{padding:16px;}
+  .win-meta{flex-direction:row;align-items:center;margin-top:8px;flex-wrap:wrap;gap:6px;}
+  .newjob-box .newjob-header{padding:18px 14px 0;}
+  .newjob-card{padding:12px 14px;}
+  .ty-action-card{padding:14px;}
+  .ty-hero{padding:20px 0 16px;}
+  .ty-title{font-size:22px;}
+  .ty-summary{flex-direction:column;align-items:center;text-align:center;gap:8px;}
+  .ty-summary-score{font-size:48px;}
+
+  /* 결과 인포그래픽 */
+  .result-score-ring-wrap svg{width:100px;height:100px;}
+
+  /* 5b 화면들 - 옵션 */
+  .slider-wrap{margin-bottom:20px;}
+  .free-textarea{font-size:13px;min-height:100px;}
+
+  /* 감사 페이지 */
+  .ty-actions{gap:10px;}
+  .ty-action-icon{width:36px;height:36px;font-size:16px;}
+  .ty-action-title{font-size:13px;}
+  .ty-action-desc{font-size:11px;}
+
+  /* 이메일 폼 */
+  .ty-email-expand .email-input{font-size:13px;}
+
+  /* 결제 모달 */
+  .payment-sheet{padding:24px 18px;}
+  .pay-title{font-size:18px;}
+  .pay-preview-items{gap:6px;}
+  .pay-preview-item{font-size:12px;padding:8px 10px;}
+  .pay-btn{font-size:14px;padding:14px;}
+}
+
+@media(max-width:380px){
+  .job-grid{grid-template-columns:1fr;}
+  .screen-title{font-size:20px;}
+  .btn{font-size:12px;}
 }
 </style>
 </head>
@@ -2592,7 +2642,7 @@ function handlePaymentSuccess(orderId) {
 
   // JD 에이전트 페이지로 이동 (같은 도메인 가정)
   // 실제 배포 시 URL 교체
-  const jdAgentUrl = 'deeploy_jd_agent_v2.html?from=diagnosis';
+  const jdAgentUrl = 'https://www.jdxwork.com/jd?from=diagnosis';
   window.location.href = jdAgentUrl;
 }
 
