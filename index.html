@@ -1629,21 +1629,55 @@ ${state.context.concern}
     return `${t.name}(주${a.hours||3}h,${agMap[a.agentRisk]||'?'})`;
   }).join(' / ');
 
-  const shortPrompt = `AI 시대 직무 분석 전문가로서 아래 데이터를 분석해 JSON만 출력하세요.
+  const shortPrompt = `You are an AI era job transition analyst. Analyze the data below and output ONLY a JSON object. No explanation, no markdown, no code blocks - just the raw JSON.
 
-직무:${job.title} 업종:${state.industry} 규모:${state.size} AI현황:${state.ai}
-경력:${state.reg.years||'?'} 직책:${state.reg.jobtitle||'?'}
-태스크: ${taskList}
-고민: ${(state.context.pain||'없음').slice(0,80)}
-판단방식:${state.context.decisionStyle||'?'} 단독결정:${state.context.decisionAutonomy||5}/10
-조직레이어:${layerMap[state.context.orgLayer]||'?'} KPI:${kpiMap[state.context.kpiType]||'?'}
-맡기고싶은것:${(state.context.vanishTask||'없음').slice(0,60)}
-5년후:${futureMap[state.context.futureJob]||'?'}
+DATA:
+Job: ${job.title}, Industry: ${state.industry}, Size: ${state.size}, AI: ${state.ai}
+Years: ${state.reg.years||'?'}, Role: ${state.reg.jobtitle||'?'}
+Tasks: ${taskList}
+Pain: ${(state.context.pain||'none').slice(0,80)}
+Decision style: ${state.context.decisionStyle||'?'}, Autonomy: ${state.context.decisionAutonomy||5}/10
+Org layer: ${layerMap[state.context.orgLayer]||'?'}, KPI: ${kpiMap[state.context.kpiType]||'?'}
+Wants to delegate: ${(state.context.vanishTask||'none').slice(0,60)}
+Future vision: ${futureMap[state.context.futureJob]||'?'}
 
-JSON 형식 (이것만 출력, 다른 텍스트 금지):
-{"readiness_score":숫자(0-100),"readiness_label":"초기 단계|준비 단계|전환 가능|적극 전환 가능","readiness_desc":"2문장","layer_current":{"l1":숫자,"l2":숫자,"l3":숫자},"layer_after":{"l1":숫자,"l2":숫자,"l3":숫자},"layer_insight":"1문장","quick_wins":[{"task":"태스크명","why":"이유","hours_saved":숫자,"difficulty":"low|mid|high","timeline":"1개월 내|3개월 내|6개월 내"}],"human_core":[{"task":"태스크명","why":"이유","judgment_type":"유형"}],"blocker_insight":"1문장","concern_response":"1문장","redesign_title":"15자이내","redesign_desc":"2문장","redesign_data":"1문장","redesign_role":"1문장","redesign_impact":"1문장","redesign_day":"2문장","redesign_collab":"1문장","skills_keep":["역량1","역량2","역량3"],"skills_develop":[{"skill":"스킬","why":"이유","how":"방법"}],"skills_ai":["역량1","역량2","역량3"],"next_step":"구체적액션"}
+OUTPUT this exact JSON structure with real values (all in Korean):
+{
+  "readiness_score": 72,
+  "readiness_label": "전환 가능",
+  "readiness_desc": "현재 직무의 특성을 분석한 결과입니다. 에이전트 도입으로 효율화가 가능합니다.",
+  "layer_current": {"l1": 40, "l2": 35, "l3": 25},
+  "layer_after": {"l1": 15, "l2": 35, "l3": 50},
+  "layer_insight": "반복 태스크를 에이전트에 이양하면 고차 판단에 집중할 수 있습니다.",
+  "quick_wins": [
+    {"task": "태스크명", "why": "위임 근거", "hours_saved": 5, "difficulty": "low", "timeline": "1개월 내"}
+  ],
+  "human_core": [
+    {"task": "태스크명", "why": "인간 필요 이유", "judgment_type": "판단 유형"}
+  ],
+  "blocker_insight": "병목 해소 방향입니다.",
+  "concern_response": "우려에 대한 답변입니다.",
+  "redesign_title": "새로운 직무명",
+  "redesign_desc": "새로운 직무 정의 2문장입니다.",
+  "redesign_data": "활용할 데이터 종류입니다.",
+  "redesign_role": "핵심 역할 설명입니다.",
+  "redesign_impact": "조직 임팩트입니다.",
+  "redesign_day": "하루 일과 변화입니다. 기존과 달라지는 점입니다.",
+  "redesign_collab": "에이전트와 협업 방식입니다.",
+  "skills_keep": ["역량1", "역량2", "역량3"],
+  "skills_develop": [
+    {"skill": "스킬명", "why": "필요 이유", "how": "실천 방법"}
+  ],
+  "skills_ai": ["AI역량1", "AI역량2", "AI역량3"],
+  "next_step": "첫번째 실행 액션"
+}
 
-layer_current, layer_after 각각 l1+l2+l3=100 필수.`;
+RULES:
+- Replace ALL example values with real analysis based on the data
+- layer_current l1+l2+l3 must equal 100
+- layer_after l1+l2+l3 must equal 100
+- readiness_label must be one of: "초기 단계", "준비 단계", "전환 가능", "적극 전환 가능"
+- Output ONLY the JSON, nothing else`;
 
   const GEMINI_URL = '/api/analyze';
 
@@ -1653,7 +1687,7 @@ layer_current, layer_after 각각 l1+l2+l3=100 필수.`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: shortPrompt }] }],
-        generationConfig: { maxOutputTokens: 1500, temperature: 0.85 }
+        generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
       })
     });
     if (res.status === 429 && retry < 2) {
@@ -1668,9 +1702,25 @@ layer_current, layer_after 각각 l1+l2+l3=100 필수.`;
     const data = await res.json();
     const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
     if (!raw) throw new Error('empty');
-    const m = raw.replace(/```json|```/g,'').trim().match(/\{[\s\S]*\}/);
-    if (!m) { console.error('[Gemini] no JSON:', raw.slice(0,200)); throw new Error('no JSON'); }
-    return JSON.parse(m[0]);
+
+    // 강건한 JSON 추출
+    const cleaned = raw
+      .replace(/```json/g,'').replace(/```/g,'')
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g,' ')
+      .trim();
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (!m) { console.error('[Gemini] no JSON:', raw.slice(0,300)); throw new Error('no JSON'); }
+
+    try {
+      return JSON.parse(m[0]);
+    } catch(e) {
+      // JSON 파싱 실패 시 일부 정리 후 재시도
+      const fixed = m[0]
+        .replace(/,\s*}/g,'}')
+        .replace(/,\s*]/g,']')
+        .replace(/([{,]\s*)(\w+):/g, '$1"$2":');
+      return JSON.parse(fixed);
+    }
   }
 
   try {
