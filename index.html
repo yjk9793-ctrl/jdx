@@ -2015,8 +2015,7 @@ JSON 형식 (이것만 출력, 다른 텍스트 금지):
 
 layer_current, layer_after 각각 l1+l2+l3=100 필수.`;
 
-  const GEMINI_KEY = 'AIzaSyCwwLK2g_4knw23OwDUCsa6LK26IYU-6u0';
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+  const GEMINI_URL = '/api/analyze';
 
   async function callGemini(retry = 0) {
     const res = await fetch(GEMINI_URL, {
