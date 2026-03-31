@@ -1183,21 +1183,31 @@ ${divSummary}
 }`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1200,
-        messages:[{role:'user',content:prompt}]
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 1500, temperature: 0.8 }
       })
     });
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
     const data = await res.json();
-    const text = data.content?.[0]?.text||'';
-    const clean = text.replace(/```json|```/g,'').trim();
-    state.result = JSON.parse(clean);
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!text) throw new Error('empty');
+
+    const start = text.indexOf('{');
+    const end   = text.lastIndexOf('}');
+    if (start === -1 || end === -1) throw new Error('no JSON');
+
+    const jsonStr = text.slice(start, end + 1).replace(/,\s*([}\]])/g, '$1');
+    state.result = JSON.parse(jsonStr);
+    console.log('[TeamOS] ✓ AI 분석 완료');
+
   } catch(e) {
-    console.error('API error:', e);
+    console.error('[TeamOS] API 실패:', e.message);
     state.result = {
       headline:`${totalHead}명 팀에서 즉시 가능한 AI 전환이 확인됐습니다`,
       ai_readiness: score,
