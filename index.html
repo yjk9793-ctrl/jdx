@@ -1830,7 +1830,7 @@ function renderResult() {
         : 'background:rgba(212,148,59,.08);border:1px solid rgba(212,148,59,.25);'}">
       <span style="width:7px;height:7px;border-radius:50%;background:${state.resultSource === 'gemini' ? '#2ea87e' : '#d4943b'};"></span>
       <span style="font-size:11px;font-family:'Syne',sans-serif;letter-spacing:1px;color:${state.resultSource === 'gemini' ? '#2ea87e' : '#d4943b'};">
-        ${state.resultSource === 'gemini' ? 'Gemini AI 분석 완료' : '기본 분석 (AI 연결 실패)'}
+        ${state.resultSource === 'gemini' ? 'Deeploy 엔진 분석 완료' : '기본 분석 (연결 실패)'}
       </span>
     </div>
 
@@ -2290,19 +2290,55 @@ function toggleEmailForm() {
   form.classList.toggle('open');
 }
 
-function sendReport() {
+async function sendReport() {
   const email = document.getElementById('confirmEmail')?.value || state.reg.email;
   if (!email || !email.includes('@')) {
     alert('올바른 이메일을 입력해주세요.');
     return;
   }
+
   const btn = event.target;
-  btn.textContent = '발송됨 ✓';
+  btn.textContent = '발송 중...';
   btn.disabled = true;
-  btn.style.background = '#2ea87e';
-  setTimeout(() => {
-    document.getElementById('emailForm').classList.remove('open');
-  }, 1200);
+
+  const r = state.result;
+  if (!r) { btn.textContent = '발송'; btn.disabled = false; return; }
+
+  try {
+    const res = await fetch('/api/sendmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to:            email,
+        name:          state.reg.name    || '회원',
+        company:       state.reg.company || '',
+        job:           JOB_DB[state.job]?.title || '',
+        score:         r.readiness_score,
+        label:         r.readiness_label,
+        quickWins:     r.quick_wins    || [],
+        humanCore:     r.human_core    || [],
+        redesignTitle: r.redesign_title || '',
+        redesignDesc:  r.redesign_desc  || '',
+        nextStep:      r.next_step      || ''
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = '발송됨 ✓';
+      btn.style.background = '#2ea87e';
+      setTimeout(() => {
+        document.getElementById('emailForm').classList.remove('open');
+      }, 1500);
+    } else {
+      throw new Error(data.error || 'failed');
+    }
+  } catch(e) {
+    console.error('sendmail error:', e);
+    btn.textContent = '발송 실패 — 재시도';
+    btn.disabled = false;
+    btn.style.background = '';
+  }
 }
 
 // ══════════════════════════════════════════
