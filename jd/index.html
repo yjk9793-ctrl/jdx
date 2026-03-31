@@ -227,6 +227,79 @@ html,body{background:var(--bg);color:var(--white);font-family:'Noto Sans KR',san
   .form-side{padding:28px 20px;}
   .header{padding:14px 20px;}
 }
+
+@media(max-width:600px){
+  /* 헤더 */
+  .header{padding:12px 16px;flex-wrap:wrap;gap:8px;}
+  .header-nav{gap:8px;}
+
+  /* 폼 영역 */
+  .form-side{padding:20px 16px 100px;}
+
+  /* 스텝 헤더 */
+  .step-header{margin-bottom:20px;}
+  .step-num{font-size:10px;padding:3px 8px;}
+  .step-title{font-size:18px;}
+  .step-desc{font-size:12px;}
+
+  /* 인풋 */
+  .field-label{font-size:12px;}
+  .text-input,.select-input,.textarea-input{font-size:14px;padding:11px 13px;}
+  .textarea-input{min-height:80px;}
+
+  /* 3층 구조 */
+  .layer-section{gap:10px;}
+  .layer-card{padding:14px;}
+  .layer-badge{width:28px;height:28px;font-size:11px;}
+  .layer-name{font-size:13px;}
+  .layer-desc{font-size:11px;}
+
+  /* 태스크 칩 */
+  .task-chips{gap:6px;}
+  .task-chip{font-size:11px;padding:6px 10px;}
+
+  /* 슬라이더 */
+  .slider-row{flex-direction:column;gap:6px;}
+  .slider-label{font-size:12px;}
+
+  /* 버튼 */
+  .btn-gen{width:100%;padding:14px;font-size:14px;}
+  .btn-row-nav{flex-direction:column;gap:8px;}
+  .btn-next,.btn-prev{width:100%;justify-content:center;}
+
+  /* 결과 영역 */
+  .result-side{padding:20px 16px;}
+  .result-top{flex-direction:column;gap:10px;align-items:flex-start;}
+  .result-title-wrap{gap:6px;}
+  .result-job-title{font-size:20px;}
+  .result-meta{font-size:11px;}
+  .version-tabs{gap:4px;}
+  .vtab{padding:7px 12px;font-size:12px;}
+
+  /* 결과 바디 */
+  #resultBody{padding:16px;}
+  #resultBody > div{margin-bottom:10px;}
+
+  /* 액션바 */
+  .action-bar{flex-wrap:wrap;gap:8px;}
+  .ab-copy,.ab-download{font-size:12px;padding:8px 12px;}
+
+  /* 인증 모달 */
+  .auth-box{padding:28px 20px;margin:16px;}
+  .auth-logo{font-size:22px;}
+
+  /* 드로어 */
+  .drawer-inner{padding:20px 16px;}
+
+  /* 온톨로지 표시 */
+  .ontology-indicator{font-size:10px;padding:4px 10px;flex-wrap:wrap;}
+}
+
+@media(max-width:380px){
+  .form-side{padding:16px 12px 100px;}
+  .step-title{font-size:16px;}
+  .vtab{padding:6px 8px;font-size:11px;}
+}
 </style>
 </head>
 <body>
