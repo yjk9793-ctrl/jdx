@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JDXwork · Team OS 진단 — 지금 이 팀 구조로 1년 후에도 살아남을 수 있을까요?</title>
+
+<!-- SEO -->
+<meta name="description" content="AI가 팀의 일하는 방식을 바꾸는 속도가 빨라지고 있습니다. 어떤 직무가 에이전트로 대체되고, 어떤 사람이 반드시 남아야 하는지 10분 만에 진단합니다. 스타트업 대표·C레벨 대상.">
+<meta name="author" content="Deeploy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.jdxwork.com/teamos">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.jdxwork.com/teamos">
+<meta property="og:site_name" content="JDXwork by Deeploy">
+<meta property="og:title" content="지금 이 팀 구조로 1년 후에도 살아남을 수 있을까요?">
+<meta property="og:description" content="AI가 팀의 일하는 방식을 바꾸는 속도가 빨라지고 있습니다. 먼저 설계한 팀이 이깁니다. 10분 무료 진단.">
+<meta property="og:image" content="https://www.jdxwork.com/og-image.png">
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="지금 이 팀 구조로 1년 후에도 살아남을 수 있을까요?">
+<meta name="twitter:description" content="AI 시대 팀 OS 진단 — 스타트업 대표·C레벨 대상. 10분 무료.">
+<meta name="twitter:image" content="https://www.jdxwork.com/og-image.png">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2305060a'/><text x='16' y='22' text-anchor='middle' font-size='16' font-family='sans-serif' font-weight='900' fill='%2300c9a7'>T</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#05060a;
+  --bg2:#0a0c12;
+  --surface:#0f1118;
+  --surface2:#161922;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);
+  --white:#eeeae0;
+  --muted:#6b7a99;
+  --muted2:#8a9ab5;
+  --blue:#4a7cff;
+  --blue-dim:rgba(74,124,255,.1);
+  --blue-glow:rgba(74,124,255,.25);
+  --teal:#00c9a7;
+  --teal-dim:rgba(0,201,167,.08);
+  --amber:#f59e0b;
+  --amber-dim:rgba(245,158,11,.08);
+  --red:#ef4444;
+  --red-dim:rgba(239,68,68,.08);
+}
+
+html,body{background:var(--bg);color:var(--white);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── GRID BG ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(74,124,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,124,255,.03) 1px, transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 40px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(5,6,10,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.header-logo{display:flex;align-items:center;gap:10px;}
+.logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;letter-spacing:3px;color:var(--white);}
+.logo-sep{width:1px;height:16px;background:var(--border2);}
+.logo-product{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:2px;}
+.header-progress{display:flex;align-items:center;gap:12px;}
+.prog-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;}
+.prog-bar{width:120px;height:2px;background:var(--border2);border-radius:1px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:1px;transition:width .5s ease;width:0%;}
+
+/* ── MAIN ── */
+.main{position:relative;z-index:1;padding-top:56px;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:calc(100vh - 56px);padding:60px 40px 100px;}
+.screen.active{display:flex;flex-direction:column;animation:screenIn .4s ease;}
+.screen.landing{padding:0;min-height:calc(100vh - 56px);display:none;}
+.screen.landing.active{display:flex;flex-direction:column;}
+@keyframes screenIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-inner{max-width:720px;width:100%;margin:0 auto;}
+
+/* ── LANDING ── */
+.landing{max-width:100%;display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 56px);padding:60px 40px;}
+.landing-inner{max-width:800px;margin:0 auto;}
+.landing-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+.landing-tag::before{content:'';width:32px;height:1px;background:var(--teal);}
+.landing-title{font-family:'Syne',sans-serif;font-size:clamp(42px,6vw,72px);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:24px;}
+.landing-title .accent{
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.landing-desc{font-size:17px;color:var(--muted2);font-weight:300;line-height:1.8;max-width:560px;margin-bottom:48px;}
+.landing-stats{display:flex;gap:40px;margin-bottom:48px;}
+.stat-item{border-left:2px solid var(--border2);padding-left:20px;}
+.stat-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--white);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+.landing-cta{display:flex;align-items:center;gap:16px;}
+.btn-start{
+  padding:16px 36px;background:var(--blue);color:#fff;
+  border:none;border-radius:8px;font-size:15px;font-weight:700;
+  cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+  display:flex;align-items:center;gap:10px;
+  transition:all .2s;
+  box-shadow:0 0 0 0 var(--blue-glow);
+}
+.btn-start:hover{background:#3a6ef0;box-shadow:0 0 40px var(--blue-glow);transform:translateY(-1px);}
+.btn-start-sub{font-size:12px;color:var(--muted);}
+
+/* ── STEP HEADER ── */
+.step-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.step-tag::before{content:'';width:20px;height:1px;background:var(--teal);}
+.step-title{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:800;line-height:1.2;margin-bottom:10px;}
+.step-desc{font-size:14px;color:var(--muted2);font-weight:300;line-height:1.7;margin-bottom:36px;}
+
+/* ── FORM ELEMENTS ── */
+.fg{margin-bottom:20px;}
+.fl{font-size:12px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:6px;font-weight:300;}
+.fl strong{color:var(--white);font-weight:500;}
+.fi{
+  width:100%;padding:13px 16px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:8px;color:var(--white);font-size:14px;
+  outline:none;font-family:'Noto Sans KR',sans-serif;
+  transition:border-color .2s,box-shadow .2s;
+}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim);}
+.fi::placeholder{color:rgba(107,122,153,.5);}
+
+/* ── DIVISION CARDS ── */
+.division-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.division-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:20px;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.division-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--teal));
+  transform:scaleX(0);transition:transform .3s;transform-origin:left;
+}
+.division-card.has-people::before{transform:scaleX(1);}
+.division-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.division-icon{font-size:20px;}
+.division-name{font-size:13px;font-weight:700;color:var(--white);margin-top:4px;}
+.division-count-wrap{display:flex;align-items:center;gap:8px;}
+.count-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--white);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;line-height:1;
+}
+.count-btn:hover{background:var(--blue);border-color:var(--blue);}
+.count-display{
+  font-family:'JetBrains Mono',monospace;font-size:20px;
+  font-weight:600;color:var(--white);min-width:28px;text-align:center;
+}
+.division-label{font-size:11px;color:var(--muted);margin-top:2px;}
+.division-ai-check{display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.ai-checkbox{width:16px;height:16px;border-radius:4px;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.ai-checkbox.checked{background:var(--teal);border-color:var(--teal);}
+.ai-checkbox svg{display:none;}
+.ai-checkbox.checked svg{display:block;}
+.division-ai-label{font-size:11px;color:var(--muted);}
+
+/* ── SALARY ESTIMATE ── */
+.salary-banner{
+  background:linear-gradient(135deg,rgba(74,124,255,.08),rgba(0,201,167,.06));
+  border:1px solid rgba(74,124,255,.2);border-radius:10px;
+  padding:18px 20px;margin-bottom:32px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.salary-left{font-size:13px;color:var(--muted2);}
+.salary-num{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--blue);margin-top:4px;}
+.salary-right{text-align:right;}
+.salary-headcount{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--white);}
+.salary-hc-label{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── ROLE ANALYSIS CARDS ── */
+.role-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;margin-bottom:16px;overflow:hidden;
+}
+.role-card-header{
+  padding:18px 20px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);cursor:pointer;
+}
+.role-card-icon{font-size:18px;}
+.role-card-name{font-size:14px;font-weight:700;flex:1;}
+.role-card-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);background:var(--surface2);padding:4px 10px;border-radius:20px;}
+.role-card-body{padding:20px;}
+
+/* ── TASK CHIPS ── */
+.task-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.task-chip{
+  padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;
+  border:1px solid var(--border2);color:var(--muted2);
+  transition:all .15s;font-family:'Noto Sans KR',sans-serif;
+  user-select:none;
+}
+.task-chip:hover{border-color:var(--blue);color:var(--white);}
+.task-chip.selected{border-color:var(--blue);background:var(--blue-dim);color:var(--blue);}
+.task-chip.selected-teal{border-color:var(--teal);background:var(--teal-dim);color:var(--teal);}
+
+/* ── SLIDER ── */
+.slider-group{margin-bottom:16px;}
+.slider-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.slider-label{font-size:12px;color:var(--muted2);}
+.slider-val-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:3px;
+  border-radius:2px;background:var(--border2);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--blue);border:2px solid var(--bg);cursor:pointer;
+}
+.slider-ends{display:flex;justify-content:space-between;margin-top:6px;}
+.slider-ends span{font-size:10px;color:var(--muted);}
+
+/* ── RADIO OPTIONS ── */
+.radio-opts{display:flex;flex-direction:column;gap:8px;}
+.radio-opt{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:13px 16px;border:1px solid var(--border);
+  border-radius:8px;cursor:pointer;transition:all .2s;
+}
+.radio-opt:hover{border-color:var(--border2);}
+.radio-opt.selected{border-color:var(--blue);background:var(--blue-dim);}
+.radio-dot{
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid var(--border2);flex-shrink:0;
+  margin-top:1px;transition:all .2s;
+}
+.radio-opt.selected .radio-dot{background:var(--blue);border-color:var(--blue);}
+.radio-opt-text{}
+.radio-opt-label{font-size:13px;font-weight:500;color:var(--white);}
+.radio-opt.selected .radio-opt-label{color:var(--blue);}
+.radio-opt-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+
+/* ── CHECKBOX MULTI ── */
+.check-opts{display:flex;flex-wrap:wrap;gap:8px;}
+.check-opt{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;border:1px solid var(--border);
+  border-radius:8px;cursor:pointer;transition:all .2s;font-size:12px;color:var(--muted2);
+}
+.check-opt:hover{border-color:var(--border2);color:var(--white);}
+.check-opt.selected{border-color:var(--blue);background:var(--blue-dim);color:var(--blue);}
+.check-square{width:14px;height:14px;border-radius:3px;border:1px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.check-opt.selected .check-square{background:var(--blue);border-color:var(--blue);}
+
+/* ── LAYER VISUALIZATION ── */
+.layer-viz{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.layer-row{display:flex;align-items:center;gap:12px;}
+.layer-badge{
+  width:28px;height:28px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+}
+.lb1{background:rgba(239,68,68,.15);color:#ef4444;}
+.lb2{background:rgba(245,158,11,.15);color:var(--amber);}
+.lb3{background:rgba(0,201,167,.15);color:var(--teal);}
+.layer-bar-wrap{flex:1;}
+.layer-bar-label{font-size:11px;color:var(--muted2);margin-bottom:4px;}
+.layer-bar-outer{height:8px;background:var(--border2);border-radius:4px;overflow:hidden;}
+.layer-bar-inner{height:100%;border-radius:4px;transition:width .8s ease;}
+.lb1-bar{background:linear-gradient(90deg,#ef4444,#f87171);}
+.lb2-bar{background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.lb3-bar{background:linear-gradient(90deg,var(--teal),#34d399);}
+.layer-estimate{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);flex-shrink:0;min-width:60px;text-align:right;}
+
+/* ── RESULT ── */
+.result-hero{text-align:center;padding:40px 0 48px;}
+.result-score-ring{
+  width:140px;height:140px;margin:0 auto 24px;
+  border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:conic-gradient(var(--blue) 0%, var(--teal) 60%, var(--border2) 60%);
+  position:relative;
+}
+.result-score-ring::before{
+  content:'';position:absolute;inset:10px;
+  border-radius:50%;background:var(--bg);
+}
+.result-score-inner{position:relative;z-index:1;text-align:center;}
+.result-score-num{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--white);}
+.result-score-label{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+.result-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px;}
+.result-sub{font-size:14px;color:var(--muted2);font-weight:300;}
+
+/* ── RESULT CARDS ── */
+.result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+.result-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:20px;text-align:center;
+}
+.result-card-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:4px;}
+.result-card-label{font-size:11px;color:var(--muted);line-height:1.4;}
+.rc-blue .result-card-num{color:var(--blue);}
+.rc-teal .result-card-num{color:var(--teal);}
+.rc-amber .result-card-num{color:var(--amber);}
+
+/* ── ROADMAP ── */
+.roadmap{display:flex;flex-direction:column;gap:0;margin-bottom:24px;}
+.roadmap-item{display:flex;gap:16px;padding-bottom:24px;position:relative;}
+.roadmap-item:not(:last-child)::before{
+  content:'';position:absolute;left:15px;top:32px;bottom:0;
+  width:1px;background:var(--border2);
+}
+.roadmap-dot{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  position:relative;z-index:1;
+}
+.rd-now{background:var(--red-dim);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
+.rd-soon{background:var(--amber-dim);border:1px solid rgba(245,158,11,.3);color:var(--amber);}
+.rd-mid{background:var(--teal-dim);border:1px solid rgba(0,201,167,.3);color:var(--teal);}
+.roadmap-content{flex:1;padding-top:4px;}
+.roadmap-phase{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.rp-now{color:#ef4444;}
+.rp-soon{color:var(--amber);}
+.rp-mid{color:var(--teal);}
+.roadmap-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.roadmap-items-list{font-size:12px;color:var(--muted2);line-height:1.8;}
+.roadmap-saving{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal);margin-top:8px;display:flex;align-items:center;gap:6px;}
+.roadmap-saving::before{content:'↓';font-size:10px;}
+
+/* ── KEEP CARD ── */
+.keep-section{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px;}
+.keep-section-title{font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
+.keep-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.keep-item:last-child{border-bottom:none;}
+.keep-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.keep-text{font-size:12px;color:var(--muted2);line-height:1.6;}
+.keep-text strong{color:var(--white);display:block;margin-bottom:2px;font-size:13px;}
+
+/* ── PAYWALL ── */
+.paywall{
+  background:linear-gradient(135deg,rgba(74,124,255,.06),rgba(0,201,167,.04));
+  border:1px solid rgba(74,124,255,.25);border-radius:14px;
+  padding:32px;margin-top:24px;
+  position:relative;overflow:hidden;
+}
+.paywall::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,124,255,.15),transparent 70%);
+}
+.paywall-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:8px;}
+.paywall-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:20px;}
+.paywall-items{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.paywall-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted2);}
+.paywall-item::before{content:'✓';color:var(--teal);font-size:12px;flex-shrink:0;}
+.paywall-pricing{display:flex;align-items:baseline;gap:8px;margin-bottom:20px;}
+.paywall-price{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--blue);}
+.paywall-price-label{font-size:13px;color:var(--muted);}
+.btn-pay{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--blue),#6a9fff);
+  color:#fff;border:none;border-radius:8px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;
+  transition:all .2s;
+}
+.btn-pay:hover{opacity:.9;transform:translateY(-1px);}
+.consulting-link{text-align:center;margin-top:16px;font-size:13px;color:var(--muted);}
+.consulting-link a{color:var(--teal);text-decoration:none;cursor:pointer;}
+
+/* ── NAV ── */
+.nav-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  padding:16px 40px;background:rgba(5,6,10,.9);
+  backdrop-filter:blur(20px);border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:50;
+}
+.btn-prev{
+  padding:11px 24px;background:transparent;border:1px solid var(--border2);
+  color:var(--muted2);border-radius:8px;font-size:13px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+}
+.btn-prev:hover{border-color:var(--white);color:var(--white);}
+.btn-next{
+  padding:11px 28px;background:var(--blue);color:#fff;
+  border:none;border-radius:8px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-next:hover{background:#3a6ef0;transform:translateY(-1px);}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-analyze{
+  padding:13px 32px;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+  display:flex;align-items:center;gap:8px;transition:all .2s;
+}
+.btn-analyze:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── SECTION DIVIDER ── */
+.sdiv{border:none;border-top:1px solid var(--border);margin:24px 0;}
+
+/* ── SKELETON ── */
+.skel{background:linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,.03) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ── ANALYZING ── */
+.analyzing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;}
+.analyzing-ring{
+  width:80px;height:80px;border-radius:50%;
+  border:3px solid var(--border2);border-top-color:var(--blue);border-right-color:var(--teal);
+  animation:spin 1.2s linear infinite;margin-bottom:28px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.analyzing-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;}
+.analyzing-steps{list-style:none;margin-top:24px;display:flex;flex-direction:column;gap:10px;}
+.analyzing-steps li{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.analyzing-steps li.done{color:var(--teal);}
+.analyzing-steps li.done::before{content:'✓';}
+.analyzing-steps li:not(.done)::before{content:'○';}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;right:24px;background:var(--surface2);border:1px solid var(--teal);border-radius:8px;padding:12px 20px;font-size:13px;color:var(--teal);z-index:999;display:none;animation:screenIn .3s ease;}
+
+/* ── REGISTRATION ── */
+.reg-wrap{max-width:480px;}
+.reg-promise{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;}
+.reg-promise-icon{font-size:18px;flex-shrink:0;}
+.reg-promise-text{font-size:12px;color:var(--muted2);line-height:1.7;}
+.reg-promise-text strong{color:var(--blue);display:block;margin-bottom:2px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .header{padding:0 20px;}
+  .screen{padding:40px 20px 100px;}
+  .landing{padding:40px 20px;}
+  .division-grid{grid-template-columns:1fr;}
+  .result-grid{grid-template-columns:1fr;}
+  .nav-bar{padding:12px 20px;}
+  .landing-stats{gap:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-text">DEEPLOY</div>
+    <div class="logo-sep"></div>
+    <div class="logo-product">TEAM·OS</div>
+  </div>
+  <div class="header-progress">
+    <div class="prog-label" id="progLabel">READY</div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- ══ SCREEN 0: LANDING ══ -->
+<section class="screen active landing" id="s0">
+  <div class="landing-inner">
+    <div class="landing-tag">Team OS 진단 · Beta</div>
+    <h1 class="landing-title">
+      지금 이 팀 구조로<br>
+      <span class="accent">1년 후에도</span><br>
+      살아남을 수 있을까요?
+    </h1>
+    <p class="landing-desc">
+      AI가 팀의 일하는 방식을 바꾸는 속도가 빨라지고 있습니다.<br>
+      어떤 직무가 에이전트로 대체되고, 어떤 사람이 반드시 남아야 하는지,<br>
+      지금 알고 계신가요?<br><br>
+      먼저 설계한 팀이 이깁니다.
+    </p>
+    <div class="landing-stats">
+      <div class="stat-item">
+        <div class="stat-num">10분</div>
+        <div class="stat-label">소요 시간</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5막</div>
+        <div class="stat-label">진단 구조</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">무료</div>
+        <div class="stat-label">기본 진단</div>
+      </div>
+    </div>
+    <div class="landing-cta">
+      <button class="btn-start" onclick="goScreen(1)">
+        지금 바로 진단하기
+        <span>→</span>
+      </button>
+      <div class="btn-start-sub">스타트업 대표 · C레벨 대상</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 1: 등록 ══ -->
+<section class="screen" id="s1">
+  <div class="screen-inner">
+    <div class="step-tag">시작 전</div>
+    <h2 class="step-title">결과를<br>보내드릴게요</h2>
+    <p class="step-desc">진단 완료 후 팀 분석 리포트를 이메일로 보내드립니다. 1분이면 됩니다.</p>
+
+    <div class="reg-wrap">
+      <div class="reg-promise">
+        <div class="reg-promise-icon">🔒</div>
+        <div class="reg-promise-text">
+          <strong>개인정보 보호 약속</strong>
+          수집된 정보는 리포트 발송 및 Deeploy 서비스 안내에만 사용됩니다. 제3자 제공 없음.
+        </div>
+      </div>
+
+      <div class="fg">
+        <div class="fl"><strong>대표자 성명</strong></div>
+        <input type="text" class="fi" id="r_name" placeholder="홍길동" oninput="checkReg()">
+      </div>
+      <div class="fg">
+        <div class="fl"><strong>이메일</strong></div>
+        <input type="email" class="fi" id="r_email" placeholder="ceo@startup.com" oninput="checkReg()">
+      </div>
+      <div class="fg">
+        <div class="fl"><strong>회사명</strong></div>
+        <input type="text" class="fi" id="r_company" placeholder="(주)스타트업" oninput="checkReg()">
+      </div>
+      <div class="fg">
+        <div class="fl"><strong>업종</strong> <span style="font-size:11px;color:var(--muted);font-weight:300;">(선택)</span></div>
+        <select class="fi" id="r_industry" style="appearance:none;">
+          <option value="">선택해주세요</option>
+          <option value="it">IT · 소프트웨어</option>
+          <option value="commerce">커머스 · 리테일</option>
+          <option value="fintech">핀테크 · 금융</option>
+          <option value="content">콘텐츠 · 미디어</option>
+          <option value="healthcare">헬스케어</option>
+          <option value="b2b">B2B · SaaS</option>
+          <option value="other">기타</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 2: 1막 — 팀 지도 ══ -->
+<section class="screen" id="s2">
+  <div class="screen-inner">
+    <div class="step-tag">1막 — 지금 우리 팀 그리기</div>
+    <h2 class="step-title">지금 몇 명이<br>어떤 일을 하나요?</h2>
+    <p class="step-desc">직군별 인원을 입력해주세요. 숫자를 보는 것만으로도 새롭게 보이는 것이 있을 겁니다.</p>
+
+    <div class="division-grid" id="divisionGrid"></div>
+
+    <div class="salary-banner" id="salaryBanner">
+      <div class="salary-left">
+        <div>팀 전체 추정 월 인건비</div>
+        <div class="salary-num" id="salaryNum">— 원</div>
+      </div>
+      <div class="salary-right">
+        <div class="salary-headcount" id="totalHeadcount">0</div>
+        <div class="salary-hc-label">명</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 3: 2막 — 직군별 업무 분석 ══ -->
+<section class="screen" id="s3">
+  <div class="screen-inner">
+    <div class="step-tag">2막 — 각 직군의 일 들여다보기</div>
+    <h2 class="step-title">각 팀은<br>주로 어떤 일을 하나요?</h2>
+    <p class="step-desc">직접 선택하는 과정에서 "이건 AI가 해도 되겠다"는 감이 올 겁니다.</p>
+    <div id="roleAnalysisCards"></div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 4: 3막 — AI 전환 가능성 검토 ══ -->
+<section class="screen" id="s4">
+  <div class="screen-inner">
+    <div class="step-tag">3막 — AI 전환 가능성</div>
+    <h2 class="step-title">분류해봤습니다.<br>맞게 보이시나요?</h2>
+    <p class="step-desc">입력하신 내용을 기반으로 각 직군의 업무를 3단계로 나눴습니다. 슬라이더로 조정할 수 있습니다.</p>
+    <div id="layerVizContainer"></div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 5: 4막 — 리스크와 제약 ══ -->
+<section class="screen" id="s5">
+  <div class="screen-inner">
+    <div class="step-tag">4막 — 현실적 장벽</div>
+    <h2 class="step-title">솔직하게<br>물어볼게요</h2>
+    <p class="step-desc">이론이 아닌 실제 실행을 위한 질문입니다.</p>
+
+    <div class="fg" style="margin-bottom:28px;">
+      <div class="fl" style="margin-bottom:12px;"><strong>지금 팀에서 한 명이 떠나면 가장 타격이 큰 직군은?</strong></div>
+      <div class="radio-opts" id="criticalRoleOpts"></div>
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="fg" style="margin-bottom:28px;">
+      <div class="fl" style="margin-bottom:12px;"><strong>AI 전환의 현실적 장벽은? </strong><span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+      <div class="check-opts" id="barrierOpts">
+        <div class="check-opt" onclick="toggleCheckOpt(this,'barriers','resistance')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          팀원 저항·불안
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'barriers','productivity')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          전환 기간 생산성 저하
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'barriers','learning')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          AI 도구 학습 비용
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'barriers','legal')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          법적·계약 이슈
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'barriers','perception')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          투자자·고객 인식
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'barriers','tech')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          기술 의존도 리스크
+        </div>
+      </div>
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="fg">
+      <div class="fl" style="margin-bottom:12px;"><strong>지금 가장 급한 것은?</strong></div>
+      <div class="radio-opts">
+        <div class="radio-opt" onclick="selectRadioOpt(this,'urgency','cost')">
+          <div class="radio-dot"></div>
+          <div class="radio-opt-text">
+            <div class="radio-opt-label">비용 절감이 시급하다 (3개월 내)</div>
+            <div class="radio-opt-sub">런웨이가 촉박하거나 수익성 개선이 필요한 상황</div>
+          </div>
+        </div>
+        <div class="radio-opt" onclick="selectRadioOpt(this,'urgency','growth')">
+          <div class="radio-dot"></div>
+          <div class="radio-opt-text">
+            <div class="radio-opt-label">성장을 위한 팀 재편이 필요하다</div>
+            <div class="radio-opt-sub">같은 비용으로 더 강한 팀 구조를 원함</div>
+          </div>
+        </div>
+        <div class="radio-opt" onclick="selectRadioOpt(this,'urgency','structure')">
+          <div class="radio-dot"></div>
+          <div class="radio-opt-text">
+            <div class="radio-opt-label">장기적으로 지속 가능한 구조를 만들고 싶다</div>
+            <div class="radio-opt-sub">1~2년 후를 내다보는 팀 아키텍처 설계</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 6: 5막 — 대표의 각오 ══ -->
+<section class="screen" id="s6">
+  <div class="screen-inner">
+    <div class="step-tag">5막 — 대표의 각오</div>
+    <h2 class="step-title">마지막으로<br>한 가지만요</h2>
+    <p class="step-desc">이 결정이 진짜가 되려면 무엇이 필요한지 알아야 합니다.</p>
+
+    <div class="fg" style="margin-bottom:28px;">
+      <div class="fl" style="margin-bottom:12px;"><strong>팀 재편 후 절감된 자원을 어디에 쓸 계획인가요?</strong></div>
+      <div class="check-opts" id="reinvestOpts">
+        <div class="check-opt" onclick="toggleCheckOpt(this,'reinvest','talent')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          핵심 인재에 재투자
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'reinvest','product')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          제품 개발 가속화
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'reinvest','growth')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          마케팅·그로스 투자
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'reinvest','runway')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          런웨이 확보
+        </div>
+        <div class="check-opt" onclick="toggleCheckOpt(this,'reinvest','unclear')">
+          <div class="check-square"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          아직 명확하지 않다
+        </div>
+      </div>
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="fg">
+      <div class="fl" style="margin-bottom:12px;"><strong>이 결정, 혼자 내릴 수 있나요?</strong></div>
+      <div class="radio-opts">
+        <div class="radio-opt" onclick="selectRadioOpt(this,'authority','solo')">
+          <div class="radio-dot"></div>
+          <div class="radio-opt-text">
+            <div class="radio-opt-label">내가 단독 결정권을 가지고 있다</div>
+            <div class="radio-opt-sub">대표 단독 or 공동창업자 간 이미 합의</div>
+          </div>
+        </div>
+        <div class="radio-opt" onclick="selectRadioOpt(this,'authority','cofounder')">
+          <div class="radio-dot"></div>
+          <div class="radio-opt-text">
+            <div class="radio-opt-label">공동창업자와 협의가 필요하다</div>
+            <div class="radio-opt-sub">방향성 공유 후 함께 결정</div>
+          </div>
+        </div>
+        <div class="radio-opt" onclick="selectRadioOpt(this,'authority','board')">
+          <div class="radio-dot"></div>
+          <div class="radio-opt-text">
+            <div class="radio-opt-label">이사회·투자자 설득이 필요하다</div>
+            <div class="radio-opt-sub">데이터와 논리로 납득시켜야 하는 상황</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 7: 분석 중 ══ -->
+<section class="screen" id="s7">
+  <div class="screen-inner">
+    <div class="analyzing">
+      <div class="analyzing-ring"></div>
+      <div class="analyzing-title">팀을 분석하는 중...</div>
+      <p style="font-size:13px;color:var(--muted);font-weight:300;">Deeploy 직무 온톨로지 엔진이<br>에이전트 전환 가능성을 계산하고 있습니다</p>
+      <ul class="analyzing-steps" id="analyzeSteps">
+        <li id="as1">직군별 태스크 레이어 분류</li>
+        <li id="as2">인원 효율화 시뮬레이션</li>
+        <li id="as3">단계별 전환 로드맵 생성</li>
+        <li id="as4">핵심 보존 역할 식별</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREEN 8: 결과 ══ -->
+<section class="screen" id="s8">
+  <div class="screen-inner" id="resultContent"></div>
+</section>
+
+</main>
+
+<!-- ── NAVIGATION BAR ── -->
+<nav class="nav-bar" id="navBar" style="display:none;">
+  <button class="btn-prev" id="btnPrev" onclick="prevScreen()">← 이전</button>
+  <div id="navRight"></div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// 페이지 로드 시 초기화
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('navBar').style.display = 'none';
+});
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const state = {
+  screen: 0,
+  reg: { name:'', email:'', company:'', industry:'' },
+  divisions: {
+    dev:     { name:'개발·엔지니어링', icon:'💻', count:0, aiUsed:false, tasks:[], repeatPct:50, keyType:null },
+    design:  { name:'디자인', icon:'🎨', count:0, aiUsed:false, tasks:[], repeatPct:40, keyType:null },
+    mktg:    { name:'마케팅·그로스', icon:'📣', count:0, aiUsed:false, tasks:[], repeatPct:60, keyType:null },
+    sales:   { name:'세일즈·CS', icon:'🤝', count:0, aiUsed:false, tasks:[], repeatPct:55, keyType:null },
+    ops:     { name:'운영·어드민', icon:'⚙️', count:0, aiUsed:false, tasks:[], repeatPct:70, keyType:null },
+    finance: { name:'재무·HR', icon:'📊', count:0, aiUsed:false, tasks:[], repeatPct:65, keyType:null },
+  },
+  layerAdj: {},  // layer adjustments per division
+  criticalRole: null,
+  barriers: [],
+  urgency: null,
+  reinvest: [],
+  authority: null,
+  result: null
+};
+
+const TASK_OPTIONS = {
+  dev:     ['신규 기능 개발','기존 코드 유지보수','버그 수정','테스트·QA','배포·운영','코드 리뷰','문서화'],
+  design:  ['UI 디자인','UX 리서치','브랜딩','에셋 제작','프로토타이핑','디자인 시스템 관리'],
+  mktg:    ['콘텐츠 제작','광고 운영','SEO·그로스','소셜 미디어','이메일 마케팅','데이터 분석'],
+  sales:   ['영업·리드 발굴','고객 미팅','제안서 작성','계약 관리','CS·고객 응대','CRM 관리'],
+  ops:     ['데이터 입력·처리','일정 관리','보고서 작성','구매·총무','행정 처리','내부 시스템 관리'],
+  finance: ['재무제표 관리','급여 처리','채용·온보딩','경비 정산','법무·계약 검토','투자자 리포팅'],
+};
+
+const KEY_TYPES = {
+  dev:     ['복잡한 아키텍처 설계자','빠른 프로토타입 제작자','시스템 안정 유지자','고객 요구 번역자'],
+  design:  ['전략적 UX 기획자','브랜드 비전 수호자','사용자 공감 연구자','디자인 시스템 설계자'],
+  mktg:    ['그로스 전략가','창의적 콘텐츠 기획자','데이터 기반 최적화자','브랜드 스토리텔러'],
+  sales:   ['관계 기반 영업자','복잡한 딜 클로저','전략적 파트너십 담당자','고객 성공 설계자'],
+  ops:     ['프로세스 설계자','핵심 파트너 관계자','긴급 상황 대응자','조직 컨트롤 타워'],
+  finance: ['재무 전략가','법무 리스크 판단자','핵심 인재 심사자','투자자 관계 담당자'],
+};
+
+const AVG_MONTHLY_SALARY = {
+  dev:600000,design:480000,mktg:400000,
+  sales:420000,ops:320000,finance:420000
+}; // 만원 단위
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const SCREENS = ['s0','s1','s2','s3','s4','s5','s6','s7','s8'];
+const PROGRESS = [0,8,22,40,56,70,84,94,100];
+const PROG_LABELS = ['READY','INTRO','1 / 5','2 / 5','3 / 5','4 / 5','5 / 5','ANALYZING','DONE'];
+
+function goScreen(n) {
+  document.getElementById(SCREENS[state.screen]).classList.remove('active');
+  document.getElementById(SCREENS[n]).classList.add('active');
+  state.screen = n;
+  document.getElementById('progFill').style.width = PROGRESS[n] + '%';
+  document.getElementById('progLabel').textContent = PROG_LABELS[n];
+  document.getElementById('navBar').style.display = (n===0||n===7||n===8) ? 'none' : 'flex';
+  document.getElementById('btnPrev').style.visibility = n<=1 ? 'hidden' : 'visible';
+  updateNavRight();
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if (n===2) renderDivisionGrid();
+  if (n===3) renderRoleCards();
+  if (n===4) renderLayerViz();
+  if (n===5) renderCriticalRoles();
+  if (n===7) runAnalysis();
+}
+
+function prevScreen() { if (state.screen>1) goScreen(state.screen-1); }
+
+function updateNavRight() {
+  const el = document.getElementById('navRight');
+  const s = state.screen;
+  if (s===1) {
+    el.innerHTML=`<button class="btn-next" id="btnNext" onclick="submitReg()" disabled>다음 →</button>`;
+    checkReg();
+  } else if (s===6) {
+    el.innerHTML=`<button class="btn-analyze" onclick="goScreen(7)">✦ 팀 분석 시작하기</button>`;
+  } else {
+    el.innerHTML=`<button class="btn-next" onclick="goScreen(${s+1})">다음 →</button>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// REG
+// ══════════════════════════════════════════
+function checkReg() {
+  const n=document.getElementById('r_name').value.trim();
+  const e=document.getElementById('r_email').value.trim();
+  const c=document.getElementById('r_company').value.trim();
+  const ok = n && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && c;
+  const btn=document.getElementById('btnNext');
+  if(btn) btn.disabled=!ok;
+}
+
+function submitReg() {
+  state.reg.name    = document.getElementById('r_name').value.trim();
+  state.reg.email   = document.getElementById('r_email').value.trim();
+  state.reg.company = document.getElementById('r_company').value.trim();
+  state.reg.industry= document.getElementById('r_industry').value;
+  goScreen(2);
+}
+
+// ══════════════════════════════════════════
+// 1막: DIVISION GRID
+// ══════════════════════════════════════════
+function renderDivisionGrid() {
+  const grid = document.getElementById('divisionGrid');
+  grid.innerHTML = Object.entries(state.divisions).map(([key,d]) => `
+    <div class="division-card ${d.count>0?'has-people':''}" id="dc_${key}">
+      <div class="division-card-header">
+        <div>
+          <div class="division-icon">${d.icon}</div>
+          <div class="division-name">${d.name}</div>
+        </div>
+        <div>
+          <div class="division-count-wrap">
+            <button class="count-btn" onclick="adjustCount('${key}',-1)">−</button>
+            <div class="count-display" id="cnt_${key}">${d.count}</div>
+            <button class="count-btn" onclick="adjustCount('${key}',1)">+</button>
+          </div>
+          <div class="division-label" style="text-align:center;margin-top:4px;">명</div>
+        </div>
+      </div>
+      <div class="division-ai-check" onclick="toggleAI('${key}')">
+        <div class="ai-checkbox ${d.aiUsed?'checked':''}" id="ai_${key}">
+          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="division-ai-label">이미 AI 도구 사용 중</div>
+      </div>
+    </div>`).join('');
+  updateSalary();
+}
+
+function adjustCount(key, delta) {
+  const d = state.divisions[key];
+  d.count = Math.max(0, d.count + delta);
+  document.getElementById('cnt_'+key).textContent = d.count;
+  const card = document.getElementById('dc_'+key);
+  card.classList.toggle('has-people', d.count>0);
+  updateSalary();
+}
+
+function toggleAI(key) {
+  state.divisions[key].aiUsed = !state.divisions[key].aiUsed;
+  const el = document.getElementById('ai_'+key);
+  el.classList.toggle('checked');
+}
+
+function updateSalary() {
+  const total = Object.entries(state.divisions).reduce((sum,[k,d]) => sum + d.count*(AVG_MONTHLY_SALARY[k]||400000), 0);
+  const headcount = Object.values(state.divisions).reduce((s,d)=>s+d.count,0);
+  document.getElementById('salaryNum').textContent = headcount>0 ? `약 ${Math.round(total/10000)}백만 원` : '— 원';
+  document.getElementById('totalHeadcount').textContent = headcount;
+}
+
+// ══════════════════════════════════════════
+// 2막: ROLE ANALYSIS
+// ══════════════════════════════════════════
+function renderRoleCards() {
+  const active = Object.entries(state.divisions).filter(([,d])=>d.count>0);
+  if (active.length===0) {
+    document.getElementById('roleAnalysisCards').innerHTML =
+      `<div style="text-align:center;padding:40px;color:var(--muted);">앞 단계에서 인원을 입력해주세요.</div>`;
+    return;
+  }
+  document.getElementById('roleAnalysisCards').innerHTML = active.map(([key,d]) => `
+    <div class="role-card">
+      <div class="role-card-header">
+        <div class="role-card-icon">${d.icon}</div>
+        <div class="role-card-name">${d.name}</div>
+        <div class="role-card-count">${d.count}명</div>
+      </div>
+      <div class="role-card-body">
+        <div class="fl" style="margin-bottom:10px;"><strong>주로 하는 일</strong> <span style="font-size:11px;color:var(--muted);">(복수 선택)</span></div>
+        <div class="task-chips" id="tc_${key}">
+          ${(TASK_OPTIONS[key]||[]).map(t=>`
+            <div class="task-chip ${(d.tasks||[]).includes(t)?'selected':''}"
+              onclick="toggleTask('${key}','${t}',this)">${t}</div>`).join('')}
+        </div>
+        <div class="slider-group">
+          <div class="slider-label-row">
+            <div class="slider-label">반복·정형 업무 비중</div>
+            <div class="slider-val-label" id="rp_${key}">${d.repeatPct}%</div>
+          </div>
+          <input type="range" min="10" max="90" value="${d.repeatPct}" step="5"
+            oninput="updateRepeat('${key}',this)">
+          <div class="slider-ends"><span>창의·판단 중심</span><span>반복·처리 중심</span></div>
+        </div>
+        <div class="fl" style="margin-bottom:10px;margin-top:4px;"><strong>이 팀에서 가장 대체하기 어려운 유형은?</strong></div>
+        <div class="radio-opts" id="kt_${key}">
+          ${(KEY_TYPES[key]||[]).map(t=>`
+            <div class="radio-opt ${d.keyType===t?'selected':''}"
+              onclick="selectKeyType('${key}','${t}',this)">
+              <div class="radio-dot"></div>
+              <div class="radio-opt-text"><div class="radio-opt-label">${t}</div></div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleTask(key, task, el) {
+  const d = state.divisions[key];
+  if (!d.tasks) d.tasks = [];
+  if (d.tasks.includes(task)) {
+    d.tasks = d.tasks.filter(t=>t!==task);
+    el.classList.remove('selected');
+  } else {
+    d.tasks.push(task);
+    el.classList.add('selected');
+  }
+}
+
+function updateRepeat(key, el) {
+  state.divisions[key].repeatPct = parseInt(el.value);
+  document.getElementById('rp_'+key).textContent = el.value+'%';
+}
+
+function selectKeyType(key, val, el) {
+  state.divisions[key].keyType = val;
+  document.querySelectorAll(`#kt_${key} .radio-opt`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ══════════════════════════════════════════
+// 3막: LAYER VISUALIZATION
+// ══════════════════════════════════════════
+function renderLayerViz() {
+  const active = Object.entries(state.divisions).filter(([,d])=>d.count>0);
+  document.getElementById('layerVizContainer').innerHTML = active.map(([key,d]) => {
+    const repeat = d.repeatPct;
+    const l1 = Math.round(repeat * 0.7);
+    const l2 = Math.round(repeat * 0.3 + (100-repeat)*0.4);
+    const l3 = 100-l1-l2;
+    if (!state.layerAdj[key]) state.layerAdj[key] = {l1,l2,l3};
+    const adj = state.layerAdj[key];
+    const est1=(d.count*adj.l1/100).toFixed(1);
+    const est2=(d.count*adj.l2/100).toFixed(1);
+    const est3=(d.count*adj.l3/100).toFixed(1);
+    return `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:16px;">${d.icon}</span>
+          <span style="font-size:14px;font-weight:700;">${d.name}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:var(--surface2);padding:3px 8px;border-radius:10px;">${d.count}명</span>
+        </div>
+        <div class="layer-viz">
+          <div class="layer-row">
+            <div class="layer-badge lb1">1</div>
+            <div class="layer-bar-wrap">
+              <div class="layer-bar-label">에이전트 자동 처리</div>
+              <div class="layer-bar-outer"><div class="layer-bar-inner lb1-bar" style="width:${adj.l1}%"></div></div>
+            </div>
+            <div class="layer-estimate">${est1}명분</div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-badge lb2">2</div>
+            <div class="layer-bar-wrap">
+              <div class="layer-bar-label">에이전트 + 인간 협력</div>
+              <div class="layer-bar-outer"><div class="layer-bar-inner lb2-bar" style="width:${adj.l2}%"></div></div>
+            </div>
+            <div class="layer-estimate">${est2}명분</div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-badge lb3">3</div>
+            <div class="layer-bar-wrap">
+              <div class="layer-bar-label">인간 필수 판단</div>
+              <div class="layer-bar-outer"><div class="layer-bar-inner lb3-bar" style="width:${adj.l3}%"></div></div>
+            </div>
+            <div class="layer-estimate">${est3}명분</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
+          조정 필요하면 슬라이더를 당겨보세요
+        </div>
+        <div style="margin-top:10px;">
+          <input type="range" min="10" max="80" value="${adj.l1}" step="5"
+            oninput="adjustLayer('${key}',this.value)" id="lslider_${key}">
+          <div class="slider-ends"><span>← 인간 중심</span><span>에이전트 중심 →</span></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function adjustLayer(key, val) {
+  const v = parseInt(val);
+  state.layerAdj[key] = { l1:v, l2:Math.round((100-v)*0.45), l3:Math.round((100-v)*0.55) };
+  renderLayerViz();
+  setTimeout(()=>{ const sl=document.getElementById('lslider_'+key); if(sl) sl.value=val; },10);
+}
+
+// ══════════════════════════════════════════
+// 4막: CRITICAL ROLES & BARRIERS
+// ══════════════════════════════════════════
+function renderCriticalRoles() {
+  const active = Object.entries(state.divisions).filter(([,d])=>d.count>0);
+  document.getElementById('criticalRoleOpts').innerHTML = active.map(([key,d])=>`
+    <div class="radio-opt ${state.criticalRole===key?'selected':''}"
+      onclick="selectRadioOpt(this,'criticalRole','${key}')">
+      <div class="radio-dot"></div>
+      <div class="radio-opt-text">
+        <div class="radio-opt-label">${d.icon} ${d.name}</div>
+        <div class="radio-opt-sub">${d.keyType||'핵심 역할 보유'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function selectRadioOpt(el, key, val) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  state[key] = val;
+}
+
+function toggleCheckOpt(el, key, val) {
+  el.classList.toggle('selected');
+  const sq = el.querySelector('.check-square');
+  sq.style.background = el.classList.contains('selected') ? 'var(--blue)' : '';
+  sq.style.borderColor = el.classList.contains('selected') ? 'var(--blue)' : '';
+  if (!state[key]) state[key]=[];
+  if (el.classList.contains('selected')) { if(!state[key].includes(val)) state[key].push(val); }
+  else { state[key]=state[key].filter(v=>v!==val); }
+}
+
+// ══════════════════════════════════════════
+// ANALYSIS
+// ══════════════════════════════════════════
+async function runAnalysis() {
+  const steps=['as1','as2','as3','as4'];
+  for(let i=0;i<steps.length;i++){
+    await new Promise(r=>setTimeout(r,900));
+    document.getElementById(steps[i]).classList.add('done');
+  }
+  await new Promise(r=>setTimeout(r,600));
+
+  const active = Object.entries(state.divisions).filter(([,d])=>d.count>0);
+  const totalHead = active.reduce((s,[,d])=>s+d.count,0);
+
+  // 전환 가능 인원 계산
+  let totalL1=0, totalL2=0, totalL3=0;
+  active.forEach(([key,d])=>{
+    const adj = state.layerAdj[key] || {l1:Math.round(d.repeatPct*.7),l2:30,l3:30};
+    totalL1 += d.count * adj.l1/100;
+    totalL2 += d.count * adj.l2/100;
+    totalL3 += d.count * adj.l3/100;
+  });
+
+  const replaceableHead = Math.round(totalL1);
+  let savingTotal = 0;
+  active.forEach(([key,d])=>{
+    const adj = state.layerAdj[key]||{l1:Math.round(d.repeatPct*.7)};
+    savingTotal += Math.round(d.count * adj.l1/100) * (AVG_MONTHLY_SALARY[key]||400000);
+  });
+  const monthlySaving = Math.round(savingTotal/10000);
+
+  const aiPct = Math.round((totalL1+totalL2*.5)/totalHead*100);
+  const score  = Math.min(98, Math.round(aiPct * 1.1));
+
+  // 로드맵 직군 분류
+  const quickWins  = active.filter(([k,d])=>(state.layerAdj[k]?.l1||Math.round(d.repeatPct*.7))>50);
+  const midTerm    = active.filter(([k,d])=>{const l1=state.layerAdj[k]?.l1||Math.round(d.repeatPct*.7);return l1>30&&l1<=50;});
+  const keepSafe   = active.filter(([k,d])=>(state.layerAdj[k]?.l3||30)>50);
+
+  // Claude API 호출
+  const divSummary = active.map(([key,d])=>{
+    const adj=state.layerAdj[key]||{l1:Math.round(d.repeatPct*.7),l2:30,l3:30};
+    return `${d.name}(${d.count}명): L1=${adj.l1}% L2=${adj.l2}% L3=${adj.l3}% 반복=${d.repeatPct}% 핵심유형=${d.keyType||'미입력'} 주요태스크=${(d.tasks||[]).slice(0,3).join('·')}`;
+  }).join('\n');
+
+  const prompt = `당신은 Deeploy의 팀 OS 분석 에이전트입니다. 스타트업 대표를 위한 AI 시대 팀 재설계 전문가로서 분석합니다.
+
+[팀 정보]
+회사: ${state.reg.company} | 업종: ${state.reg.industry||'미입력'}
+총 인원: ${totalHead}명 | AI 전환 긴급도: ${state.urgency||'미입력'}
+결정 권한: ${state.authority||'미입력'}
+
+[직군별 분석]
+${divSummary}
+
+[추가 맥락]
+핵심 인재 직군: ${state.criticalRole||'미입력'}
+도입 장벽: ${(state.barriers||[]).join(', ')||'미입력'}
+재투자 방향: ${(state.reinvest||[]).join(', ')||'미입력'}
+
+위 데이터를 기반으로 아래 JSON만 출력하세요. 다른 텍스트 없이:
+
+{
+  "headline": "<이 팀의 핵심 인사이트 한 문장>",
+  "ai_readiness": <0-100 AI 전환 준비도>,
+  "replaceable_head": <즉시 전환 가능 인원 추정치 숫자>,
+  "monthly_saving": <월 절감 추정액 만원 단위 숫자>,
+  "quick_action": "<즉시(0-1개월) 실행 권고 2문장>",
+  "quick_divisions": "<즉시 전환 가능 직군 나열>",
+  "mid_action": "<단기(1-3개월) 권고 2문장>",
+  "mid_divisions": "<단기 전환 직군>",
+  "keep_roles": [
+    {"division":"<직군>","reason":"<반드시 유지해야 하는 이유 1문장>"},
+    {"division":"<직군>","reason":"<이유>"}
+  ],
+  "risk_insight": "<이 팀의 가장 큰 전환 리스크 1문장>",
+  "ceo_message": "<대표에게 전하는 핵심 메시지 2문장. 직접적이고 솔직하게>"
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text||'';
+    const clean = text.replace(/```json|```/g,'').trim();
+    state.result = JSON.parse(clean);
+  } catch(e) {
+    console.error('API error:', e);
+    state.result = {
+      headline:`${totalHead}명 팀에서 즉시 가능한 AI 전환이 확인됐습니다`,
+      ai_readiness: score,
+      replaceable_head: replaceableHead,
+      monthly_saving: monthlySaving,
+      quick_action:'반복 처리 중심 직군부터 에이전트 파일럿을 시작하세요. 3주 내 효과를 확인할 수 있습니다.',
+      quick_divisions: quickWins.map(([,d])=>d.name).join(', ')||'운영·CS',
+      mid_action:'파일럿 결과를 기반으로 구조적 변화를 설계하세요. 이 단계에서 팀원 리스킬링이 병행되어야 합니다.',
+      mid_divisions: midTerm.map(([,d])=>d.name).join(', ')||'마케팅',
+      keep_roles:[
+        {division:'핵심 기획 역할', reason:'전략 방향과 제품 비전은 사람이 책임져야 합니다'},
+        {division:'고객 관계 역할', reason:'신뢰와 관계는 에이전트가 대체할 수 없습니다'}
+      ],
+      risk_insight:'전환 기간의 생산성 저하를 과소평가하지 마세요.',
+      ceo_message:'지금 가장 중요한 것은 속도입니다. 완벽한 계획보다 작은 실험이 먼저입니다.'
+    };
+  }
+
+  try { renderResult(); } catch(e) { console.error('renderResult error:', e); }
+  goScreen(8);
+}
+
+// ══════════════════════════════════════════
+// RESULT RENDER
+// ══════════════════════════════════════════
+function renderResult() {
+  const r = state.result;
+  const pct = Math.min(r.ai_readiness, 98);
+  const conic = `conic-gradient(var(--blue) 0% ${pct*0.6}%, var(--teal) ${pct*0.6}% ${pct}%, var(--border2) ${pct}% 100%)`;
+
+  document.getElementById('resultContent').innerHTML = `
+
+    <div class="result-hero">
+      <div class="result-score-ring" style="background:${conic};">
+        <div class="result-score-inner">
+          <div class="result-score-num">${r.ai_readiness}</div>
+          <div class="result-score-label">AI READY</div>
+        </div>
+      </div>
+      <div class="result-title">${r.headline}</div>
+      <div class="result-sub" style="max-width:480px;margin:0 auto;">${r.ceo_message}</div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card rc-blue">
+        <div class="result-card-num">${r.replaceable_head}명</div>
+        <div class="result-card-label">즉시 전환<br>가능 인원</div>
+      </div>
+      <div class="result-card rc-teal">
+        <div class="result-card-num">${r.monthly_saving}만원</div>
+        <div class="result-card-label">월 절감<br>추정액</div>
+      </div>
+      <div class="result-card rc-amber">
+        <div class="result-card-num">${r.ai_readiness}점</div>
+        <div class="result-card-label">팀 AI<br>전환 지수</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+      <div style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:2px;color:#ef4444;margin-bottom:6px;">⚠ RISK</div>
+      <div style="font-size:13px;color:var(--muted2);">${r.risk_insight}</div>
+    </div>
+
+    <div class="roadmap">
+      <div class="roadmap-item">
+        <div class="roadmap-dot rd-now">01</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase rp-now">즉시 · 0~1개월</div>
+          <div class="roadmap-title">${r.quick_divisions}</div>
+          <div class="roadmap-items-list">${r.quick_action}</div>
+          <div class="roadmap-saving">월 ${Math.round(r.monthly_saving*0.4)}만원 절감 시작 가능</div>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-dot rd-soon">02</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase rp-soon">단기 · 1~3개월</div>
+          <div class="roadmap-title">${r.mid_divisions}</div>
+          <div class="roadmap-items-list">${r.mid_action}</div>
+          <div class="roadmap-saving">누적 절감 월 ${r.monthly_saving}만원 수준</div>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-dot rd-mid">03</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase rp-mid">중기 · 3~6개월</div>
+          <div class="roadmap-title">팀 구조 재설계 완성</div>
+          <div class="roadmap-items-list">에이전트 협업 체계가 정착되고, 남은 인원이 핵심 판단에만 집중하는 팀으로 재편됩니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="keep-section">
+      <div class="keep-section-title">반드시 지켜야 할 것</div>
+      ${(r.keep_roles||[]).map(k=>`
+        <div class="keep-item">
+          <div class="keep-icon">🛡</div>
+          <div class="keep-text">
+            <strong>${k.division}</strong>
+            ${k.reason}
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <!-- PAYWALL -->
+    <div class="paywall">
+      <div class="paywall-title">더 깊이 보고 싶으신가요?</div>
+      <div class="paywall-desc">지금 보신 내용은 기본 분석입니다. 상세 리포트에는 팀 재설계 실행 플랜과 각 직군별 전환 스크립트가 포함됩니다.</div>
+      <div class="paywall-items">
+        <div class="paywall-item">직군별 인원 최적화 시뮬레이션 (상세)</div>
+        <div class="paywall-item">팀원 커뮤니케이션 가이드 및 스크립트</div>
+        <div class="paywall-item">단계별 AI 도구 도입 체크리스트</div>
+        <div class="paywall-item">리스크 매트릭스 및 대응 전략</div>
+        <div class="paywall-item">투자자·이사회 설득 데이터 패키지</div>
+      </div>
+      <div class="paywall-pricing">
+        <div class="paywall-price">₩30,000</div>
+        <div class="paywall-price-label">상세 리포트 1회</div>
+      </div>
+      <button class="btn-pay" onclick="showToast('결제 기능 준비 중입니다. yjk9793@gmail.com으로 문의해주세요.')">
+        상세 리포트 받기 →
+      </button>
+      <div class="consulting-link">
+        직접 팀 재설계를 도와드립니다 —
+        <span onclick="openConsulting()">
+          Deeploy 컨설팅 신청 (초기 상담 무료)
+        </span>
+      </div>
+    </div>
+
+    <div style="height:40px;"></div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function openConsulting() {
+  const co = state.reg.company || '';
+  const nm = state.reg.name || '';
+  const hc = Object.values(state.divisions).reduce((s,d)=>s+d.count,0);
+  window.location.href = `mailto:yjk9793@gmail.com?subject=Team OS 컨설팅 문의&body=회사명: ${co}%0A대표자: ${nm}%0A팀 규모: ${hc}명`;
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+</script>
+</body>
+</html>
