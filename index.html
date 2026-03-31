@@ -1687,7 +1687,7 @@ RULES:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: shortPrompt }] }],
-        generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
+        generationConfig: { maxOutputTokens: 2500, temperature: 0.7 }
       })
     });
     if (res.status === 429 && retry < 2) {
@@ -1703,23 +1703,23 @@ RULES:
     const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
     if (!raw) throw new Error('empty');
 
-    // 강건한 JSON 추출
-    const cleaned = raw
-      .replace(/```json/g,'').replace(/```/g,'')
-      .replace(/[\u0000-\u001F\u007F-\u009F]/g,' ')
-      .trim();
-    const m = cleaned.match(/\{[\s\S]*\}/);
-    if (!m) { console.error('[Gemini] no JSON:', raw.slice(0,300)); throw new Error('no JSON'); }
-
+    // 강건한 JSON 추출 — 첫 { 부터 마지막 } 까지
+    const start = raw.indexOf('{');
+    const end   = raw.lastIndexOf('}');
+    if (start === -1 || end === -1) {
+      console.error('[Gemini] no JSON braces:', raw.slice(0,200));
+      throw new Error('no JSON');
+    }
+    const jsonStr = raw.slice(start, end + 1);
     try {
-      return JSON.parse(m[0]);
+      return JSON.parse(jsonStr);
     } catch(e) {
-      // JSON 파싱 실패 시 일부 정리 후 재시도
-      const fixed = m[0]
-        .replace(/,\s*}/g,'}')
-        .replace(/,\s*]/g,']')
-        .replace(/([{,]\s*)(\w+):/g, '$1"$2":');
-      return JSON.parse(fixed);
+      // 마지막 완전한 필드까지만 파싱 시도
+      console.error('[Gemini] parse error, trying repair:', e.message);
+      const repaired = jsonStr
+        .replace(/,\s*([}\]])/g, '$1')  // trailing comma 제거
+        .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":'); // 따옴표 없는 키 수정
+      return JSON.parse(repaired);
     }
   }
 
