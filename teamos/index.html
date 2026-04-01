@@ -329,6 +329,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <option value="other">기타</option>
       </select>
     </div>
+
+    <!-- 개인정보 동의 -->
+    <div style="margin-top:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px;">
+      <div style="font-size:11px;color:#8892b0;line-height:1.75;margin-bottom:12px;">
+        <strong style="color:#aab4cc;display:block;margin-bottom:6px;">개인정보 수집 · 이용 안내</strong>
+        수집 항목: 성명, 이메일, 회사명, 업종<br>
+        수집 목적: AX 진단 결과 발송 및 Deeploy 서비스 안내<br>
+        보유 기간: 수집일로부터 1년 (철회 시 즉시 삭제)<br>
+        귀하는 동의를 거부할 권리가 있으며, 거부 시 진단 결과 이메일 발송이 제한됩니다.
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <input type="checkbox" id="r_agree" onchange="chkReg()"
+          style="width:16px;height:16px;accent-color:#00d4a0;cursor:pointer;flex-shrink:0;">
+        <span style="font-size:13px;color:#ccd6f6;font-weight:500;">
+          개인정보 수집 · 이용에 동의합니다 <span style="color:#ff4d6d;">*</span>
+        </span>
+      </label>
+    </div>
   </div>
 </section>
 
@@ -767,7 +785,8 @@ function chkReg() {
   const n = document.getElementById('r_name').value.trim();
   const e = document.getElementById('r_email').value.trim();
   const c = document.getElementById('r_company').value.trim();
-  const ok = n && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && c;
+  const agreed = document.getElementById('r_agree')?.checked || false;
+  const ok = n && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && c && agreed;
   const btn = document.getElementById('btnNext');
   if (btn) btn.disabled = !ok;
 }
@@ -1137,7 +1156,7 @@ function renderResult() {
     <div id="teamEmailForm" style="display:none;background:var(--surface);border:1px solid rgba(74,124,255,.2);border-radius:10px;padding:16px 20px;">
       <div style="font-size:12px;color:var(--muted2);margin-bottom:8px;">발송할 이메일 주소</div>
       <div style="display:flex;gap:8px;">
-        <input type="email" id="teamEmailInput" class="fi" placeholder="${state.reg.email||'이메일 입력'}" value="${state.reg.email||''}" style="flex:1;">
+        <input type="email" id="teamEmailInput" class="fi" placeholder="이메일 입력" value="" style="flex:1;">
         <button onclick="sendTeamReport()" style="padding:11px 20px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;">발송</button>
       </div>
     </div>
@@ -1156,8 +1175,8 @@ function renderResult() {
     <div style="background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(155,124,255,.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'" onclick="window.open('https://www.jdxwork.com','_blank')">
       <div style="width:40px;height:40px;border-radius:9px;background:rgba(155,124,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">👤</div>
       <div style="flex:1;">
-        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:2px;">개인 직무 진단 받기</div>
-        <div style="font-size:12px;color:var(--muted2);font-weight:300;">내 직무에서 에이전트가 할 수 없는 것을 찾아드립니다 · 10분 무료</div>
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:2px;">AI 직무 전환 가능성, 지금 측정해보세요</div>
+        <div style="font-size:12px;color:var(--muted2);font-weight:300;">내 직무에서 에이전트가 대체 못하는 것이 무엇인지 10분 진단 · 무료</div>
       </div>
       <div style="color:var(--muted);font-size:16px;">→</div>
     </div>
@@ -1222,6 +1241,11 @@ async function sendTeamReport() {
 }
 
 function openConsulting() {
+  // Fill fields from registration data
+  const el = id => document.getElementById(id);
+  if(el('cq_company')) el('cq_company').value = state.reg.company||'';
+  if(el('cq_name'))    el('cq_name').value    = state.reg.name||'';
+  if(el('cq_email'))   el('cq_email').value   = state.reg.email||'';
   document.getElementById('consultingModal').style.display = 'flex';
 }
 
@@ -1245,11 +1269,15 @@ async function submitConsulting() {
 
   const r = state.result;
   const hc = Object.values(state.divisions).reduce((s,d)=>s+d.count,0);
-  const bodyText =
-    `회사명: ${company}\n성명: ${name}\n부서/직책: ${dept||'-'}\n이메일: ${email}\n연락처: ${phone||'-'}\n\n문의 내용:\n${msg||'-'}\n\n` +
-    `── 진단 결과 ──\n` +
-    `팀 규모: ${hc}명 | AX 준비도: ${r?.ax_score||'미진단'}점 | 리스크: ${r?.risk_label||'-'}\n` +
-    `인건비 절감 가능: ${r?.cost_simulation?.savable_amount||'-'}\n${r?.headline||''}`;
+  // Web3Forms 방식으로 이메일 직접 발송 (진단 결과 제외, 문의 내용만)
+  const formBody = `회사명: ${company}
+성명: ${name}
+부서/직책: ${dept||'-'}
+이메일: ${email}
+연락처: ${phone||'-'}
+
+문의 내용:
+${msg||'(내용 없음)'}`;
 
   try {
     const res = await fetch('https://www.jdxwork.com/api/sendmail', {
@@ -1258,13 +1286,15 @@ async function submitConsulting() {
       body: JSON.stringify({
         to: 'yjk9793@gmail.com',
         name: `[컨설팅 문의] ${company} ${name}`,
-        company, job: dept||'',
-        score: r?.ax_score||0, label: r?.risk_label||'',
+        company: company,
+        job: `부서/직책: ${dept||'-'} | 연락처: ${phone||'-'}`,
+        score: 0,
+        label: '컨설팅 문의',
         quickWins: [],
         humanCore: [],
-        redesignTitle: `컨설팅 문의 — ${company}`,
-        redesignDesc: `${name} (${email} / ${phone||'-'})\n\n${msg||'-'}`,
-        nextStep: `팀 규모 ${hc}명 | AX ${r?.ax_score||'?'}점 | ${r?.cost_simulation?.savable_amount||'-'} 절감 가능`
+        redesignTitle: `컨설팅/상담 문의 — ${company} ${name}`,
+        redesignDesc: `이메일: ${email}\n연락처: ${phone||'-'}\n\n문의 내용:\n${msg||'(내용 없음)'}`,
+        nextStep: `부서/직책: ${dept||'-'}`
       })
     });
     const data = await res.json();
@@ -1297,12 +1327,12 @@ function showToast(msg) {
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div>
         <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">회사명 <span style="color:#ff4d6d;">*</span></div>
-        <input id="cq_company" type="text" placeholder="(주)스타트업" value="${state.reg.company||''}" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+        <input id="cq_company" type="text" placeholder="(주)스타트업" value="" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div>
           <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">성명 <span style="color:#ff4d6d;">*</span></div>
-          <input id="cq_name" type="text" placeholder="홍길동" value="${state.reg.name||''}" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+          <input id="cq_name" type="text" placeholder="홍길동" value="" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
         </div>
         <div>
           <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">부서 · 직책</div>
@@ -1311,7 +1341,7 @@ function showToast(msg) {
       </div>
       <div>
         <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">이메일 <span style="color:#ff4d6d;">*</span></div>
-        <input id="cq_email" type="email" placeholder="ceo@startup.com" value="${state.reg.email||''}" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+        <input id="cq_email" type="email" placeholder="ceo@startup.com" value="" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
       </div>
       <div>
         <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">연락처</div>
