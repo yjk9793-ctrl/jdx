@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deeploy Admin — Portfolio AX Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#06080f;--bg2:#0c0f1a;--surface:#111420;--surface2:#181c2e;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --white:#f0edf5;--muted:#5a6380;--muted2:#8892b0;
+  --blue:#4f7cff;--blue2:#7ea6ff;--teal:#00d4a0;--teal2:#00ff9d;
+  --amber:#f5a623;--red:#ff4d6d;--purple:#9b7cff;
+}
+html,body{background:var(--bg);color:var(--white);font-family:'Bricolage Grotesque',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(79,124,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,124,255,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70vh;background:radial-gradient(ellipse at center,rgba(79,124,255,.06) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.app{display:flex;min-height:100vh;position:relative;z-index:1;}
+.sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:50;}
+.sidebar-logo{padding:0 20px 28px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.logo-mark{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--teal);margin-bottom:4px;}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:1px;}
+.nav-section{padding:0 12px;margin-bottom:8px;}
+.nav-label{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:0 8px;margin-bottom:6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--muted2);margin-bottom:2px;}
+.nav-item:hover{background:var(--surface);color:var(--white);}
+.nav-item.active{background:rgba(79,124,255,.12);color:var(--blue2);border:1px solid rgba(79,124,255,.2);}
+.nav-icon{font-size:14px;width:18px;text-align:center;}
+.sidebar-bottom{margin-top:auto;padding:20px;border-top:1px solid var(--border);}
+.cvc-badge{background:rgba(0,212,160,.08);border:1px solid rgba(0,212,160,.2);border-radius:8px;padding:10px 12px;}
+.cvc-name{font-size:11px;font-weight:700;color:var(--teal);margin-bottom:2px;}
+.cvc-role{font-size:10px;color:var(--muted);}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:58px;border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,8,15,.8);backdrop-filter:blur(20px);position:sticky;top:0;z-index:40;}
+.topbar-title{font-size:14px;font-weight:600;color:var(--white);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+.cohort-selector{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--blue2);font-family:'Bricolage Grotesque',sans-serif;}
+.content{padding:28px;flex:1;}
+.page-header{margin-bottom:28px;}
+.page-header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
+.page-title{font-size:22px;font-weight:800;}
+.page-desc{font-size:13px;color:var(--muted2);font-weight:300;}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}
+.kpi-card:hover{border-color:var(--border2);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--blue));}
+.kpi-label{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;}
+.kpi-value{font-size:30px;font-weight:800;line-height:1;margin-bottom:4px;}
+.kpi-sub{font-size:11px;color:var(--muted);}
+.section-grid{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-bottom:16px;}
+.section-grid.full{grid-template-columns:1fr;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue2);font-family:'JetBrains Mono',monospace;}
+.card-action{font-size:11px;color:var(--muted);cursor:pointer;transition:color .15s;}
+.card-action:hover{color:var(--white);}
+.co-table{width:100%;border-collapse:collapse;}
+.co-table th{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:10px 20px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);font-family:'JetBrains Mono',monospace;}
+.co-row{border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.co-row:last-child{border-bottom:none;}
+.co-row:hover{background:var(--surface2);}
+.co-row.selected{background:rgba(79,124,255,.06);border-left:2px solid var(--blue);}
+.co-row td{padding:14px 20px;vertical-align:middle;}
+.co-rank{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);width:32px;}
+.co-info{display:flex;flex-direction:column;gap:2px;}
+.co-name{font-size:13px;font-weight:700;}
+.co-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;}
+.co-tag{font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(79,124,255,.1);color:var(--blue2);border:1px solid rgba(79,124,255,.15);font-family:'JetBrains Mono',monospace;}
+.co-tag.saas{background:rgba(155,124,255,.1);color:var(--purple);border-color:rgba(155,124,255,.2);}
+.co-tag.ai{background:rgba(0,212,160,.08);color:var(--teal);border-color:rgba(0,212,160,.2);}
+.co-tag.platform{background:rgba(245,166,35,.08);color:var(--amber);border-color:rgba(245,166,35,.2);}
+.co-tag.fintech{background:rgba(79,124,255,.1);color:var(--blue2);border-color:rgba(79,124,255,.2);}
+.score-cell{display:flex;align-items:center;gap:10px;}
+.score-bar-outer{width:80px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.score-bar-inner{height:100%;border-radius:3px;}
+.score-num{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;min-width:28px;}
+.risk-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+.risk-red{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:var(--red);}
+.risk-amber{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:var(--amber);}
+.risk-green{background:rgba(0,212,160,.08);border:1px solid rgba(0,212,160,.25);color:var(--teal);}
+.saving-cell{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal);}
+.team-cell{font-size:12px;color:var(--muted2);font-family:'JetBrains Mono',monospace;}
+.detail-header{padding:20px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.detail-company{font-size:16px;font-weight:800;margin-bottom:4px;}
+.detail-meta{font-size:11px;color:var(--muted);display:flex;gap:10px;align-items:center;}
+.score-ring-wrap{display:flex;align-items:center;justify-content:center;padding:20px 0 8px;}
+.ring-inner{position:absolute;inset:8px;background:var(--bg2);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-score{font-size:24px;font-weight:900;line-height:1;}
+.ring-label{font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'JetBrains Mono',monospace;}
+.axis-section{padding:0 16px 16px;}
+.axis-title{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:10px;}
+.axis-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.axis-lbl{font-size:10px;color:var(--muted2);width:86px;flex-shrink:0;}
+.axis-bar-o{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.axis-bar-i{height:100%;border-radius:3px;}
+.axis-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:24px;text-align:right;}
+.insight-box{margin:0 16px 12px;background:rgba(79,124,255,.06);border:1px solid rgba(79,124,255,.15);border-radius:8px;padding:12px 14px;}
+.insight-label{font-size:9px;letter-spacing:2px;color:var(--blue2);font-family:'JetBrains Mono',monospace;margin-bottom:6px;}
+.insight-text{font-size:12px;color:var(--muted2);line-height:1.7;}
+.action-row{padding:12px 16px;display:flex;gap:8px;}
+.btn-primary{flex:1;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;transition:opacity .15s;}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{padding:10px 14px;background:transparent;color:var(--muted2);border:1px solid var(--border2);border-radius:7px;font-size:12px;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;transition:all .15s;}
+.btn-ghost:hover{border-color:var(--white);color:var(--white);}
+.dist-section{padding:16px 20px;}
+.dist-title{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:14px;}
+.dist-bars{display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:8px;}
+.dist-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;}
+.dist-bar{width:100%;border-radius:4px 4px 0 0;cursor:pointer;}
+.dist-bar:hover{opacity:.8;}
+.dist-lbl{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.priority-item{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.priority-item:last-child{border-bottom:none;}
+.priority-item:hover{background:var(--surface2);}
+.priority-num{width:22px;height:22px;border-radius:50%;background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:var(--red);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.priority-num.amber{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);color:var(--amber);}
+.priority-info{flex:1;}
+.priority-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.priority-reason{font-size:11px;color:var(--muted);}
+.priority-action{font-size:10px;color:var(--teal);font-family:'JetBrains Mono',monospace;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;gap:10px;text-align:center;}
+.empty-icon{font-size:36px;opacity:.3;}
+.empty-text{font-size:13px;color:var(--muted);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:460px;padding:28px;animation:modalIn .25s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px);}to{opacity:1;transform:none;}}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
+.modal-input-group{margin-bottom:14px;}
+.modal-label{font-size:11px;color:var(--muted2);margin-bottom:6px;}
+.modal-input{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-size:13px;outline:none;font-family:'Bricolage Grotesque',sans-serif;transition:border-color .15s;}
+.modal-input:focus{border-color:var(--blue);}
+.modal-footer{display:flex;gap:10px;margin-top:20px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp .4s ease both;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">DEEPLOY</div>
+      <div class="logo-sub">AX Intelligence Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" onclick="showView('portfolio')"><span class="nav-icon">◉</span> 포트폴리오 현황</div>
+      <div class="nav-item" onclick="showView('priority')"><span class="nav-icon">▲</span> 우선순위 대응</div>
+      <div class="nav-item" onclick="showView('insight')"><span class="nav-icon">✦</span> 워크 온톨로지 인사이트</div>
+    </div>
+    <div class="nav-section" style="margin-top:16px;">
+      <div class="nav-label">관리</div>
+      <div class="nav-item" onclick="openCohortModal()"><span class="nav-icon">⊕</span> 기수 코드 생성</div>
+      <div class="nav-item" onclick="showView('ontology')"><span class="nav-icon">◈</span> 워크 온톨로지 진행</div>
+      <div class="nav-item"><span class="nav-icon">⇩</span> 리포트 다운로드</div>
+      <div class="nav-item"><span class="nav-icon">◎</span> 초대 링크 발송</div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="cvc-badge">
+        <div class="cvc-name">○○ 벤처스</div>
+        <div class="cvc-role">포트폴리오 어드민</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">포트폴리오 AX 현황</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="todayDate"></div>
+        <div class="cohort-selector" onclick="openCohortModal()"><span>기수 선택</span><span style="opacity:.5">▾</span></div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- PORTFOLIO VIEW -->
+      <div id="view-portfolio">
+        <div class="page-header">
+          <div class="page-header-top">
+            <div>
+              <div class="page-title fade-up">포트폴리오 AI 전환 현황 <span style="color:var(--blue2)">10개사</span></div>
+              <div class="page-desc fade-up">진단 완료 기준 · Deeploy Work Ontology 엔진 분석</div>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-card fade-up" style="--accent:var(--blue)"><div class="kpi-label">평균 AX 준비도</div><div class="kpi-value" style="color:var(--blue2)">54<span style="font-size:18px">점</span></div><div class="kpi-sub">포트폴리오 전체 평균</div></div>
+          <div class="kpi-card fade-up" style="--accent:var(--red)"><div class="kpi-label">긴급 대응 필요</div><div class="kpi-value" style="color:var(--red)">3<span style="font-size:18px">개사</span></div><div class="kpi-sub">AX 준비도 40점 미만</div></div>
+          <div class="kpi-card fade-up" style="--accent:var(--teal)"><div class="kpi-label">월 인건비 절감 가능</div><div class="kpi-value" style="color:var(--teal)">18<span style="font-size:18px">%</span></div><div class="kpi-sub">평균 추정 절감율</div></div>
+          <div class="kpi-card fade-up" style="--accent:var(--amber)"><div class="kpi-label">즉시 전환 가능 인원</div><div class="kpi-value" style="color:var(--amber)">47<span style="font-size:18px">명</span></div><div class="kpi-sub">에이전트 대체 가능</div></div>
+          <div class="kpi-card fade-up" style="--accent:var(--purple)"><div class="kpi-label">진단 완료율</div><div class="kpi-value" style="color:var(--purple)">100<span style="font-size:18px">%</span></div><div class="kpi-sub">10 / 10개사</div></div>
+        </div>
+        <div class="section-grid">
+          <div class="card fade-up">
+            <div class="card-header"><span class="card-title">포트폴리오 회사 · AX 준비도 순위</span><span class="card-action">전체 다운로드 ↓</span></div>
+            <div><table class="co-table"><thead><tr><th>#</th><th>회사</th><th>AX 준비도</th><th>생존 리스크</th><th>절감 가능</th><th>팀 규모</th></tr></thead><tbody id="companyTableBody"></tbody></table></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="card fade-up" id="detailCard">
+              <div id="detailContent"><div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">회사를 클릭하면<br>상세 분석이 표시됩니다</div></div></div>
+            </div>
+            <div class="card fade-up">
+              <div class="card-header"><span class="card-title">준비도 분포</span></div>
+              <div class="dist-section">
+                <div class="dist-bars" id="distBars"></div>
+                <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+                  <span style="font-size:9px;color:var(--red);font-family:'JetBrains Mono',monospace;">● 위험 (3)</span>
+                  <span style="font-size:9px;color:var(--amber);font-family:'JetBrains Mono',monospace;">● 주의 (4)</span>
+                  <span style="font-size:9px;color:var(--teal);font-family:'JetBrains Mono',monospace;">● 안정 (3)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRIORITY VIEW -->
+      <div id="view-priority" style="display:none;">
+        <div class="page-header"><div class="page-title fade-up">우선순위 대응 현황</div><div class="page-desc fade-up">즉시 지원이 필요한 포트폴리오사와 권장 액션</div></div>
+        <div class="section-grid full"><div class="card"><div class="card-header"><span class="card-title">🔴 긴급 · 즉시 개입 필요</span></div><div id="priorityListRed"></div></div></div>
+        <div class="section-grid full" style="margin-top:12px;"><div class="card"><div class="card-header"><span class="card-title">🟡 주의 · 1개월 내 지원 권장</span></div><div id="priorityListAmber"></div></div></div>
+      </div>
+
+      <!-- INSIGHT VIEW -->
+      <div id="view-insight" style="display:none;">
+        <div class="page-header"><div class="page-title fade-up">워크 워크 온톨로지 인사이트</div><div class="page-desc fade-up">포트폴리오 전체 워크 온톨로지 데이터 기반 패턴 분석</div></div>
+        <div class="section-grid">
+          <div class="card"><div class="card-header"><span class="card-title">직군별 에이전트 위임 가능 비율</span></div><div class="dist-section" id="divisionChart" style="padding:20px;"></div></div>
+          <div class="card"><div class="card-header"><span class="card-title">워크 워크 온톨로지 레이어 분포</span></div><div style="padding:20px;" id="layerInsight"></div></div>
+        </div>
+        <div class="section-grid full" style="margin-top:12px;"><div class="card"><div class="card-header"><span class="card-title">포트폴리오 공통 발견 패턴</span></div><div style="padding:20px;" id="commonPatterns"></div></div></div>
+      </div>
+
+    <!-- ONTOLOGY VIEW -->
+      <div id="view-ontology" style="display:none;">
+        <div class="page-header">
+          <div class="page-title fade-up">워크 워크 워크 온톨로지 진행 현황 <span id="ontoCo" style="color:var(--teal)">PickPick</span></div>
+          <div class="page-desc fade-up">L1~L5 워크 온톨로지 레이어 매핑 · 암묵지 명시화 · 데이터 축적 · AX 로드맵 진행</div>
+        </div>
+
+        <!-- Company selector tabs -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;" id="ontoTabs"></div>
+
+        <!-- Row 1: Layer mapping + Tacit knowledge -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+          <!-- Layer radar -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">① 워크 워크 온톨로지 레이어 매핑 현황</span><span class="card-action" style="color:var(--muted2);font-size:10px;">L1 완전자동 → L5 인간전담</span></div>
+            <div style="padding:20px;display:flex;gap:20px;align-items:flex-start;">
+              <canvas id="layerRadar" width="180" height="180"></canvas>
+              <div style="flex:1;display:flex;flex-direction:column;gap:8px;" id="layerBars"></div>
+            </div>
+          </div>
+
+          <!-- Tacit knowledge verbalization -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">② 암묵지 명시화 진도</span><span class="card-action" style="color:var(--muted2);font-size:10px;">직무별 언어화 완료율</span></div>
+            <div style="padding:20px;" id="tacitBars"></div>
+          </div>
+        </div>
+
+        <!-- Row 2: Accumulation stats + Roadmap -->
+        <div style="display:grid;grid-template-columns:380px 1fr;gap:16px;">
+
+          <!-- Accumulation -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">③ 워크 워크 온톨로지 누적 데이터</span></div>
+            <div style="padding:20px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;" id="accumStats"></div>
+              <canvas id="accumChart" width="340" height="120"></canvas>
+              <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;">누적 워크 온톨로지 데이터 증가 추이</div>
+            </div>
+          </div>
+
+          <!-- Roadmap -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">④ AX 전환 로드맵 진행</span><span id="roadmapStatus" class="card-action"></span></div>
+            <div style="padding:20px;" id="roadmapView"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="cohortModal">
+  <div class="modal">
+    <div class="modal-title">기수 코드 생성</div>
+    <div class="modal-desc">교육 참가자들이 이 코드를 입력하면 해당 기수로 자동 분류됩니다. 일반 참여자는 입력하지 않아도 됩니다.</div>
+    <div class="modal-input-group"><div class="modal-label">기수명</div><input type="text" class="modal-input" placeholder="예: 2026 Spring Cohort" id="cohortName"></div>
+    <div class="modal-input-group"><div class="modal-label">자동 생성 코드</div><input type="text" class="modal-input" id="cohortCode" readonly style="font-family:'JetBrains Mono',monospace;color:var(--teal);"></div>
+    <div class="modal-footer"><button class="btn-primary" onclick="closeCohortModal()">코드 저장 및 복사</button><button class="btn-ghost" onclick="closeCohortModal()">닫기</button></div>
+  </div>
+</div>
+
+<script>
+const COMPANIES=[{id:1,name:'Flowdesk',type:'saas',typeLabel:'B2B SaaS',team:23,score:71,risk:'green',riskLabel:'안정',saving:'월 680만원',savingPct:22,axis:{biz:55,cost:70,ai:78,comp:60,exec:72},insight:'영업·마케팅 자동화 파이프라인이 이미 구축되어 있어 에이전트 전환 준비도가 높습니다. CS 직군 40% 즉시 위임 가능합니다.',action:'즉시 파일럿 가능',priority:null,replaceable:6,transform:{data:{score:82,delta:'+24p',desc:'CRM·세일즈 데이터 파이프라인 구축 완료'},decision:{score:74,delta:'+18p',desc:'의사결정 사이클 12일→4일 단축'},efficiency:{score:68,delta:'+12p',desc:'팀 규모 유지, 1인당 매출 1.8배'}}},{id:2,name:'MediLink AI',type:'ai',typeLabel:'AI·헬스케어',team:15,score:68,risk:'green',riskLabel:'안정',saving:'월 420만원',savingPct:18,axis:{biz:70,cost:55,ai:82,comp:65,exec:58},insight:'AI 네이티브 팀으로 기술 준비도는 최고 수준이나, 의사결정 구조 명시화가 부족합니다. 판단 레이어 정의가 우선입니다.',action:'워크 온톨로지 설계 필요',priority:null,replaceable:4,transform:{data:{score:76,delta:'+19p',desc:'의료 데이터 수집 체계 고도화 진행'},decision:{score:61,delta:'+8p',desc:'임상 판단 기준 명시화 작업 중'},efficiency:{score:72,delta:'+15p',desc:'에이전트 도입으로 분석 시간 60% 단축'}}},{id:3,name:'PickPick',type:'platform',typeLabel:'커머스 플랫폼',team:31,score:58,risk:'amber',riskLabel:'주의',saving:'월 1,240만원',savingPct:24,axis:{biz:65,cost:48,ai:50,comp:72,exec:55},insight:'운영·CS 인력이 전체의 55%를 차지하며 인건비 비중이 높습니다. 반복 업무 자동화로 즉각적 ROI가 기대됩니다.',action:'운영 자동화 시급',priority:'amber',priorityReason:'운영 인건비 과다, 경쟁사 AI 도입 가속화',replaceable:9,transform:{data:{score:44,delta:'+6p',desc:'운영 데이터 산발적 — 통합 파이프라인 미구축'},decision:{score:38,delta:'+3p',desc:'운영 이슈 대응 중심 — 선제 판단 구조 부재'},efficiency:{score:41,delta:'+5p',desc:'인력 대비 매출 정체 — 자동화 전환 시급'}}},{id:4,name:'Kasa Finance',type:'fintech',typeLabel:'핀테크',team:19,score:52,risk:'amber',riskLabel:'주의',saving:'월 580만원',savingPct:16,axis:{biz:72,cost:42,ai:48,comp:68,exec:60},insight:'컴플라이언스 요구사항으로 AI 도입이 제한적이나, 데이터 분석·리포팅 영역은 즉시 에이전트 위임 가능합니다.',action:'데이터 파이프라인 우선',priority:'amber',priorityReason:'데이터 인프라 미비, 리포팅 자동화 시급',replaceable:5,transform:{data:{score:55,delta:'+9p',desc:'금융 데이터 정합성 확보 중 — 규제 대응 병행'},decision:{score:48,delta:'+6p',desc:'리스크 판단 기준 정의 진행 중'},efficiency:{score:52,delta:'+8p',desc:'리포팅 자동화로 분석팀 20% 효율화'}}},{id:5,name:'Spaceful',type:'platform',typeLabel:'프롭테크',team:12,score:48,risk:'amber',riskLabel:'주의',saving:'월 310만원',savingPct:14,axis:{biz:55,cost:52,ai:38,comp:45,exec:50},insight:'소규모 팀임에도 L1 태스크 비중이 높아 1인당 판단 리소스가 부족합니다. 작은 변화로 큰 효과를 낼 수 있는 구조입니다.',action:'워크플로우 재설계',priority:'amber',priorityReason:'소규모 팀 과부하, 반복 업무 비중 70% 이상',replaceable:3,transform:{data:{score:36,delta:'+4p',desc:'부동산 데이터 수집은 있으나 분석 체계 미비'},decision:{score:33,delta:'+2p',desc:'대표 단독 판단 비중 85% — 구조화 필요'},efficiency:{score:40,delta:'+5p',desc:'12명 팀 과부하 — 핵심 판단 집중 구조 전환 필요'}}},{id:6,name:'Nurilab',type:'saas',typeLabel:'EdTech SaaS',team:27,score:44,risk:'red',riskLabel:'위험',saving:'월 920만원',savingPct:21,axis:{biz:62,cost:38,ai:32,comp:55,exec:42},insight:'경쟁사 2개사가 이미 AI 커리큘럼 자동화를 도입했습니다. 콘텐츠 제작 파이프라인 전환 없이는 6개월 내 경쟁력 약화가 우려됩니다.',action:'⚠ 즉각 개입 필요',priority:'red',priorityReason:'경쟁사 AI 도입 완료, 콘텐츠 생산성 격차 확대 중',replaceable:7,transform:{data:{score:28,delta:'+2p',desc:'학습 데이터 단절 — 콘텐츠·학습자 데이터 미연동'},decision:{score:31,delta:'+3p',desc:'콘텐츠 기획 판단 기준 없음 — 개인 역량 의존'},efficiency:{score:29,delta:'+2p',desc:'27명이 수동 제작 — 경쟁사 대비 생산성 3배 열위'}}},{id:7,name:'하이퍼로컬',type:'platform',typeLabel:'로컬 플랫폼',team:18,score:41,risk:'red',riskLabel:'위험',saving:'월 670만원',savingPct:20,axis:{biz:48,cost:35,ai:28,comp:60,exec:38},insight:'로컬 데이터 수집 인력이 전체 60%를 차지합니다. 크롤링·데이터 파이프라인 자동화로 팀 구조 전면 재편이 가능합니다.',action:'⚠ 인력 구조 재편 필요',priority:'red',priorityReason:'데이터 수집 인력 과다, 자동화 전환 즉시 가능',replaceable:8,transform:{data:{score:32,delta:'+3p',desc:'수동 수집 중심 — 자동화 전환 시 즉시 데이터 자산화 가능'},decision:{score:27,delta:'+2p',desc:'현장 판단 의존도 높음 — 기준 정의 시급'},efficiency:{score:24,delta:'+1p',desc:'18명 중 11명이 수집 담당 — 구조 전환 즉시 가능'}}},{id:8,name:'Cloudit',type:'saas',typeLabel:'클라우드 SaaS',team:34,score:37,risk:'red',riskLabel:'위험',saving:'월 1,580만원',savingPct:26,axis:{biz:78,cost:30,ai:35,comp:80,exec:32},insight:'비즈니스 리스크는 가장 높은 수준입니다. 글로벌 클라우드 기업들이 동일 기능을 AI로 묶어 제공하기 시작했습니다. 제품 포지션 재정의가 시급합니다.',action:'⚠ 전략 전환 시급',priority:'red',priorityReason:'경쟁사 AI 번들링 공세, 비즈니스 모델 위협',replaceable:11,transform:{data:{score:42,delta:'+5p',desc:'인프라 데이터는 풍부하나 제품 인사이트 미흡'},decision:{score:30,delta:'+2p',desc:'운영 대응 중심 — 전략적 피벗 판단 구조 없음'},efficiency:{score:26,delta:'+1p',desc:'34명 고비용 구조 — 제품 전환 없이는 런웨이 위기'}}},{id:9,name:'Connecto',type:'platform',typeLabel:'HR 플랫폼',team:14,score:63,risk:'green',riskLabel:'안정',saving:'월 380만원',savingPct:15,axis:{biz:50,cost:60,ai:65,comp:42,exec:70},insight:'대표의 AI 학습 의지가 높고 팀 수용성이 좋습니다. 채용 프로세스 에이전트화로 가장 빠른 ROI를 낼 수 있는 구조입니다.',action:'채용 파이프라인 자동화',priority:null,replaceable:3,transform:{data:{score:70,delta:'+16p',desc:'채용·HR 데이터 체계화 완료 — 분석 기반 의사결정 정착'},decision:{score:68,delta:'+14p',desc:'HR 판단 기준 명시화 — 에이전트 협업 구조 안착'},efficiency:{score:65,delta:'+13p',desc:'14명으로 30명 규모 채용 처리 — 업계 최고 수준'}}},{id:10,name:'Grainbox',type:'platform',typeLabel:'애그테크',team:9,score:46,risk:'amber',riskLabel:'주의',saving:'월 240만원',savingPct:17,axis:{biz:45,cost:55,ai:40,comp:38,exec:55},insight:'소규모 팀의 강점을 살려 에이전트 도입 시 빠른 전환이 가능합니다. 데이터 수집·분석 자동화가 핵심 레버입니다.',action:'데이터 자동화 파일럿',priority:null,replaceable:2,transform:{data:{score:41,delta:'+7p',desc:'농업 센서 데이터 수집 시작 — 분석 체계 구축 중'},decision:{score:44,delta:'+8p',desc:'작황 판단 기준 워크 온톨로지화 진행 중'},efficiency:{score:49,delta:'+9p',desc:'9명 팀 효율 극대화 — 에이전트 도입 시 3배 성장 가능'}}}];
+
+let selectedId=null;
+
+function renderTable(){
+  const sorted=[...COMPANIES].sort((a,b)=>b.score-a.score);
+  document.getElementById('companyTableBody').innerHTML=sorted.map((co,i)=>{
+    const bc=co.risk==='red'?'var(--red)':co.risk==='amber'?'var(--amber)':'var(--teal)';
+    return`<tr class="co-row${selectedId===co.id?' selected':''}" onclick="selectCompany(${co.id})">
+      <td class="co-rank">${String(i+1).padStart(2,'0')}</td>
+      <td><div class="co-info"><span class="co-name">${co.name}</span><div class="co-meta"><span class="co-tag ${co.type}">${co.typeLabel}</span></div></div></td>
+      <td><div class="score-cell"><div class="score-bar-outer"><div class="score-bar-inner" style="width:${co.score}%;background:${bc};"></div></div><span class="score-num" style="color:${bc}">${co.score}</span></div></td>
+      <td><span class="risk-pill risk-${co.risk}">${co.riskLabel}</span></td>
+      <td class="saving-cell">${co.saving}</td>
+      <td class="team-cell">${co.team}명</td>
+    </tr>`;
+  }).join('');
+}
+
+function selectCompany(id){
+  selectedId=id;renderTable();
+  const co=COMPANIES.find(c=>c.id===id);
+  const bc=co.risk==='red'?'var(--red)':co.risk==='amber'?'var(--amber)':'var(--teal)';
+  const rp=`${co.score*3.6}deg`;
+  const axD=[{l:'비즈니스 리스크',v:co.axis.biz,c:'var(--red)'},{l:'비용 효율화 여지',v:co.axis.cost,c:'var(--amber)'},{l:'AI 준비도',v:co.axis.ai,c:'var(--blue2)'},{l:'경쟁 압박도',v:co.axis.comp,c:'var(--purple)'},{l:'실행 가능성',v:co.axis.exec,c:'var(--teal)'}];
+  const transformMeta=[
+    {key:'data',label:'데이터 드리븐',icon:'◈',color:'var(--blue2)'},
+    {key:'decision',label:'판단 중심화',icon:'◎',color:'var(--teal)'},
+    {key:'efficiency',label:'조직 슬림화',icon:'◉',color:'var(--purple)'}
+  ];
+  document.getElementById('detailContent').innerHTML=`
+    <div class="detail-header"><div class="detail-company">${co.name}</div><div class="detail-meta"><span class="co-tag ${co.type}">${co.typeLabel}</span><span style="color:var(--muted)">팀 ${co.team}명</span><span class="risk-pill risk-${co.risk}">${co.riskLabel}</span></div></div>
+    <div class="score-ring-wrap">
+      <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(${bc} ${rp},var(--surface2) 0);position:relative;">
+        <div class="ring-inner"><span class="ring-score" style="color:${bc}">${co.score}</span><span class="ring-label">AX SCORE</span></div>
+      </div>
+    </div>
+    <div class="axis-section"><div class="axis-title">5축 분석</div>${axD.map(a=>`<div class="axis-row"><span class="axis-lbl">${a.l}</span><div class="axis-bar-o"><div class="axis-bar-i" style="width:${a.v}%;background:${a.c};"></div></div><span class="axis-val">${a.v}</span></div>`).join('')}</div>
+    <div class="insight-box"><div class="insight-label">✦ AI 인사이트</div><div class="insight-text">${co.insight}</div></div>
+    <div style="padding:0 16px 8px;display:flex;gap:8px;">
+      <div style="background:rgba(0,212,160,.08);border:1px solid rgba(0,212,160,.2);border-radius:7px;padding:8px 12px;flex:1;text-align:center;"><div style="font-size:16px;font-weight:800;color:var(--teal);">${co.replaceable}명</div><div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;">즉시 전환</div></div>
+      <div style="background:rgba(79,124,255,.08);border:1px solid rgba(79,124,255,.15);border-radius:7px;padding:8px 12px;flex:1;text-align:center;"><div style="font-size:13px;font-weight:800;color:var(--blue2);">${co.saving}</div><div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;">절감 추정</div></div>
+    </div>
+    <div class="action-row"><button class="btn-primary">상세 리포트 보기</button><button class="btn-ghost">공유</button></div>`;
+}
+
+function renderDistChart(){
+  const bands=[{l:'0-30',max:30,c:'var(--red)'},{l:'30-50',max:50,c:'#ff8a6d'},{l:'50-70',max:70,c:'var(--amber)'},{l:'70-90',max:90,c:'#7adfa0'},{l:'90+',max:101,c:'var(--teal)'}];
+  const counts=bands.map((b,i)=>({...b,count:COMPANIES.filter(c=>c.score<b.max&&c.score>=(i===0?0:bands[i-1].max)).length}));
+  const mx=Math.max(...counts.map(c=>c.count));
+  document.getElementById('distBars').innerHTML=counts.map(b=>`<div class="dist-bar-wrap"><div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">${b.count}</div><div class="dist-bar" style="height:${b.count/mx*60}px;background:${b.c};"></div><div class="dist-lbl">${b.l}</div></div>`).join('');
+}
+
+function renderPriority(){
+  const reds=COMPANIES.filter(c=>c.priority==='red');
+  const ambers=COMPANIES.filter(c=>c.priority==='amber');
+  document.getElementById('priorityListRed').innerHTML=reds.map((co,i)=>`<div class="priority-item" onclick="selectAndShowPortfolio(${co.id})"><div class="priority-num">${i+1}</div><div class="priority-info"><div class="priority-name">${co.name} <span style="font-size:11px;color:var(--muted);">(${co.typeLabel}, ${co.team}명)</span></div><div class="priority-reason">${co.priorityReason}</div></div><div class="priority-action">AX ${co.score}점 →</div></div>`).join('');
+  document.getElementById('priorityListAmber').innerHTML=ambers.map((co,i)=>`<div class="priority-item" onclick="selectAndShowPortfolio(${co.id})"><div class="priority-num amber">${i+1}</div><div class="priority-info"><div class="priority-name">${co.name} <span style="font-size:11px;color:var(--muted);">(${co.typeLabel}, ${co.team}명)</span></div><div class="priority-reason">${co.priorityReason}</div></div><div class="priority-action" style="color:var(--amber)">AX ${co.score}점 →</div></div>`).join('');
+}
+
+function renderInsight(){
+  const divData=[{name:'운영·어드민',pct:72,color:'var(--teal)'},{name:'CS·고객응대',pct:65,color:'var(--blue2)'},{name:'마케팅·콘텐츠',pct:58,color:'var(--purple)'},{name:'데이터·분석',pct:51,color:'var(--amber)'},{name:'세일즈',pct:44,color:'#7adfa0'},{name:'개발·엔지니어',pct:32,color:'var(--muted2)'}];
+  document.getElementById('divisionChart').innerHTML=divData.map(d=>`<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:12px;color:var(--muted2);">${d.name}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${d.color};">${d.pct}%</span></div><div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:${d.pct}%;height:100%;background:${d.color};border-radius:3px;"></div></div></div>`).join('');
+  document.getElementById('layerInsight').innerHTML=`<div style="display:flex;flex-direction:column;gap:10px;">${[{l:'L1 태스크',p:68,d:'에이전트 위임 가능',c:'var(--blue)'},{l:'L2 데이터 흐름',p:55,d:'설계 후 위임 가능',c:'var(--purple)'},{l:'L3 판단 로직',p:38,d:'조건부 협업',c:'var(--amber)'},{l:'L4 예외 처리',p:12,d:'인간 전담',c:'var(--teal)'},{l:'L5 관계·맥락',p:8,d:'인간 전담',c:'var(--teal)'}].map(l=>`<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:${l.c};">${l.l}</span><span style="font-size:10px;color:var(--muted);">${l.d}</span></div><div style="height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:${l.p}%;height:100%;background:${l.c};border-radius:3px;"></div></div></div>`).join('')}</div>`;
+  document.getElementById('commonPatterns').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">${[{icon:'⚠',title:'반복 업무 과부하',desc:'포트폴리오 10개사 중 8개사에서 L1 태스크에 전체 인력의 60% 이상 소진',color:'var(--red)'},{icon:'💡',title:'CS 자동화 가능성',desc:'고객 응대 직군은 평균 65%가 에이전트 위임 가능. 가장 빠른 ROI 영역',color:'var(--amber)'},{icon:'🎯',title:'데이터 인프라 부재',desc:'7개사에서 구조화된 데이터 파이프라인 부재로 AI 도입 병목 발생',color:'var(--blue2)'},{icon:'🚀',title:'대표 학습 의지가 핵심',desc:'AX 준비도 60점 이상 기업 공통점: 대표가 직접 AI 도구를 사용 중',color:'var(--teal)'}].map(p=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;"><div style="font-size:20px;margin-bottom:8px;">${p.icon}</div><div style="font-size:13px;font-weight:700;color:${p.color};margin-bottom:6px;">${p.title}</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">${p.desc}</div></div>`).join('')}</div>`;
+}
+
+function showView(view){
+  ['portfolio','priority','insight'].forEach(v=>document.getElementById(`view-${v}`).style.display=v===view?'block':'none');
+  document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','cohort','dl','invite'];el.classList.toggle('active',vs[i]===view);});
+  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 워크 온톨로지 인사이트'};
+  document.getElementById('topbarTitle').textContent=titles[view]||'';
+}
+
+function selectAndShowPortfolio(id){showView('portfolio');setTimeout(()=>selectCompany(id),50);}
+
+function openCohortModal(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const code=Array.from({length:8},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  document.getElementById('cohortCode').value=code;
+  document.getElementById('cohortModal').classList.add('open');
+}
+function closeCohortModal(){
+  navigator.clipboard?.writeText(document.getElementById('cohortCode').value).catch(()=>{});
+  document.getElementById('cohortModal').classList.remove('open');
+}
+
+const now=new Date();
+document.getElementById('todayDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+renderTable();renderDistChart();renderPriority();renderInsight();
+
+// ── ONTOLOGY DATA ──
+const ONTO_DATA = {
+  3: { // PickPick
+    name: 'PickPick', type: '커머스 플랫폼',
+    layers: { L1:88, L2:72, L3:51, L4:28, L5:18 },
+    tacit: [
+      {role:'운영·CS', pct:82, mapped:34, total:42, color:'var(--teal)'},
+      {role:'마케팅', pct:65, mapped:19, total:29, color:'var(--blue2)'},
+      {role:'물류·배송', pct:71, mapped:22, total:31, color:'var(--purple)'},
+      {role:'데이터분석', pct:44, mapped:11, total:25, color:'var(--amber)'},
+      {role:'세일즈', pct:38, mapped:9, total:24, color:'#7adfa0'},
+    ],
+    accum: {
+      tasks: 183, judgments: 47, exceptions: 31, patterns: 12,
+      history: [12,28,45,68,95,128,158,183]
+    },
+    roadmap: [
+      {phase:'Phase 1', title:'태스크 워크 온톨로지 분해', desc:'전 직무 L1·L2 매핑 완료. 183개 태스크 목록화.', status:'done', date:'2026.01'},
+      {phase:'Phase 2', title:'판단 로직 명시화', desc:'L3 기준 정의 중. CS·운영 직군 70% 완료.', status:'active', date:'2026.02~03'},
+      {phase:'Phase 3', title:'에이전트 위임 설계', desc:'L1 자동화 파이프라인 설계 및 파일럿 준비.', status:'upcoming', date:'2026.04~05'},
+      {phase:'Phase 4', title:'팀 구조 재편', desc:'워크 온톨로지 기반 역할 재정의 및 새 JD 발행.', status:'upcoming', date:'2026.06~'},
+    ]
+  },
+  6: { // Nurilab
+    name: 'Nurilab', type: 'EdTech SaaS',
+    layers: { L1:60, L2:45, L3:30, L4:15, L5:10 },
+    tacit: [
+      {role:'콘텐츠제작', pct:52, mapped:21, total:40, color:'var(--teal)'},
+      {role:'교육운영', pct:44, mapped:14, total:32, color:'var(--blue2)'},
+      {role:'마케팅', pct:38, mapped:10, total:27, color:'var(--purple)'},
+      {role:'CS', pct:61, mapped:17, total:28, color:'var(--amber)'},
+    ],
+    accum: {
+      tasks: 112, judgments: 28, exceptions: 19, patterns: 7,
+      history: [8,18,31,52,78,98,108,112]
+    },
+    roadmap: [
+      {phase:'Phase 1', title:'태스크 워크 온톨로지 분해', desc:'콘텐츠·교육 직군 L1 매핑 진행 중. 112개 완료.', status:'active', date:'2026.02~'},
+      {phase:'Phase 2', title:'판단 로직 명시화', desc:'L3 기준 정의 예정.', status:'upcoming', date:'2026.04~'},
+      {phase:'Phase 3', title:'에이전트 위임 설계', desc:'콘텐츠 자동 생성 파이프라인 파일럿.', status:'upcoming', date:'2026.06~'},
+      {phase:'Phase 4', title:'팀 구조 재편', desc:'역할 재정의 및 새 JD 발행.', status:'upcoming', date:'2026.08~'},
+    ]
+  },
+  1: { // Flowdesk
+    name: 'Flowdesk', type: 'B2B SaaS',
+    layers: { L1:95, L2:85, L3:68, L4:42, L5:30 },
+    tacit: [
+      {role:'세일즈', pct:88, mapped:35, total:40, color:'var(--teal)'},
+      {role:'CS', pct:91, mapped:29, total:32, color:'var(--blue2)'},
+      {role:'마케팅', pct:76, mapped:22, total:29, color:'var(--purple)'},
+      {role:'운영', pct:82, mapped:23, total:28, color:'var(--amber)'},
+    ],
+    accum: {
+      tasks: 218, judgments: 74, exceptions: 48, patterns: 19,
+      history: [22,48,82,118,152,184,206,218]
+    },
+    roadmap: [
+      {phase:'Phase 1', title:'태스크 워크 온톨로지 분해', desc:'전 직무 L1·L2 매핑 완료.', status:'done', date:'2025.11'},
+      {phase:'Phase 2', title:'판단 로직 명시화', desc:'L3 기준 정의 완료. L4 예외 처리 패턴 수집 중.', status:'done', date:'2026.01'},
+      {phase:'Phase 3', title:'에이전트 위임 설계', desc:'CS 자동화 파일럿 운영 중. 전환율 38% 달성.', status:'active', date:'2026.02~'},
+      {phase:'Phase 4', title:'팀 구조 재편', desc:'새 역할 정의 완료 예정.', status:'upcoming', date:'2026.05~'},
+    ]
+  }
+};
+
+let currentOntoId = 3;
+
+function renderOntology(id) {
+  currentOntoId = id;
+  const d = ONTO_DATA[id];
+  if (!d) return;
+  document.getElementById('ontoCo').textContent = d.name;
+
+  // Tabs
+  const ids = Object.keys(ONTO_DATA);
+  document.getElementById('ontoTabs').innerHTML = ids.map(tid => {
+    const co = COMPANIES.find(c => c.id == tid);
+    const active = tid == id;
+    return `<div onclick="renderOntology(${tid})" style="padding:8px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:${active?700:400};border:1px solid ${active?'rgba(0,212,160,.4)':'var(--border)'};background:${active?'rgba(0,212,160,.08)':'var(--surface)'};color:${active?'var(--teal)':'var(--muted2)'};transition:all .15s;">${co?.name || tid}</div>`;
+  }).join('');
+
+  // ① Layer bars
+  const layerMeta = {
+    L1:{label:'L1 태스크',desc:'에이전트 자동 실행',color:'#4f7cff'},
+    L2:{label:'L2 데이터 흐름',desc:'구조화 후 위임',color:'#9b7cff'},
+    L3:{label:'L3 판단 로직',desc:'조건부 협업',color:'#f5a623'},
+    L4:{label:'L4 예외 처리',desc:'인간 전담',color:'#00d4a0'},
+    L5:{label:'L5 관계·맥락',desc:'인간 전담',color:'#00ff9d'},
+  };
+  document.getElementById('layerBars').innerHTML = Object.entries(d.layers).map(([k,v]) => {
+    const m = layerMeta[k];
+    return `<div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <div>
+          <span style="font-size:11px;font-weight:700;color:${m.color};">${m.label}</span>
+          <span style="font-size:9px;color:var(--muted);margin-left:6px;">${m.desc}</span>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${m.color};">${v}%</span>
+      </div>
+      <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+        <div style="width:${v}%;height:100%;background:${m.color};border-radius:3px;transition:width 1s;"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Draw radar
+  drawRadar(d.layers);
+
+  // ② Tacit bars
+  document.getElementById('tacitBars').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+      <span style="font-size:11px;color:var(--muted2);">직무</span>
+      <div style="display:flex;gap:16px;">
+        <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">명시화</span>
+        <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">완료율</span>
+      </div>
+    </div>
+    ${d.tacit.map(t => `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-size:12px;font-weight:600;color:var(--white);">${t.role}</span>
+        <div style="display:flex;gap:16px;align-items:center;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${t.mapped}/${t.total}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:${t.color};">${t.pct}%</span>
+        </div>
+      </div>
+      <div style="height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;position:relative;">
+        <div style="width:${t.pct}%;height:100%;background:${t.color};border-radius:4px;"></div>
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,rgba(255,255,255,.06) 0%,transparent 100%);"></div>
+      </div>
+    </div>`).join('')}`;
+
+  // ③ Accumulation stats
+  const a = d.accum;
+  document.getElementById('accumStats').innerHTML = [
+    {label:'수집 태스크',val:a.tasks,unit:'개',color:'var(--blue2)'},
+    {label:'판단 패턴',val:a.judgments,unit:'개',color:'var(--purple)'},
+    {label:'예외 케이스',val:a.exceptions,unit:'개',color:'var(--amber)'},
+    {label:'워크 온톨로지 패턴',val:a.patterns,unit:'개',color:'var(--teal)'},
+  ].map(s => `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:22px;font-weight:800;color:${s.color};line-height:1;">${s.val}<span style="font-size:12px">${s.unit}</span></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;">${s.label}</div>
+    </div>`).join('');
+  drawAccumChart(a.history);
+
+  // ④ Roadmap
+  const statusStyles = {
+    done:     {bg:'rgba(0,212,160,.08)',border:'rgba(0,212,160,.3)',dot:'var(--teal)',label:'완료',lc:'var(--teal)'},
+    active:   {bg:'rgba(79,124,255,.08)',border:'rgba(79,124,255,.3)',dot:'var(--blue)',label:'진행 중',lc:'var(--blue2)'},
+    upcoming: {bg:'rgba(255,255,255,.02)',border:'var(--border)',dot:'var(--muted)',label:'예정',lc:'var(--muted)'},
+  };
+  const activeCount = d.roadmap.filter(r=>r.status==='done').length;
+  document.getElementById('roadmapStatus').textContent = `Phase ${activeCount}/${d.roadmap.length} 완료`;
+  document.getElementById('roadmapView').innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:20px;">
+      ${d.roadmap.map((r,i) => `
+        <div style="flex:1;height:4px;border-radius:2px;background:${r.status==='done'?'var(--teal)':r.status==='active'?'var(--blue)':'var(--surface2)'};"></div>
+        ${i<d.roadmap.length-1?'':''}
+      `).join('')}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+    ${d.roadmap.map(r => {
+      const s = statusStyles[r.status];
+      return `<div style="background:${s.bg};border:1px solid ${s.border};border-radius:10px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="width:8px;height:8px;border-radius:50%;background:${s.dot};flex-shrink:0;margin-top:5px;${r.status==='active'?'box-shadow:0 0 8px '+s.dot+';':''}"></div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <div>
+              <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-right:8px;">${r.phase}</span>
+              <span style="font-size:13px;font-weight:700;color:var(--white);">${r.title}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">${r.date}</span>
+              <span style="font-size:10px;font-weight:700;color:${s.lc};padding:2px 8px;border-radius:4px;border:1px solid ${s.border};">${s.label}</span>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted2);line-height:1.6;">${r.desc}</div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+function drawRadar(layers) {
+  const canvas = document.getElementById('layerRadar');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = 90, cy = 90, r = 70;
+  const keys = ['L1','L2','L3','L4','L5'];
+  const vals = keys.map(k => layers[k] / 100);
+  const colors = ['#4f7cff','#9b7cff','#f5a623','#00d4a0','#00ff9d'];
+  const angle = (i) => (Math.PI * 2 * i / 5) - Math.PI / 2;
+
+  ctx.clearRect(0, 0, 180, 180);
+
+  // Grid circles
+  [0.25,0.5,0.75,1].forEach(f => {
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a = angle(i);
+      i === 0 ? ctx.moveTo(cx + r*f*Math.cos(a), cy + r*f*Math.sin(a))
+              : ctx.lineTo(cx + r*f*Math.cos(a), cy + r*f*Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Axes
+  keys.forEach((_, i) => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i)));
+    ctx.strokeStyle = 'rgba(255,255,255,.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Fill
+  ctx.beginPath();
+  vals.forEach((v, i) => {
+    const a = angle(i);
+    const x = cx + r * v * Math.cos(a);
+    const y = cy + r * v * Math.sin(a);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(79,124,255,.12)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(79,124,255,.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Dots
+  vals.forEach((v, i) => {
+    const a = angle(i);
+    const x = cx + r * v * Math.cos(a);
+    const y = cy + r * v * Math.sin(a);
+    ctx.beginPath();
+    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+  });
+
+  // Labels
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  keys.forEach((k, i) => {
+    const a = angle(i);
+    const x = cx + (r + 14) * Math.cos(a);
+    const y = cy + (r + 14) * Math.sin(a);
+    ctx.fillStyle = colors[i];
+    ctx.fillText(k, x, y + 4);
+  });
+}
+
+function drawAccumChart(history) {
+  const canvas = document.getElementById('accumChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = 340, h = 120, pad = 20;
+  ctx.clearRect(0, 0, w, h);
+  const max = Math.max(...history);
+  const pts = history.map((v, i) => ({
+    x: pad + (i / (history.length - 1)) * (w - pad * 2),
+    y: h - pad - (v / max) * (h - pad * 2)
+  }));
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, 'rgba(0,212,160,.2)');
+  grad.addColorStop(1, 'rgba(0,212,160,0)');
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, h - pad);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, h - pad);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = 'var(--teal, #00d4a0)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dots
+  pts.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#00d4a0';
+    ctx.fill();
+  });
+}
+
+function showView(view){
+  ['portfolio','priority','insight','ontology'].forEach(v=>document.getElementById(`view-${v}`).style.display=v===view?'block':'none');
+  document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','ontology'];el.classList.toggle('active',vs[i]===view);});
+  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 워크 온톨로지 인사이트',ontology:'워크 워크 워크 온톨로지 진행 현황'};
+  document.getElementById('topbarTitle').textContent=titles[view]||'';
+  if(view==='ontology') setTimeout(()=>renderOntology(currentOntoId),50);
+}
+</script>
+</body>
+</html>
