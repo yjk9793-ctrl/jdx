@@ -228,10 +228,10 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
 
       <!-- INSIGHT VIEW -->
       <div id="view-insight" style="display:none;">
-        <div class="page-header"><div class="page-title fade-up">워크 워크 온톨로지 인사이트</div><div class="page-desc fade-up">포트폴리오 전체 워크 온톨로지 데이터 기반 패턴 분석</div></div>
+        <div class="page-header"><div class="page-title fade-up">워크 온톨로지 인사이트</div><div class="page-desc fade-up">포트폴리오 전체 워크 온톨로지 데이터 기반 패턴 분석</div></div>
         <div class="section-grid">
           <div class="card"><div class="card-header"><span class="card-title">직군별 에이전트 위임 가능 비율</span></div><div class="dist-section" id="divisionChart" style="padding:20px;"></div></div>
-          <div class="card"><div class="card-header"><span class="card-title">워크 워크 온톨로지 레이어 분포</span></div><div style="padding:20px;" id="layerInsight"></div></div>
+          <div class="card"><div class="card-header"><span class="card-title">워크 온톨로지 레이어 분포</span></div><div style="padding:20px;" id="layerInsight"></div></div>
         </div>
         <div class="section-grid full" style="margin-top:12px;"><div class="card"><div class="card-header"><span class="card-title">포트폴리오 공통 발견 패턴</span></div><div style="padding:20px;" id="commonPatterns"></div></div></div>
       </div>
@@ -239,7 +239,7 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
     <!-- ONTOLOGY VIEW -->
       <div id="view-ontology" style="display:none;">
         <div class="page-header">
-          <div class="page-title fade-up">워크 워크 워크 온톨로지 진행 현황 <span id="ontoCo" style="color:var(--teal)">PickPick</span></div>
+          <div class="page-title fade-up">워크 온톨로지 진행 현황 <span id="ontoCo" style="color:var(--teal)">PickPick</span></div>
           <div class="page-desc fade-up">L1~L5 워크 온톨로지 레이어 매핑 · 암묵지 명시화 · 데이터 축적 · AX 로드맵 진행</div>
         </div>
 
@@ -251,7 +251,7 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
 
           <!-- Layer radar -->
           <div class="card">
-            <div class="card-header"><span class="card-title">① 워크 워크 온톨로지 레이어 매핑 현황</span><span class="card-action" style="color:var(--muted2);font-size:10px;">L1 완전자동 → L5 인간전담</span></div>
+            <div class="card-header"><span class="card-title">① 워크 온톨로지 레이어 매핑 현황</span><span class="card-action" style="color:var(--muted2);font-size:10px;">L1 완전자동 → L5 인간전담</span></div>
             <div style="padding:20px;display:flex;gap:20px;align-items:flex-start;">
               <canvas id="layerRadar" width="180" height="180"></canvas>
               <div style="flex:1;display:flex;flex-direction:column;gap:8px;" id="layerBars"></div>
@@ -270,7 +270,7 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
 
           <!-- Accumulation -->
           <div class="card">
-            <div class="card-header"><span class="card-title">③ 워크 워크 온톨로지 누적 데이터</span></div>
+            <div class="card-header"><span class="card-title">③ 워크 온톨로지 누적 데이터</span></div>
             <div style="padding:20px;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;" id="accumStats"></div>
               <canvas id="accumChart" width="340" height="120"></canvas>
@@ -373,7 +373,7 @@ function renderInsight(){
 function showView(view){
   ['portfolio','priority','insight'].forEach(v=>document.getElementById(`view-${v}`).style.display=v===view?'block':'none');
   document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','cohort','dl','invite'];el.classList.toggle('active',vs[i]===view);});
-  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 워크 온톨로지 인사이트'};
+  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 온톨로지 인사이트'};
   document.getElementById('topbarTitle').textContent=titles[view]||'';
 }
 
@@ -695,7 +695,7 @@ function drawAccumChart(history) {
 function showView(view){
   ['portfolio','priority','insight','ontology'].forEach(v=>document.getElementById(`view-${v}`).style.display=v===view?'block':'none');
   document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','ontology'];el.classList.toggle('active',vs[i]===view);});
-  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 워크 온톨로지 인사이트',ontology:'워크 워크 워크 온톨로지 진행 현황'};
+  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 온톨로지 인사이트',ontology:'워크 온톨로지 진행 현황'};
   document.getElementById('topbarTitle').textContent=titles[view]||'';
   if(view==='ontology') setTimeout(()=>renderOntology(currentOntoId),50);
 }
