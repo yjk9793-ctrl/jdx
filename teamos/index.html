@@ -1122,25 +1122,210 @@ function renderResult() {
     </div>
   </div>
 
+  <!-- ACTION CARDS -->
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+
+    <!-- 이메일로 받기 -->
+    <div style="background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(74,124,255,.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'" onclick="toggleTeamEmailForm()">
+      <div style="width:40px;height:40px;border-radius:9px;background:rgba(74,124,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✉</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:2px;">진단 결과 이메일로 받기</div>
+        <div style="font-size:12px;color:var(--muted2);font-weight:300;">AX 전환 리포트와 실행 체크리스트를 발송해드립니다</div>
+      </div>
+      <div style="color:var(--muted);font-size:16px;">→</div>
+    </div>
+    <div id="teamEmailForm" style="display:none;background:var(--surface);border:1px solid rgba(74,124,255,.2);border-radius:10px;padding:16px 20px;">
+      <div style="font-size:12px;color:var(--muted2);margin-bottom:8px;">발송할 이메일 주소</div>
+      <div style="display:flex;gap:8px;">
+        <input type="email" id="teamEmailInput" class="fi" placeholder="${state.reg.email||'이메일 입력'}" value="${state.reg.email||''}" style="flex:1;">
+        <button onclick="sendTeamReport()" style="padding:11px 20px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;">발송</button>
+      </div>
+    </div>
+
+    <!-- 컨설팅 문의 -->
+    <div style="background:rgba(0,201,167,.05);border:1px solid rgba(0,201,167,.2);border-radius:10px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(0,201,167,.4)'" onmouseout="this.style.borderColor='rgba(0,201,167,.2)'" onclick="openConsulting()">
+      <div style="width:40px;height:40px;border-radius:9px;background:rgba(0,201,167,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💬</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:2px;">컨설팅 · 상담 문의하기</div>
+        <div style="font-size:12px;color:var(--muted2);font-weight:300;">Deeploy와 직접 AX 전환을 설계합니다 · 초기 상담 무료</div>
+      </div>
+      <div style="color:var(--teal);font-size:16px;">→</div>
+    </div>
+
+    <!-- 개인 진단으로 -->
+    <div style="background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(155,124,255,.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'" onclick="window.open('https://www.jdxwork.com','_blank')">
+      <div style="width:40px;height:40px;border-radius:9px;background:rgba(155,124,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">👤</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:2px;">개인 직무 진단 받기</div>
+        <div style="font-size:12px;color:var(--muted2);font-weight:300;">내 직무에서 에이전트가 할 수 없는 것을 찾아드립니다 · 10분 무료</div>
+      </div>
+      <div style="color:var(--muted);font-size:16px;">→</div>
+    </div>
+
+  </div>
+
   <div style="height:40px;"></div>
-  `;
-}
+  `;}
 
 // ══════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════
-function openConsulting() {
-  const co = state.reg.company||'';
-  const nm = state.reg.name||'';
+function toggleTeamEmailForm() {
+  const f = document.getElementById('teamEmailForm');
+  if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function sendTeamReport() {
+  const email = document.getElementById('teamEmailInput')?.value?.trim();
+  if (!email || !email.includes('@')) { showToast('올바른 이메일을 입력해주세요.'); return; }
+  const btn = event.target;
+  btn.textContent = '발송 중...'; btn.disabled = true;
+  const r = state.result;
   const hc = Object.values(state.divisions).reduce((s,d)=>s+d.count,0);
-  window.location.href = `mailto:yjk9793@gmail.com?subject=Team AX 컨설팅 문의&body=회사명: ${co}%0A대표자: ${nm}%0A팀 규모: ${hc}명`;
+  const estSalary = Object.entries(state.divisions).reduce((s,[k,d])=>s+d.count*(AVG_SALARY[k]||400),0);
+
+  // 진단 결과 상세 데이터 구성
+  const roadmapItems = (r?.roadmap||[]).map(i=>({task:i.title, why:i.desc, hours_saved:0, timeline:i.phase}));
+  const keepItems = (r?.keep_roles||[]).map(k=>({task:k.role, why:k.reason, judgment_type:'인간 전담'}));
+
+  try {
+    const res = await fetch('https://www.jdxwork.com/api/sendmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: email,
+        name: state.reg.name || '대표님',
+        company: state.reg.company || '',
+        job: `팀 AX 진단 (${hc}명 / ${state.reg.industry||''}업종)`,
+        score: r?.ax_score || 0,
+        label: r?.risk_label || '주의 필요',
+        quickWins: roadmapItems.slice(0,3),
+        humanCore: keepItems.slice(0,2),
+        redesignTitle: r?.headline || '팀 AX 전환 분석 완료',
+        redesignDesc: (r?.ceo_message||'') + '\n\n' +
+          `현재 월 인건비 추정: 약 ${estSalary}만원 | ` +
+          `절감 가능: ${r?.cost_simulation?.savable_amount||'-'} | ` +
+          `즉시 전환 가능: ${r?.replaceable_head||0}명`,
+        nextStep: (r?.roadmap?.[0]?.desc) || '팀 AX 전환 1단계를 지금 시작하세요'
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = '발송됨 ✓'; btn.style.background = '#2ea87e';
+      setTimeout(()=>{ document.getElementById('teamEmailForm').style.display='none'; }, 1500);
+    } else throw new Error(data.error||'failed');
+  } catch(e) {
+    console.error('sendmail error:', e);
+    btn.textContent = '발송'; btn.disabled = false;
+    showToast('발송 실패 — 잠시 후 다시 시도해주세요');
+  }
+}
+
+function openConsulting() {
+  document.getElementById('consultingModal').style.display = 'flex';
+}
+
+function closeConsulting() {
+  document.getElementById('consultingModal').style.display = 'none';
+}
+
+async function submitConsulting() {
+  const company = document.getElementById('cq_company').value.trim();
+  const name    = document.getElementById('cq_name').value.trim();
+  const dept    = document.getElementById('cq_dept').value.trim();
+  const email   = document.getElementById('cq_email').value.trim();
+  const phone   = document.getElementById('cq_phone').value.trim();
+  const msg     = document.getElementById('cq_msg').value.trim();
+
+  if (!company||!name||!email) { showToast('회사명, 성명, 이메일은 필수입니다.'); return; }
+  if (!email.includes('@'))    { showToast('올바른 이메일을 입력해주세요.'); return; }
+
+  const btn = document.getElementById('cq_btn');
+  btn.textContent = '발송 중...'; btn.disabled = true;
+
+  const r = state.result;
+  const hc = Object.values(state.divisions).reduce((s,d)=>s+d.count,0);
+  const bodyText =
+    `회사명: ${company}\n성명: ${name}\n부서/직책: ${dept||'-'}\n이메일: ${email}\n연락처: ${phone||'-'}\n\n문의 내용:\n${msg||'-'}\n\n` +
+    `── 진단 결과 ──\n` +
+    `팀 규모: ${hc}명 | AX 준비도: ${r?.ax_score||'미진단'}점 | 리스크: ${r?.risk_label||'-'}\n` +
+    `인건비 절감 가능: ${r?.cost_simulation?.savable_amount||'-'}\n${r?.headline||''}`;
+
+  try {
+    const res = await fetch('https://www.jdxwork.com/api/sendmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: 'yjk9793@gmail.com',
+        name: `[컨설팅 문의] ${company} ${name}`,
+        company, job: dept||'',
+        score: r?.ax_score||0, label: r?.risk_label||'',
+        quickWins: [],
+        humanCore: [],
+        redesignTitle: `컨설팅 문의 — ${company}`,
+        redesignDesc: `${name} (${email} / ${phone||'-'})\n\n${msg||'-'}`,
+        nextStep: `팀 규모 ${hc}명 | AX ${r?.ax_score||'?'}점 | ${r?.cost_simulation?.savable_amount||'-'} 절감 가능`
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = '문의 완료 ✓'; btn.style.background = '#2ea87e';
+      showToast('문의가 접수됐습니다. 빠른 시일 내에 연락드리겠습니다.');
+      setTimeout(()=>closeConsulting(), 2000);
+    } else throw new Error(data.error||'failed');
+  } catch(e) {
+    console.error('consulting submit error:', e);
+    btn.textContent = '문의하기'; btn.disabled = false;
+    showToast('발송 실패 — 잠시 후 다시 시도해주세요');
+  }
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.display = 'block';
-  setTimeout(() => t.style.display='none', 3000);
+  setTimeout(() => t.style.display='none', 3500);
 }
 </script>
+<!-- 컨설팅 모달 -->
+<div id="consultingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0f1118;border:1px solid rgba(255,255,255,.12);border-radius:16px;width:100%;max-width:480px;padding:32px;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="closeConsulting()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#6b7a99;font-size:20px;cursor:pointer;line-height:1;">×</button>
+    <div style="font-size:10px;letter-spacing:3px;color:#00d4a0;font-family:'JetBrains Mono',monospace;margin-bottom:8px;">CONSULTING</div>
+    <div style="font-size:18px;font-weight:800;color:#eeeae0;margin-bottom:6px;">컨설팅 · 상담 문의</div>
+    <div style="font-size:13px;color:#8892b0;margin-bottom:24px;line-height:1.7;">팀 AX 전환을 직접 도와드립니다. 초기 상담은 무료입니다.</div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">회사명 <span style="color:#ff4d6d;">*</span></div>
+        <input id="cq_company" type="text" placeholder="(주)스타트업" value="${state.reg.company||''}" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">성명 <span style="color:#ff4d6d;">*</span></div>
+          <input id="cq_name" type="text" placeholder="홍길동" value="${state.reg.name||''}" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+        </div>
+        <div>
+          <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">부서 · 직책</div>
+          <input id="cq_dept" type="text" placeholder="CEO / 대표" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">이메일 <span style="color:#ff4d6d;">*</span></div>
+        <input id="cq_email" type="email" placeholder="ceo@startup.com" value="${state.reg.email||''}" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+      </div>
+      <div>
+        <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">연락처</div>
+        <input id="cq_phone" type="tel" placeholder="010-0000-0000" style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+      </div>
+      <div>
+        <div style="font-size:11px;color:#8892b0;margin-bottom:6px;">문의 내용</div>
+        <textarea id="cq_msg" placeholder="팀 AX 전환과 관련해 궁금한 점을 자유롭게 작성해주세요." style="width:100%;padding:11px 14px;background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eeeae0;font-size:14px;outline:none;font-family:'Noto Sans KR',sans-serif;min-height:90px;resize:vertical;line-height:1.6;" onfocus="this.style.borderColor='rgba(0,212,160,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
+      </div>
+    </div>
+
+    <button id="cq_btn" onclick="submitConsulting()" style="width:100%;margin-top:20px;padding:14px;background:linear-gradient(135deg,#00d4a0,#4f7cff);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:opacity .2s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">문의하기 →</button>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:#5a6380;">빠른 시일 내에 직접 연락드리겠습니다</div>
+  </div>
+</div>
 </body>
 </html>
