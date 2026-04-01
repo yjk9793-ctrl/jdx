@@ -156,6 +156,7 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
       <div class="nav-label">관리</div>
       <div class="nav-item" onclick="openCohortModal()"><span class="nav-icon">⊕</span> 기수 코드 생성</div>
       <div class="nav-item" onclick="showView('ontology')"><span class="nav-icon">◈</span> 워크 온톨로지 진행</div>
+      <div class="nav-item" onclick="showView('metrics')"><span class="nav-icon">⬡</span> 측정 방법론</div>
       <div class="nav-item"><span class="nav-icon">⇩</span> 리포트 다운로드</div>
       <div class="nav-item"><span class="nav-icon">◎</span> 초대 링크 발송</div>
     </div>
@@ -287,6 +288,206 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
         </div>
       </div>
 
+    <!-- METRICS VIEW -->
+      <div id="view-metrics" style="display:none;">
+        <div class="page-header">
+          <div class="page-title fade-up">3가지 전환 지표 <span style="color:var(--teal)">측정 방법론</span></div>
+          <div class="page-desc fade-up">워크 온톨로지 기반 AX 전환을 어떻게 측정하고 평가하는가</div>
+        </div>
+
+        <!-- 철학 박스 -->
+        <div style="background:linear-gradient(135deg,rgba(79,124,255,.08),rgba(0,212,160,.04));border:1px solid rgba(79,124,255,.2);border-radius:14px;padding:24px 28px;margin-bottom:24px;">
+          <div style="font-size:10px;letter-spacing:3px;color:var(--blue2);font-family:'JetBrains Mono',monospace;margin-bottom:10px;">WHY THIS MATTERS</div>
+          <div style="font-size:16px;font-weight:800;color:var(--white);margin-bottom:8px;">투자사가 진짜 원하는 것</div>
+          <div style="font-size:13px;color:var(--muted2);line-height:1.85;max-width:700px;">
+            매출과 번레이트는 <strong style="color:var(--white)">후행 지표</strong>다. 문제가 생기고 나서야 보인다.<br>
+            Deeploy의 3가지 지표는 <strong style="color:var(--teal)">선행 지표</strong>다. 3~6개월 후 성과를 지금 예측한다.<br>
+            <span style="color:var(--muted);font-size:12px;margin-top:6px;display:block;">워크 온톨로지 전환이 빠를수록 → 데이터 드리븐 · 판단 중심화 · 비용 효율이 먼저 올라가고 → 그 다음 매출이 따라온다.</span>
+          </div>
+        </div>
+
+        <!-- 3가지 지표 상세 -->
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+
+          <!-- ① 데이터 드리븐 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" style="color:var(--blue2);">◈ &nbsp;① 데이터 드리븐 지수</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">가중치: A×40% + B×35% + C×25%</span>
+            </div>
+            <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--blue2);margin-bottom:8px;">A · 의사결정 데이터 기반율 (40%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:10px;">주요 결정 중 데이터 근거가 있는 비율. 분기 팀OS 진단에서 수집.</div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  <span style="font-size:10px;color:var(--muted);">분기 1회 진단으로 추적</span>
+                </div>
+              </div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--blue2);margin-bottom:8px;">B · 데이터 인프라 성숙도 (35%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:6px;">없음(1) → 스프레드시트(2) → DB(3) → 파이프라인(4) → AI분석(5)</div>
+                <div style="display:flex;gap:4px;">
+                  ${[1,2,3,4,5].map((l,i)=>`<div style="flex:1;height:4px;border-radius:2px;background:${i<3?'var(--blue)':'var(--surface)'};"></div>`).join('')}
+                </div>
+                <div style="font-size:9px;color:var(--muted);margin-top:4px;">현재 포트폴리오 평균: Lv 3.1</div>
+              </div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--blue2);margin-bottom:8px;">C · 에이전트 활용 데이터 수 (25%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:10px;">워크 온톨로지 L1·L2 매핑 완료 태스크 수. 온톨로지 진행 진단에서 자동 계산.</div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);"></div>
+                  <span style="font-size:10px;color:var(--muted);">워크 온톨로지 진행과 연동</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding:0 20px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+              <div style="font-size:11px;color:var(--muted2);padding:6px 14px;background:rgba(79,124,255,.06);border:1px solid rgba(79,124,255,.15);border-radius:6px;">
+                📈 포트폴리오 평균 <strong style="color:var(--blue2)">53점</strong> · 3개월 전 대비 <strong style="color:var(--teal)">+8p</strong>
+              </div>
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+            </div>
+          </div>
+
+          <!-- ② 판단 중심화 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" style="color:var(--teal);">◎ &nbsp;② 판단 중심화 지수</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">가중치: A×30% + B×45% + C×25%</span>
+            </div>
+            <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);margin-bottom:8px;">A · 판단 사이클 타임 (30%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:8px;">"아이디어 → 실행 결정까지 평균 며칠?" 줄어들수록 점수 상승.</div>
+                <canvas id="cycleChart" width="200" height="50"></canvas>
+                <div style="font-size:9px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;">평균 12일 → 5.4일 (6개월)</div>
+              </div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);margin-bottom:8px;">B · 인간 판단 집중도 (45%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:10px;">L1 에이전트 위임 비율이 높을수록 인간이 L3·L4·L5에 집중. 워크 온톨로지 레이어 매핑에서 자동 계산.</div>
+                <div style="font-size:11px;color:var(--teal);font-family:'JetBrains Mono',monospace;">핵심 지표 — 45% 가중</div>
+              </div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);margin-bottom:8px;">C · 의사결정 분산도 (25%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:10px;">대표 단독 결정 비율 vs 팀 분산 결정 비율. 분산도 높아질수록 조직 건강 지표 상승.</div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="font-size:11px;color:var(--muted2);">대표 단독</div>
+                  <div style="flex:1;height:5px;background:var(--surface);border-radius:3px;overflow:hidden;"><div style="width:62%;height:100%;background:var(--amber);border-radius:3px;"></div></div>
+                  <div style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace;">62%</div>
+                </div>
+                <div style="font-size:9px;color:var(--muted);margin-top:4px;">목표: 40% 이하</div>
+              </div>
+            </div>
+            <div style="padding:0 20px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+              <div style="font-size:11px;color:var(--muted2);padding:6px 14px;background:rgba(0,212,160,.06);border:1px solid rgba(0,212,160,.15);border-radius:6px;">
+                📈 포트폴리오 평균 <strong style="color:var(--teal)">46점</strong> · 3개월 전 대비 <strong style="color:var(--teal)">+6p</strong>
+              </div>
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+            </div>
+          </div>
+
+          <!-- ③ 비용·효율 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" style="color:var(--purple);">◉ &nbsp;③ 비용·효율 지수</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">가중치: A×40% + B×35% + C×25%</span>
+            </div>
+            <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--purple);margin-bottom:8px;">A · 인건비 효율화율 (40%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:8px;">(현재 인당 매출) / (6개월 전 인당 매출). 팀OS 진단에서 인건비 + 매출 입력 시 자동 계산.</div>
+                <div style="font-size:24px;font-weight:800;color:var(--purple);font-family:'JetBrains Mono',monospace;">1.4×<span style="font-size:11px;color:var(--teal);"> ↑</span></div>
+                <div style="font-size:9px;color:var(--muted);">포트폴리오 평균 인당 매출 향상</div>
+              </div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--purple);margin-bottom:8px;">B · 에이전트 ROI (35%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:8px;">에이전트 도입 비용 vs 절감된 인건비. 팔로우업 진단(3개월 후)으로 실측.</div>
+                <div style="display:flex;justify-content:space-between;margin-top:8px;">
+                  <div style="text-align:center;">
+                    <div style="font-size:16px;font-weight:800;color:var(--muted2);">₩180만</div>
+                    <div style="font-size:9px;color:var(--muted);">월 도입 비용</div>
+                  </div>
+                  <div style="display:flex;align-items:center;color:var(--teal);font-size:18px;">→</div>
+                  <div style="text-align:center;">
+                    <div style="font-size:16px;font-weight:800;color:var(--teal);">₩820만</div>
+                    <div style="font-size:9px;color:var(--muted);">월 절감 추정</div>
+                  </div>
+                </div>
+              </div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--purple);margin-bottom:8px;">C · 채용 없는 성장률 (25%)</div>
+                <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:8px;">같은 팀 규모로 매출이 성장하는 비율. 채용 없이 성장하는 것이 가장 강력한 효율 신호.</div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);"></div>
+                  <span style="font-size:11px;color:var(--muted2);">3개사 채용 없이 성장 중</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding:0 20px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+              <div style="font-size:11px;color:var(--muted2);padding:6px 14px;background:rgba(155,124,255,.06);border:1px solid rgba(155,124,255,.15);border-radius:6px;">
+                📈 포트폴리오 평균 <strong style="color:var(--purple)">48점</strong> · 3개월 전 대비 <strong style="color:var(--teal)">+7p</strong>
+              </div>
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 측정 주기 타임라인 -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">측정 주기 · 수집 방법</span></div>
+          <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div style="text-align:center;padding:20px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">
+              <div style="font-size:28px;margin-bottom:8px;">◎</div>
+              <div style="font-size:13px;font-weight:800;color:var(--blue2);margin-bottom:6px;">분기 진단</div>
+              <div style="font-size:11px;color:var(--muted2);line-height:1.7;">팀OS + 개인 진단<br>3가지 지수 스냅샷<br>베이스라인 업데이트</div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">15~20분 소요</div>
+            </div>
+            <div style="text-align:center;padding:20px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">
+              <div style="font-size:28px;margin-bottom:8px;">◈</div>
+              <div style="font-size:13px;font-weight:800;color:var(--teal);margin-bottom:6px;">월간 체크인</div>
+              <div style="font-size:11px;color:var(--muted2);line-height:1.7;">5문항 짧은 설문<br>트렌드 변화 감지<br>이상 신호 조기 포착</div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">3분 소요</div>
+            </div>
+            <div style="text-align:center;padding:20px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">
+              <div style="font-size:28px;margin-bottom:8px;">⬡</div>
+              <div style="font-size:13px;font-weight:800;color:var(--purple);margin-bottom:6px;">반기 심층 리뷰</div>
+              <div style="font-size:11px;color:var(--muted2);line-height:1.7;">Deeploy와 리뷰 세션<br>6개월 성과 분석<br>다음 로드맵 설계</div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">60~90분 세션</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 현재 vs 미래 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div class="card">
+            <div class="card-header"><span class="card-title" style="color:var(--muted);">지금 단계 (추정값)</span></div>
+            <div style="padding:20px;">
+              <div style="font-size:12px;color:var(--muted2);line-height:1.9;">
+                ✓ 팀OS · 개인 진단 기반 추정 점수<br>
+                ✓ 진단 시점 스냅샷<br>
+                ✓ 포트폴리오 간 상대 비교<br>
+                <span style="color:var(--muted);font-size:11px;">→ 지금 이 대시보드의 현재 상태</span>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="border-color:rgba(0,212,160,.2);">
+            <div class="card-header"><span class="card-title" style="color:var(--teal);">3개월 후 (실측값)</span></div>
+            <div style="padding:20px;">
+              <div style="font-size:12px;color:var(--muted2);line-height:1.9;">
+                ✦ Supabase 연동 — 실제 데이터 자동 반영<br>
+                ✦ 월간 체크인 누적 — 트렌드 자동 계산<br>
+                ✦ 이상 신호 알림 — 문제 전에 예측<br>
+                <span style="color:var(--teal);font-size:11px;">→ 투자사 포트폴리오 실시간 관리 도구</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 </div>
@@ -393,6 +594,31 @@ function closeCohortModal(){
 const now=new Date();
 document.getElementById('todayDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
 renderTable();renderDistChart();renderPriority();renderInsight();
+
+// Draw cycle time chart when metrics view is shown
+function drawCycleChart(){
+  const c = document.getElementById('cycleChart');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const data = [12,10,8.5,7.2,6.1,5.4];
+  const w=200,h=50,pad=8;
+  ctx.clearRect(0,0,w,h);
+  const max=Math.max(...data);
+  const pts=data.map((v,i)=>({x:pad+(i/(data.length-1))*(w-pad*2),y:h-pad-(v/max)*(h-pad*2)}));
+  const grad=ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,'rgba(0,212,160,.25)');
+  grad.addColorStop(1,'rgba(0,212,160,0)');
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x,h-pad);
+  pts.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,h-pad);
+  ctx.closePath();
+  ctx.fillStyle=grad;ctx.fill();
+  ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle='#00d4a0';ctx.lineWidth=2;ctx.stroke();
+  pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fillStyle='#00d4a0';ctx.fill();});
+}
 
 // ── ONTOLOGY DATA ──
 const ONTO_DATA = {
@@ -693,11 +919,12 @@ function drawAccumChart(history) {
 }
 
 function showView(view){
-  ['portfolio','priority','insight','ontology'].forEach(v=>document.getElementById(`view-${v}`).style.display=v===view?'block':'none');
-  document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','ontology'];el.classList.toggle('active',vs[i]===view);});
-  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 온톨로지 인사이트',ontology:'워크 온톨로지 진행 현황'};
+  ['portfolio','priority','insight','ontology','metrics'].forEach(v=>{const el=document.getElementById(`view-${v}`);if(el)el.style.display=v===view?'block':'none';});
+  document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','ontology','metrics'];el.classList.toggle('active',vs[i]===view);});
+  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 온톨로지 인사이트',ontology:'워크 온톨로지 진행 현황',metrics:'3가지 전환 지표 측정 방법론'};
   document.getElementById('topbarTitle').textContent=titles[view]||'';
   if(view==='ontology') setTimeout(()=>renderOntology(currentOntoId),50);
+  if(view==='metrics') setTimeout(()=>drawCycleChart(),100);
 }
 </script>
 </body>
