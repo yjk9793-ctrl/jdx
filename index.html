@@ -1773,6 +1773,43 @@ RULES:
 
   renderResult();
   goScreen(7);
+  saveIndividualDiagnosis();
+}
+
+async function saveIndividualDiagnosis() {
+  try {
+    const r = state.result || {};
+    const reg = state.reg || {};
+    await fetch('https://www.jdxwork.com/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'individual',
+        data: {
+          name:        reg.name || '',
+          email:       reg.email || '',
+          company:     reg.company || '',
+          dept:        reg.dept || '',
+          job_title:   state.jobTitle || '',
+          ax_score:    r.readiness_score || 0,
+          layer_scores: {
+            l1: r.l1_score || 0,
+            l2: r.l2_score || 0,
+            l3: r.l3_score || 0,
+            l4: r.l4_score || 0,
+            l5: r.l5_score || 0
+          },
+          quick_wins:  r.quick_wins || [],
+          human_core:  r.human_core || [],
+          cohort_code: reg.cohort_code || '',
+          raw_result:  r
+        }
+      })
+    });
+    console.log('[Diagnosis] ✓ 진단 결과 저장 완료');
+  } catch(e) {
+    console.warn('[Diagnosis] 저장 실패 (진단은 정상):', e.message);
+  }
 }
 
 function mockResult(job, tasks) {
