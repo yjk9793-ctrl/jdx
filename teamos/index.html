@@ -947,6 +947,40 @@ OUTPUT only this JSON (all text in Korean):
 
   renderResult();
   goScreen(10);
+  saveTeamDiagnosis();
+}
+
+async function saveTeamDiagnosis() {
+  try {
+    const r = state.result || {};
+    const hc = Object.values(state.divisions).reduce((s,d)=>s+d.count,0);
+    const estSalary = Object.entries(state.divisions).reduce((s,[k,d])=>s+d.count*(AVG_SALARY[k]||400),0);
+    await fetch('https://www.jdxwork.com/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'team',
+        data: {
+          company:          state.reg.company || '',
+          name:             state.reg.name || '',
+          email:            state.reg.email || '',
+          industry:         state.reg.industry || '',
+          team_size:        hc,
+          ax_score:         r.ax_score || 0,
+          risk_label:       r.risk_label || '',
+          monthly_cost:     estSalary,
+          savable_amount:   r.cost_simulation?.savable_amount || '',
+          replaceable_head: r.replaceable_head || 0,
+          headline:         r.headline || '',
+          cohort_code:      state.reg.cohort_code || '',
+          raw_result:       r
+        }
+      })
+    });
+    console.log('[TeamOS] ✓ 진단 결과 저장 완료');
+  } catch(e) {
+    console.warn('[TeamOS] 저장 실패 (진단은 정상):', e.message);
+  }
 }
 
 function mockResult(totalHead, estSalary) {
