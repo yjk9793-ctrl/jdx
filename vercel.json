@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/jd", "destination": "/jd/index.html" },
+    { "source": "/teamos", "destination": "/teamos/index.html" },
+    { "source": "/admin", "destination": "/admin/index.html" }
+  ]
+}
