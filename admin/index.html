@@ -157,6 +157,7 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
       <div class="nav-item" onclick="openCohortModal()"><span class="nav-icon">⊕</span> 기수 코드 생성</div>
       <div class="nav-item" onclick="showView('ontology')"><span class="nav-icon">◈</span> 워크 온톨로지 진행</div>
       <div class="nav-item" onclick="showView('metrics')"><span class="nav-icon">⬡</span> 측정 방법론</div>
+      <div class="nav-item" onclick="showView('myco')"><span class="nav-icon">◑</span> 내 회사 대시보드</div>
       <div class="nav-item"><span class="nav-icon">⇩</span> 리포트 다운로드</div>
       <div class="nav-item"><span class="nav-icon">◎</span> 초대 링크 발송</div>
     </div>
@@ -489,6 +490,73 @@ body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70
       </div>
 
     </div>
+
+      <!-- MY COMPANY VIEW -->
+      <div id="view-myco" style="display:none;">
+
+        <!-- Company selector -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:10px;letter-spacing:3px;color:var(--teal);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">STARTUP FOUNDER VIEW</div>
+            <div style="font-size:20px;font-weight:800;">내 회사 AX 현황 — <span id="myCoName" style="color:var(--teal);">PickPick</span></div>
+            <div style="font-size:12px;color:var(--muted2);margin-top:3px;font-weight:300;">스타트업 대표가 직접 보는 화면 · 샘플 데이터</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <select id="myCoSelect" onchange="switchMyCo(this.value)" style="padding:8px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-size:13px;font-family:'Bricolage Grotesque',sans-serif;outline:none;cursor:pointer;">
+              <option value="3">PickPick</option>
+              <option value="1">Flowdesk</option>
+              <option value="6">Nurilab</option>
+              <option value="9">Connecto</option>
+              <option value="8">Cloudit</option>
+            </select>
+            <button onclick="window.open('https://www.jdxwork.com/teamos','_blank')" style="padding:9px 18px;background:var(--teal);color:#000;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;white-space:nowrap;">팀 AX 재진단 →</button>
+          </div>
+        </div>
+
+        <!-- Next diagnosis banner -->
+        <div id="myNextBanner" style="background:linear-gradient(135deg,rgba(79,124,255,.08),rgba(0,212,160,.04));border:1px solid rgba(79,124,255,.2);border-radius:12px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
+          <div>
+            <div style="font-size:10px;letter-spacing:2px;color:var(--teal);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">NEXT DIAGNOSIS</div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:2px;">다음 분기 진단까지 <span style="color:var(--amber);">47일</span> 남았습니다</div>
+            <div style="font-size:11px;color:var(--muted2);">분기마다 재진단하면 변화 추이와 다음 액션이 자동으로 업데이트됩니다</div>
+          </div>
+        </div>
+
+        <!-- KPI 4개 -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;" id="myKpiRow"></div>
+
+        <!-- 3대 지표 -->
+        <div style="font-size:9px;letter-spacing:3px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:10px;">워크 온톨로지 전환 3대 지표</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;" id="myIndexGrid"></div>
+
+        <!-- Bottom grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+          <!-- 레이어 매핑 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">워크 온톨로지 레이어 매핑</span>
+              <span id="myLayerPhase" class="card-action"></span>
+            </div>
+            <div id="myLayerBody"></div>
+          </div>
+
+          <!-- 히스토리 + 액션 -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="card">
+              <div class="card-header"><span class="card-title">진단 히스토리</span><span class="card-action">3회 진단</span></div>
+              <div id="myHistory" style="padding:0 20px;"></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><span class="card-title">즉시 실행 가능한 액션</span></div>
+              <div id="myActions"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -594,6 +662,156 @@ function closeCohortModal(){
 const now=new Date();
 document.getElementById('todayDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
 renderTable();renderDistChart();renderPriority();renderInsight();
+
+// ── MY COMPANY DATA ──
+const MY_DATA = {
+  1: { // Flowdesk
+    ax:71, risk:'green', riskLabel:'안정', saving:'월 680만원', replaceable:6, team:23,
+    transform:{data:{score:82,delta:'+24p'},decision:{score:74,delta:'+18p'},efficiency:{score:68,delta:'+12p'}},
+    layers:[['L1','태스크',95,'#4f7cff','완료'],['L2','데이터 흐름',85,'#9b7cff','완료'],['L3','판단 로직',68,'#f5a623','완료'],['L4','예외 처리',42,'#00d4a0','진행'],['L5','관계·맥락',30,'#00d4a0','시작']],
+    phase:'Phase 3 진행 중',
+    history:[{date:'2026.04.01',score:71,delta:'+8',label:'현재'},{date:'2026.01.08',score:63,delta:'+16',label:'2차'},{date:'2025.10.14',score:47,delta:'기준',label:'1차'}],
+    actions:[{n:1,title:'에이전트 CS 자동화 파일럿',desc:'전환율 38% 달성 · 확대 단계',c:'var(--teal)',bg:'rgba(0,212,160,.08)',badge:'진행 중'},{n:2,title:'L4 예외 처리 패턴 수집',desc:'핵심 판단 케이스 문서화 · 12건 완료',c:'var(--blue2)',bg:'rgba(79,124,255,.08)',badge:'진행 중'},{n:3,title:'신직무 기술서 발행',desc:'에이전트 위임 기반 JD 재설계',c:'var(--amber)',bg:'rgba(245,166,35,.08)',badge:'예정'}],
+    descData:'파이프라인 구축 완료. CS·세일즈 데이터 자동 분석 중.',
+    descDecision:'판단 사이클 12일→4일 단축. 대표·팀장 L3 집중 구조 안착.',
+    descEfficiency:'1인당 매출 1.8배 향상. 채용 없이 성장 구조 확립.'
+  },
+  3: { // PickPick
+    ax:58, risk:'amber', riskLabel:'주의', saving:'월 1,240만원', replaceable:9, team:31,
+    transform:{data:{score:44,delta:'+6p'},decision:{score:38,delta:'+3p'},efficiency:{score:41,delta:'+5p'}},
+    layers:[['L1','태스크',88,'#4f7cff','완료'],['L2','데이터 흐름',72,'#9b7cff','완료'],['L3','판단 로직',51,'#f5a623','진행'],['L4','예외 처리',28,'#00d4a0','시작'],['L5','관계·맥락',18,'#00d4a0','시작']],
+    phase:'Phase 2 진행 중',
+    history:[{date:'2026.04.01',score:58,delta:'+9',label:'현재'},{date:'2026.01.08',score:49,delta:'+12',label:'2차'},{date:'2025.10.14',score:37,delta:'기준',label:'1차'}],
+    actions:[{n:1,title:'CS 자동응답 에이전트 도입',desc:'월 절감 추정 480만원 · 2주 내 가능',c:'var(--teal)',bg:'rgba(0,212,160,.08)',badge:'즉시'},{n:2,title:'운영 리포팅 파이프라인 구축',desc:'주간 보고서 자동화 · 매니저 2명 L3 집중 가능',c:'var(--blue2)',bg:'rgba(79,124,255,.08)',badge:'1개월'},{n:3,title:'판단 로직 명시화 워크숍',desc:'L3 기준 정의 · Deeploy 세션 1회',c:'var(--amber)',bg:'rgba(245,166,35,.08)',badge:'협의'}],
+    descData:'운영 데이터 산발적 — 통합 파이프라인 미구축. CS 에이전트 도입 시 즉시 상승.',
+    descDecision:'운영 이슈 대응 중심. L1 위임 후 대표·팀장 판단 집중 구조 전환 시급.',
+    descEfficiency:'인력 대비 매출 정체. CS·운영 자동화로 인당 처리량 증가 가능.'
+  },
+  6: { // Nurilab
+    ax:44, risk:'red', riskLabel:'위험', saving:'월 920만원', replaceable:7, team:27,
+    transform:{data:{score:28,delta:'+2p'},decision:{score:31,delta:'+3p'},efficiency:{score:29,delta:'+2p'}},
+    layers:[['L1','태스크',60,'#4f7cff','진행'],['L2','데이터 흐름',45,'#9b7cff','진행'],['L3','판단 로직',30,'#f5a623','시작'],['L4','예외 처리',15,'#00d4a0','시작'],['L5','관계·맥락',10,'#00d4a0','미시작']],
+    phase:'Phase 1 진행 중',
+    history:[{date:'2026.04.01',score:44,delta:'+7',label:'현재'},{date:'2026.01.08',score:37,delta:'기준',label:'1차'}],
+    actions:[{n:1,title:'콘텐츠 제작 자동화 즉시 착수',desc:'경쟁사 AI 도입 완료 — 시간이 없습니다',c:'var(--red)',bg:'rgba(255,77,109,.08)',badge:'긴급'},{n:2,title:'L1 태스크 전수 조사',desc:'반복 태스크 목록화 · 에이전트 위임 설계',c:'var(--amber)',bg:'rgba(245,166,35,.08)',badge:'1개월'},{n:3,title:'Deeploy 집중 지원 신청',desc:'AX 전환 6개월 플랜 수립',c:'var(--blue2)',bg:'rgba(79,124,255,.08)',badge:'협의'}],
+    descData:'학습 데이터 단절 — 콘텐츠·학습자 데이터 미연동. 즉시 구조화 필요.',
+    descDecision:'콘텐츠 기획 판단 기준 없음 — 개인 역량 의존. L3 명시화 시급.',
+    descEfficiency:'27명이 수동 제작. 경쟁사 대비 생산성 3배 열위. 즉각 전환 필요.'
+  },
+  9: { // Connecto
+    ax:63, risk:'green', riskLabel:'안정', saving:'월 380만원', replaceable:3, team:14,
+    transform:{data:{score:70,delta:'+16p'},decision:{score:68,delta:'+14p'},efficiency:{score:65,delta:'+13p'}},
+    layers:[['L1','태스크',90,'#4f7cff','완료'],['L2','데이터 흐름',78,'#9b7cff','완료'],['L3','판단 로직',65,'#f5a623','완료'],['L4','예외 처리',40,'#00d4a0','진행'],['L5','관계·맥락',25,'#00d4a0','시작']],
+    phase:'Phase 3 진행 중',
+    history:[{date:'2026.04.01',score:63,delta:'+11',label:'현재'},{date:'2026.01.08',score:52,delta:'+15',label:'2차'},{date:'2025.10.14',score:37,delta:'기준',label:'1차'}],
+    actions:[{n:1,title:'채용 파이프라인 에이전트화',desc:'서류 분석·1차 인터뷰 에이전트 전환',c:'var(--teal)',bg:'rgba(0,212,160,.08)',badge:'진행 중'},{n:2,title:'HR 판단 기준 데이터화',desc:'주요 채용 결정 패턴 온톨로지화 진행',c:'var(--blue2)',bg:'rgba(79,124,255,.08)',badge:'진행 중'},{n:3,title:'L4 예외 케이스 수집',desc:'엣지 케이스 30건 목표 · 현재 15건',c:'var(--amber)',bg:'rgba(245,166,35,.08)',badge:'진행 중'}],
+    descData:'채용·HR 데이터 체계화 완료. 분석 기반 의사결정 정착.',
+    descDecision:'HR 판단 기준 명시화 완료. 에이전트 협업 구조 안착.',
+    descEfficiency:'14명으로 30명 규모 채용 처리. 업계 최고 수준.'
+  },
+  8: { // Cloudit
+    ax:37, risk:'red', riskLabel:'위험', saving:'월 1,580만원', replaceable:11, team:34,
+    transform:{data:{score:42,delta:'+5p'},decision:{score:30,delta:'+2p'},efficiency:{score:26,delta:'+1p'}},
+    layers:[['L1','태스크',55,'#4f7cff','진행'],['L2','데이터 흐름',38,'#9b7cff','시작'],['L3','판단 로직',22,'#f5a623','시작'],['L4','예외 처리',10,'#00d4a0','미시작'],['L5','관계·맥락',8,'#00d4a0','미시작']],
+    phase:'Phase 1 초기',
+    history:[{date:'2026.04.01',score:37,delta:'+5',label:'현재'},{date:'2026.01.08',score:32,delta:'기준',label:'1차'}],
+    actions:[{n:1,title:'제품 포지션 전략 재정의',desc:'글로벌 AI 번들링 대응 전략 수립 긴급',c:'var(--red)',bg:'rgba(255,77,109,.08)',badge:'긴급'},{n:2,title:'L1 태스크 에이전트 위임',desc:'운영 인력 9명 즉시 전환 가능',c:'var(--amber)',bg:'rgba(245,166,35,.08)',badge:'즉시'},{n:3,title:'인건비 구조 재편 계획',desc:'34명 고비용 구조 → 슬림 전환 로드맵',c:'var(--blue2)',bg:'rgba(79,124,255,.08)',badge:'협의'}],
+    descData:'인프라 데이터는 풍부하나 제품 인사이트 미흡. 분석 구조 재설계 필요.',
+    descDecision:'운영 대응 중심 — 전략적 피벗 판단 구조 없음. 즉시 개선 필요.',
+    descEfficiency:'34명 고비용 구조. 제품 전환 없이는 런웨이 위기.'
+  }
+};
+
+let currentMyCoId = 3;
+
+function switchMyCo(id) {
+  currentMyCoId = parseInt(id);
+  renderMyCo(currentMyCoId);
+}
+
+function renderMyCo(id) {
+  const d = MY_DATA[id];
+  const co = COMPANIES.find(c=>c.id===id);
+  if(!d||!co) return;
+  document.getElementById('myCoName').textContent = co.name;
+
+  const rc = d.risk==='red'?'var(--red)':d.risk==='amber'?'var(--amber)':'var(--teal)';
+
+  // KPI
+  document.getElementById('myKpiRow').innerHTML = [
+    {label:'AX 준비도', val:d.ax, unit:'', sub:'100점 만점', delta:`↑ 3개월 전 대비 +${d.ax-Math.max(0,d.ax-9)}점`, c:rc, kc:'var(--blue)'},
+    {label:'생존 리스크', val:d.riskLabel, unit:'', sub:d.riskLabel+' 등급', delta:'→ Deeploy 모니터링 중', c:rc, kc:'var(--red)'},
+    {label:'절감 가능 (월)', val:d.saving.replace('월 ',''), unit:'', sub:'에이전트 전환 시', delta:'↑ 추정 정확도 향상 중', c:'var(--teal)', kc:'var(--teal)'},
+    {label:'즉시 전환 인원', val:d.replaceable+'명', unit:'', sub:`전체 ${d.team}명 중`, delta:'↑ 지난번 대비 +2명', c:'var(--purple)', kc:'var(--purple)'},
+  ].map(k=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${k.kc};"></div>
+      <div style="font-size:9px;letter-spacing:2px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:10px;">${k.label}</div>
+      <div style="font-size:30px;font-weight:800;line-height:1;color:${k.c};margin-bottom:3px;">${k.val}</div>
+      <div style="font-size:11px;color:var(--muted2);">${k.sub}</div>
+      <div style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace;margin-top:4px;">${k.delta}</div>
+    </div>`).join('');
+
+  // 3대 지표
+  const idxMeta = [
+    {key:'data',icon:'◈',label:'데이터 드리븐',color:'var(--blue2)',desc:d.descData,spark:[22,28,30,33,38,41,d.transform.data.score]},
+    {key:'decision',icon:'◎',label:'판단 중심화',color:'var(--teal)',desc:d.descDecision,spark:[18,22,25,28,31,36,d.transform.decision.score]},
+    {key:'efficiency',icon:'◉',label:'조직 슬림화',color:'var(--purple)',desc:d.descEfficiency,spark:[14,20,24,28,33,38,d.transform.efficiency.score]},
+  ];
+  document.getElementById('myIndexGrid').innerHTML = idxMeta.map(m=>{
+    const t = d.transform[m.key];
+    const max = Math.max(...m.spark);
+    const sparkHtml = m.spark.map(v=>`<div style="flex:1;border-radius:2px 2px 0 0;height:${Math.max(4,(v/max)*32)}px;background:${m.color};opacity:${0.3+0.7*(v/max)};"></div>`).join('');
+    return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s;" onmouseover="this.style.borderColor='${m.color}44'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+      <div style="font-size:16px;margin-bottom:8px;">${m.icon}</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;font-family:'JetBrains Mono',monospace;color:${m.color};margin-bottom:6px;">${m.label}</div>
+      <div style="font-size:38px;font-weight:800;line-height:1;color:${m.color};margin-bottom:3px;">${t.score}</div>
+      <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--green);margin-bottom:10px;">${t.delta} &nbsp;<span style="color:var(--muted);font-size:10px;">3개월 전 대비</span></div>
+      <div style="height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px;">
+        <div style="width:${t.score}%;height:100%;background:${m.color};border-radius:3px;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted2);line-height:1.65;margin-bottom:10px;">${m.desc}</div>
+      <div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">추이</div>
+      <div style="display:flex;align-items:flex-end;gap:3px;height:36px;">${sparkHtml}</div>
+    </div>`;
+  }).join('');
+
+  // 레이어
+  document.getElementById('myLayerPhase').textContent = d.phase;
+  document.getElementById('myLayerBody').innerHTML = d.layers.map(([l,n,p,c,s])=>`
+    <div style="display:grid;grid-template-columns:48px 1fr 52px 52px;gap:10px;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border);">
+      <div style="font-size:10px;font-weight:700;text-align:center;padding:3px 0;border-radius:5px;background:${c}18;color:${c};font-family:'JetBrains Mono',monospace;">${l}</div>
+      <div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px;">${n}</div>
+        <div style="height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="width:${p}%;height:100%;background:${c};border-radius:3px;"></div></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;color:${c};">${p}%</div>
+      <div style="font-size:10px;text-align:right;font-family:'JetBrains Mono',monospace;color:${s==='완료'?'var(--teal)':s==='진행'?'var(--amber)':s==='시작'?'var(--muted2)':'var(--muted)'};">${s}</div>
+    </div>`).join('');
+
+  // 히스토리
+  document.getElementById('myHistory').innerHTML = d.history.map(h=>`
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+      <div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;background:${h.label==='현재'?'var(--teal)':h.label==='2차'?'var(--blue2)':'var(--muted)'};"></div>
+      <div style="flex:1;">
+        <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:2px;">${h.date} · ${h.label}</div>
+        <div style="font-size:12px;color:var(--muted2);">AX 준비도 측정 완료</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:${h.label==='현재'?'var(--teal)':h.label==='2차'?'var(--blue2)':'var(--muted)'};">${h.score}<span style="font-size:10px;color:var(--muted);margin-left:4px;">${h.delta}</span></div>
+    </div>`).join('');
+
+  // 액션
+  document.getElementById('myActions').innerHTML = d.actions.map(a=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);">
+      <div style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;font-family:'JetBrains Mono',monospace;background:${a.bg};color:${a.c};border:1px solid ${a.c}33;">${a.n}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px;">${a.title}</div>
+        <div style="font-size:11px;color:var(--muted2);">${a.desc}</div>
+      </div>
+      <div style="font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;background:${a.bg};color:${a.c};border:1px solid ${a.c}33;">${a.badge}</div>
+    </div>`).join('');
+}
 
 // Draw cycle time chart when metrics view is shown
 function drawCycleChart(){
@@ -919,12 +1137,13 @@ function drawAccumChart(history) {
 }
 
 function showView(view){
-  ['portfolio','priority','insight','ontology','metrics'].forEach(v=>{const el=document.getElementById(`view-${v}`);if(el)el.style.display=v===view?'block':'none';});
-  document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','ontology','metrics'];el.classList.toggle('active',vs[i]===view);});
-  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 온톨로지 인사이트',ontology:'워크 온톨로지 진행 현황',metrics:'3가지 전환 지표 측정 방법론'};
+  ['portfolio','priority','insight','ontology','metrics','myco'].forEach(v=>{const el=document.getElementById(`view-${v}`);if(el)el.style.display=v===view?'block':'none';});
+  document.querySelectorAll('.nav-item').forEach((el,i)=>{const vs=['portfolio','priority','insight','ontology','metrics','myco'];el.classList.toggle('active',vs[i]===view);});
+  const titles={portfolio:'포트폴리오 AX 현황',priority:'우선순위 대응',insight:'워크 온톨로지 인사이트',ontology:'워크 온톨로지 진행 현황',metrics:'3가지 전환 지표 측정 방법론',myco:'내 회사 AX 대시보드'};
   document.getElementById('topbarTitle').textContent=titles[view]||'';
   if(view==='ontology') setTimeout(()=>renderOntology(currentOntoId),50);
   if(view==='metrics') setTimeout(()=>drawCycleChart(),100);
+  if(view==='myco') setTimeout(()=>renderMyCo(currentMyCoId),50);
 }
 </script>
 </body>
