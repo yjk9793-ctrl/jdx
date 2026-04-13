@@ -217,20 +217,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .risk-alert-text{font-size:12px;color:var(--muted2);line-height:1.7;}
 
 /* ── PAYWALL ── */
-.paywall{background:linear-gradient(135deg,rgba(74,124,255,.07),rgba(0,201,167,.04));border:1px solid rgba(74,124,255,.25);border-radius:14px;padding:28px;margin-top:20px;overflow:hidden;position:relative;}
-.paywall::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(74,124,255,.15),transparent 70%);pointer-events:none;}
-.pw-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:6px;}
-.pw-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:16px;}
-.pw-items{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
-.pw-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted2);}
-.pw-item::before{content:'✓';color:var(--teal);font-size:11px;flex-shrink:0;}
-.pw-price{display:flex;align-items:baseline;gap:6px;margin-bottom:16px;}
-.pw-price-n{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--blue);}
-.pw-price-l{font-size:12px;color:var(--muted);}
-.btn-pay{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),#6a9fff);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;}
-.btn-pay:hover{opacity:.9;transform:translateY(-1px);}
-.consult-link{text-align:center;margin-top:14px;font-size:12px;color:var(--muted);}
-.consult-link span{color:var(--teal);cursor:pointer;}
 
 /* ── NAV ── */
 .nav{position:fixed;bottom:0;left:0;right:0;padding:14px 24px;background:rgba(5,6,10,.92);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;z-index:50;}
@@ -257,7 +243,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   .axis-label{width:90px;font-size:10px;}
   .nav{padding:10px 16px;}
   .landing-stats{gap:20px;}
-  .paywall{padding:20px 16px;}
 }
 @media(max-width:380px){
   .div-grid{grid-template-columns:1fr;}
@@ -300,7 +285,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="stat"><div class="stat-n">15분</div><div class="stat-l">소요 시간</div></div>
       <div class="stat"><div class="stat-n">7막</div><div class="stat-l">진단 구조</div></div>
       <div class="stat"><div class="stat-n">무료</div><div class="stat-l">기본 진단</div></div>
-      <div class="stat"><div class="stat-n">CEO</div><div class="stat-l">C레벨 대상</div></div>
+      <div class="stat"><div class="stat-n">리더</div><div class="stat-l">리더 대상</div></div>
     </div>
     <button class="btn-start" onclick="goScreen(1)">지금 바로 진단하기 →</button>
   </div>
@@ -1153,28 +1138,6 @@ function renderResult() {
     ${keepHtml}
   </div>
 
-  <!-- PAYWALL -->
-  <div class="paywall">
-    <div class="pw-title">심층 분석이 필요하신가요?</div>
-    <div class="pw-desc">지금 보신 내용은 기본 진단입니다. 상세 리포트에는 직군별 실행 플랜과 투자자 설득 데이터가 포함됩니다.</div>
-    <div class="pw-items">
-      <div class="pw-item">직군별 인원 최적화 시뮬레이션 (상세)</div>
-      <div class="pw-item">팀원 커뮤니케이션 스크립트</div>
-      <div class="pw-item">단계별 AI 도구 도입 체크리스트</div>
-      <div class="pw-item">리스크 매트릭스 & 대응 전략</div>
-      <div class="pw-item">투자자·이사회 설득 데이터 패킷</div>
-    </div>
-    <div class="pw-price">
-      <div class="pw-price-n">₩30,000</div>
-      <div class="pw-price-l">상세 리포트 1회</div>
-    </div>
-    <button class="btn-pay" onclick="showToast('결제 기능 준비 중입니다. yjk9793@gmail.com으로 문의해주세요.')">상세 리포트 받기 →</button>
-    <div class="consult-link">
-      직접 팀 AX 전환을 도와드립니다 —
-      <span onclick="openConsulting()">Deeploy 컨설팅 신청 (초기 상담 무료)</span>
-    </div>
-  </div>
-
   <!-- ACTION CARDS -->
   <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
 
@@ -1391,5 +1354,24 @@ function showToast(msg) {
     <div style="text-align:center;margin-top:10px;font-size:11px;color:#5a6380;">빠른 시일 내에 직접 연락드리겠습니다</div>
   </div>
 </div>
+
+<!-- BRAND FOOTER -->
+<div style="text-align:center;padding:40px 24px 32px;border-top:1px solid rgba(255,255,255,.06);margin-top:24px;">
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:12px;">
+    <span style="color:#00D4FF;">DEEP</span><span style="color:#F0F0F5;">LOY</span>
+  </div>
+  <p style="font-size:13px;color:#8a9ab5;font-weight:300;line-height:1.7;margin-bottom:20px;">
+    에이전트는 일을 대체하지 않습니다.<br>
+    인간이 더 중요한 판단에 집중할 수 있도록<br>
+    <strong style="color:#f0eee8;">일의 구조를 재설계하는 것</strong>입니다.
+  </p>
+  <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:24px;">
+    <span style="font-size:11px;font-family:'Syne',sans-serif;letter-spacing:2px;color:rgba(122,171,240,.6);text-transform:uppercase;">워크 온톨로지 진단</span>
+    <span style="font-size:11px;font-family:'Syne',sans-serif;letter-spacing:2px;color:rgba(122,171,240,.6);text-transform:uppercase;">· 바이브코딩 교육</span>
+    <span style="font-size:11px;font-family:'Syne',sans-serif;letter-spacing:2px;color:rgba(122,171,240,.6);text-transform:uppercase;">· 전환 실행 컨설팅</span>
+  </div>
+  <a href="https://www.deeploy.site" target="_blank" rel="noopener" style="display:inline-block;padding:10px 24px;background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(0,255,136,.1));border:1px solid rgba(0,212,255,.3);border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;color:#00D4FF;text-decoration:none;">www.deeploy.site →</a>
+</div>
+
 </body>
 </html>
