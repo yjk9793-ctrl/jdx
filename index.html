@@ -91,7 +91,9 @@ body{background:#07080a;color:#f0eee8;font-family:'Noto Sans KR',sans-serif;min-
 
 /* ── HEADER ── */
 .header{position:fixed;top:2px;left:0;right:0;padding:18px 40px;display:flex;justify-content:space-between;align-items:center;z-index:99;background:rgba(7,8,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
-.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:3px;color:var(--white);}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:2px;display:flex;align-items:center;gap:4px;}
+.logo span:first-child{color:#00D4FF;}
+.logo span:last-child{color:#F0F0F5;}
 .step-indicator{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
 
 /* ── MAIN ── */
@@ -384,7 +386,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .ty-email-row{display:flex;gap:10px;margin-top:12px;}
 
 .ty-brand{text-align:center;padding:36px 0 20px;border-top:1px solid rgba(255,255,255,.06);}
-.ty-brand-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:3px;color:#f0eee8;margin-bottom:10px;}
+.ty-brand-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:0px;margin-bottom:10px;}.ty-brand-logo .logo-deep{color:#00D4FF;}.ty-brand-logo .logo-loy{color:#f0eee8;}
 .ty-brand-tagline{font-size:13px;color:#8a9ab5;font-weight:300;line-height:1.7;margin-bottom:20px;}
 .ty-brand-values{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
 .ty-brand-val{font-size:11px;font-family:'Syne',sans-serif;letter-spacing:2px;color:rgba(122,171,240,.6);text-transform:uppercase;}
@@ -393,26 +395,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .ty-contact{font-size:12px;color:#8a9ab5;}
 .ty-contact a{color:#7aabf0;text-decoration:none;}
 
-/* ── 결제 모달 ── */
-.payment-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;display:none;align-items:flex-end;justify-content:center;}
-.payment-overlay.open{display:flex;}
-.payment-sheet{background:#0f1114;border:1px solid rgba(255,255,255,.12);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:28px 24px 40px;animation:slideUp .3s ease;}
-@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.pay-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto 24px;}
-.pay-title{font-size:17px;font-weight:900;margin-bottom:4px;}
-.pay-sub{font-size:13px;color:#8a9ab5;margin-bottom:20px;line-height:1.6;}
-.pay-preview{background:#161920;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px;margin-bottom:20px;}
-.pay-preview-label{font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#7aabf0;margin-bottom:8px;}
-.pay-preview-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;color:#8a9ab5;}
-.pay-preview-item:last-child{border-bottom:none;}
-.pay-preview-item::before{content:'✓';color:#2ea87e;font-size:11px;flex-shrink:0;}
-.pay-amount{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:rgba(59,111,212,.1);border:1px solid rgba(59,111,212,.25);border-radius:8px;margin-bottom:16px;}
-.pay-amount-label{font-size:13px;color:#8a9ab5;}
-.pay-amount-price{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#7aabf0;}
-.pay-btn{width:100%;padding:15px;background:#3b6fd4;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.pay-btn:hover{background:#2d5db8;}
-.pay-cancel{width:100%;padding:12px;background:transparent;border:none;color:#8a9ab5;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
-.pay-secure{text-align:center;font-size:11px;color:rgba(138,154,181,.5);margin-top:8px;}
 @keyframes ctaGlow{
   0%,100%{box-shadow:0 0 24px rgba(59,111,212,.3),0 0 48px rgba(46,168,126,.1);}
   50%{box-shadow:0 0 40px rgba(59,111,212,.55),0 0 80px rgba(46,168,126,.28);}
@@ -422,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   /* 기본 레이아웃 */
   .screen{padding:28px 16px 100px;}
   .header{padding:12px 16px;}
-  .logo{font-size:14px;letter-spacing:2px;}
+  .logo{font-size:18px;letter-spacing:2px;}
   .step-indicator{font-size:9px;letter-spacing:2px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
   /* 타이틀·텍스트 */
@@ -490,7 +472,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 
 <header class="header">
-  <div class="logo">DEEPLOY</div>
+  <div class="logo"><span>DEEP</span><span>LOY</span></div>
   <div class="step-indicator" id="stepIndicator">직무 AI 전환 진단</div>
 </header>
 
@@ -508,7 +490,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <strong style="color:var(--white)">10분이면 AI 시대 나의 새로운 역할과 JD가 만들어집니다.</strong>
   </p>
   <button class="btn btn-primary" onclick="goScreen('Reg')">지금 바로 진단하기 →</button>
-  <p style="margin-top:16px;font-size:12px;color:var(--muted);font-weight:300;">소요 시간 약 10분 · 무료 · 이미 <strong style="color:var(--white)">HR 담당자 1,200명+</strong>이 확인했습니다</p>
+  <p style="margin-top:16px;font-size:12px;color:var(--muted);font-weight:300;">소요 시간 약 10분 · 무료</p>
 </div>
 
 <!-- ══ SCREEN REG: 간단 정보 입력 ══ -->
@@ -2201,109 +2183,6 @@ function renderThankYou() {
 
     <div class="ty-actions">
 
-      <!-- JD 에이전트 CTA — 핵심 유료 상품 -->
-      <div style="
-        position:relative;
-        border-radius:14px;
-        padding:2px;
-        background:linear-gradient(135deg,#3b6fd4,#2ea87e,#7aabf0);
-        box-shadow:0 0 28px rgba(59,111,212,.35), 0 0 60px rgba(46,168,126,.15);
-        animation:ctaGlow 3s ease-in-out infinite;
-      ">
-        <div style="
-          background:linear-gradient(135deg,#0d1220,#0a1a14);
-          border-radius:12px;
-          padding:22px 20px 16px;
-          cursor:pointer;
-        ">
-          <!-- 뱃지 -->
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
-            <span style="
-              font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;
-              background:linear-gradient(90deg,rgba(59,111,212,.3),rgba(46,168,126,.2));
-              border:1px solid rgba(59,111,212,.4);
-              color:#7aabf0;padding:4px 10px;border-radius:20px;
-            ">✦ 유료 서비스</span>
-            <span style="font-family:'Syne',sans-serif;font-size:20px;font-weight:900;color:#7aabf0;">₩3,000</span>
-          </div>
-
-          <!-- 타이틀 -->
-          <div style="font-size:18px;font-weight:900;color:#f0eee8;margin-bottom:6px;line-height:1.3;">
-            AI 시대 새로운 역할<br>JD 만들기
-          </div>
-          <div style="font-size:12px;color:#8a9ab5;line-height:1.7;margin-bottom:16px;">
-            ${job.title} 직무의 에이전트 전환 이후<br>새로운 역할을 정의한 직무기술서를 생성합니다.
-          </div>
-
-          <!-- 포함 내용 -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;">
-            ${['새 역할 정의','3층 구조 반영','협업 관계 명시','성과 기준','필요 역량','3버전 동시 생성'].map(t=>`
-              <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8a9ab5;">
-                <span style="color:#2ea87e;font-size:10px;">✓</span>${t}
-              </div>`).join('')}
-          </div>
-
-          <!-- 샘플 미리보기 토글 -->
-          <div style="
-            border-top:1px solid rgba(255,255,255,.06);
-            padding-top:12px;margin-bottom:12px;
-          ">
-            <div onclick="event.stopPropagation();toggleJDSample('${job.id||state.job}','${score}')"
-              style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:6px 0;">
-              <span style="font-size:12px;color:#7aabf0;font-weight:500;">📄 샘플 JD 미리보기</span>
-              <span style="font-size:11px;color:#8a9ab5;" id="sampleToggleIcon">펼치기 ▾</span>
-            </div>
-            <div id="jdSampleBox" style="display:none;margin-top:12px;">
-              <div style="
-                background:rgba(255,255,255,.03);
-                border:1px solid rgba(255,255,255,.07);
-                border-radius:8px;padding:16px;
-                font-size:12px;color:#8a9ab5;line-height:1.8;
-              ">
-                <div style="font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;color:#7aabf0;margin-bottom:10px;">SAMPLE — ${job.title} 새로운 역할 JD</div>
-
-                <div style="margin-bottom:12px;">
-                  <div style="font-size:11px;color:#f0eee8;font-weight:700;margin-bottom:4px;">[ 새로운 역할 정의 ]</div>
-                  <div>에이전트가 반복·정형 태스크를 담당하는 환경에서, <strong style="color:#f0eee8;">${job.title}</strong>는 데이터 기반 인사이트를 해석하고 조직의 핵심 판단을 책임지는 역할입니다.</div>
-                </div>
-
-                <div style="background:rgba(46,168,126,.06);border-left:2px solid #2ea87e;padding:10px 12px;border-radius:0 6px 6px 0;margin-bottom:12px;">
-                  <div style="font-size:10px;color:#2ea87e;letter-spacing:2px;font-family:'Syne',sans-serif;margin-bottom:6px;">에이전트가 담당합니다</div>
-                  <div style="color:#8a9ab5;">• 1차 데이터 수집·분류 및 정기 리포트 자동 생성<br>• 일정 조율 및 반복 프로세스 자동 처리<br>• 초안 작성 및 시뮬레이션 제공</div>
-                </div>
-
-                <div style="background:rgba(59,111,212,.06);border-left:2px solid #3b6fd4;padding:10px 12px;border-radius:0 6px 6px 0;margin-bottom:12px;">
-                  <div style="font-size:10px;color:#7aabf0;letter-spacing:2px;font-family:'Syne',sans-serif;margin-bottom:6px;">당신이 집중할 판단 영역</div>
-                  <div style="color:#8a9ab5;">• 이해관계자 입장을 반영한 최종 의사결정<br>• 조직 맥락과 문화를 고려한 전략 판단<br>• 에이전트 결과물의 품질 검토 및 피드백</div>
-                </div>
-
-                <div style="margin-bottom:8px;">
-                  <div style="font-size:11px;color:#f0eee8;font-weight:700;margin-bottom:4px;">[ 성과 기준 ]</div>
-                  <div>• 판단 정확도 및 이해관계자 만족도 4.0/5.0 이상<br>• 에이전트 위임 태스크 처리 시간 30% 단축<br>• 핵심 판단 리드타임 주 X시간 이내 유지</div>
-                </div>
-
-                <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:10px;margin-top:10px;">
-                  <span style="font-size:11px;color:rgba(138,154,181,.5);">
-                    ※ 실제 생성 시 진단 데이터(준비도 ${score}점, 태스크 분석, 협업 구조)가 반영되어 훨씬 구체적으로 생성됩니다.
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CTA 버튼 -->
-          <button onclick="openPaymentModal()" style="
-            width:100%;padding:14px;
-            background:linear-gradient(90deg,#3b6fd4,#2ea87e);
-            color:#fff;border:none;border-radius:8px;
-            font-size:14px;font-weight:700;cursor:pointer;
-            font-family:'Noto Sans KR',sans-serif;
-            display:flex;align-items:center;justify-content:center;gap:8px;
-          ">
-            ₩3,000으로 JD 생성하기 →
-          </button>
-        </div>
-      </div>
 
       <div class="ty-action-card primary-action" onclick="toggleEmailForm()">
         <div class="ty-action-icon blue">📧</div>
@@ -2342,7 +2221,7 @@ function renderThankYou() {
     </div>
 
     <div class="ty-brand">
-      <div class="ty-brand-logo">DEEPLOY</div>
+      <div class="ty-brand-logo"><span class="logo-deep">DEEP</span><span class="logo-loy">LOY</span></div>
       <p class="ty-brand-tagline">
         에이전트는 일을 대체하지 않습니다.<br>
         인간이 더 중요한 판단에 집중할 수 있도록<br>
@@ -2479,241 +2358,3 @@ document.getElementById('btn4').onclick = renderDeepQuestions;
     </div>
   </div>
 </div>
-
-<!-- ── 결제 모달 ── -->
-<div class="payment-overlay" id="paymentOverlay" onclick="closePayment(event)">
-  <div class="payment-sheet" id="paymentSheet">
-    <div class="pay-handle"></div>
-    <div class="pay-title">AI 시대 새로운 역할 JD 생성</div>
-    <div class="pay-sub">진단 결과를 기반으로 에이전트 전환 이후의<br>새로운 직무기술서를 생성합니다.</div>
-    <div class="pay-preview">
-      <div class="pay-preview-label">생성되는 JD 내용</div>
-      <div class="pay-preview-item">에이전트 전환 후 새로운 역할 정의</div>
-      <div class="pay-preview-item">3층 구조 기반 핵심 책임 기술</div>
-      <div class="pay-preview-item">협업 구조 · 인풋/아웃풋 관계 명시</div>
-      <div class="pay-preview-item">성과 기준 (에이전트 시대 기준)</div>
-      <div class="pay-preview-item">필요 역량 · 우대사항</div>
-      <div class="pay-preview-item">채용공고용 · 내부문서 · 소셜 3버전</div>
-    </div>
-    <div class="pay-amount">
-      <span class="pay-amount-label">결제 금액</span>
-      <span class="pay-amount-price">₩3,000</span>
-    </div>
-    <button class="pay-btn" id="payBtn" onclick="startPayment()">카드로 결제하기</button>
-    <button class="pay-cancel" onclick="closePaymentModal()">취소</button>
-    <div class="pay-secure">🔒 토스페이먼츠 보안 결제 · 결제 후 즉시 생성</div>
-  </div>
-</div>
-
-<script src="https://js.tosspayments.com/v1/payment"></script>
-<script>
-// ══════════════════════════════════════════
-// 결제 플로우 (토스페이먼츠 테스트 모드)
-// ══════════════════════════════════════════
-const TOSS_CLIENT_KEY = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'; // 테스트 키
-
-function toggleJDSample() {
-  const box  = document.getElementById('jdSampleBox');
-  const icon = document.getElementById('sampleToggleIcon');
-  const open = box.style.display === 'none';
-  box.style.display = open ? 'block' : 'none';
-  icon.textContent  = open ? '접기 ▴' : '펼치기 ▾';
-}
-
-function openConsultingModal() {
-  // 진단 데이터 자동 채우기
-  const name    = state.reg?.name    || '';
-  const company = state.reg?.company || '';
-  const email   = state.reg?.email   || '';
-  const dept    = state.reg?.dept    || '';
-  const job     = JOB_DB[state.job];
-  const score   = state.result?.readiness_score || '';
-
-  if (name)    document.getElementById('c_name').value    = name;
-  if (company) document.getElementById('c_company').value = company;
-  if (email)   document.getElementById('c_email').value   = email;
-  if (dept)    document.getElementById('c_dept').value    = dept;
-  if (job && score) {
-    document.getElementById('c_message').value =
-      `안녕하세요, Deeploy 진단을 완료했습니다.\n\n직무: ${job.title}\nAI 전환 준비도: ${score}점\n\n심층 컨설팅을 신청하고 싶습니다.`;
-  }
-  document.getElementById('consultingOverlay').style.display = 'flex';
-}
-
-function closeConsultingModal(e) {
-  if (!e || e.target === document.getElementById('consultingOverlay')) {
-    document.getElementById('consultingOverlay').style.display = 'none';
-  }
-}
-
-function submitConsulting() {
-  const name    = document.getElementById('c_name').value.trim();
-  const company = document.getElementById('c_company').value.trim();
-  const email   = document.getElementById('c_email').value.trim();
-  const phone   = document.getElementById('c_phone').value.trim();
-  const dept    = document.getElementById('c_dept').value.trim();
-  const message = document.getElementById('c_message').value.trim();
-
-  if (!name || !company || !email) {
-    alert('성명, 소속, 이메일은 필수 항목입니다.');
-    return;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('올바른 이메일 주소를 입력해주세요.');
-    return;
-  }
-
-  const job   = JOB_DB[state.job];
-  const score = state.result?.readiness_score || '';
-  const body  = `성명: ${name}%0A소속: ${company}%0A부서: ${dept}%0A이메일: ${email}%0A연락처: ${phone}%0A%0A직무: ${job?.title||''}%0AAI 전환 준비도: ${score}점%0A%0A문의 내용:%0A${encodeURIComponent(message)}`;
-
-  window.location.href = `mailto:yjk9793@gmail.com?subject=Deeploy 컨설팅 신청 - ${encodeURIComponent(company)} ${encodeURIComponent(name)}&body=${body}`;
-
-  document.getElementById('consultingOverlay').style.display = 'none';
-  showToastMsg('✓ 신청이 접수됩니다. 이메일 앱이 열립니다.');
-}
-
-function openPaymentModal() {
-  document.getElementById('paymentOverlay').classList.add('open');
-}
-function closePaymentModal() {
-  document.getElementById('paymentOverlay').classList.remove('open');
-}
-function closePayment(e) {
-  if (e.target === document.getElementById('paymentOverlay')) closePaymentModal();
-}
-
-async function startPayment() {
-  const btn = document.getElementById('payBtn');
-  btn.textContent = '결제창 로딩 중...';
-  btn.disabled = true;
-
-  const orderId  = 'DEEPLOY_JD_' + Date.now();
-  const job      = JOB_DB[state.job];
-  const name     = state.reg.name || '사용자';
-  const email    = state.reg.email || '';
-
-  try {
-    const tossPayments = TossPayments(TOSS_CLIENT_KEY);
-    await tossPayments.requestPayment('카드', {
-      amount:      3000,
-      orderId:     orderId,
-      orderName:   `Deeploy JD 생성 — ${job?.title || '직무'} 직무기술서`,
-      customerName: name,
-      customerEmail: email,
-      successUrl:  window.location.href + '?payment=success&orderId=' + orderId,
-      failUrl:     window.location.href + '?payment=fail',
-    });
-  } catch(e) {
-    if (e.code === 'USER_CANCEL') {
-      btn.textContent = '카드로 결제하기';
-      btn.disabled = false;
-    } else {
-      // 테스트 환경 등 오류 시 — MVP에서는 바로 생성으로 진행
-      btn.textContent = '카드로 결제하기';
-      btn.disabled = false;
-      handlePaymentSuccess(orderId);
-    }
-  }
-}
-
-// 결제 성공 처리 (URL 파라미터 체크)
-function checkPaymentResult() {
-  const params   = new URLSearchParams(window.location.search);
-  const payment  = params.get('payment');
-  const orderId  = params.get('orderId');
-  const action   = params.get('action');
-
-  if (action === 'jd') {
-    // 이메일에서 JD 만들기 버튼 클릭 → 결과 화면으로 이동
-    window.history.replaceState({}, '', window.location.pathname);
-    // 결과가 있으면 바로 결과 화면, 없으면 랜딩으로
-    if (state.result) {
-      goScreen(7);
-      setTimeout(() => {
-        const jdBtn = document.querySelector('.ty-action-card');
-        if (jdBtn) jdBtn.scrollIntoView({ behavior: 'smooth' });
-      }, 500);
-    } else {
-      // 결과 없으면 감사 페이지의 JD CTA 섹션으로 유도
-      openPaymentModal();
-    }
-    return;
-  }
-
-  if (payment === 'success' && orderId) {
-    window.history.replaceState({}, '', window.location.pathname);
-    handlePaymentSuccess(orderId);
-  } else if (payment === 'fail') {
-    window.history.replaceState({}, '', window.location.pathname);
-    showToastMsg('결제가 취소됐습니다');
-  }
-}
-
-function showToastMsg(msg) {
-  const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0f1114;border:1px solid rgba(46,168,126,.5);border-radius:8px;padding:12px 20px;font-size:13px;color:#2ea87e;z-index:999;';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
-
-function handlePaymentSuccess(orderId) {
-  closePaymentModal();
-  // 진단 데이터를 sessionStorage에 저장하고 JD 에이전트로 이동
-  const diagnosisPayload = buildDiagnosisPayload();
-  sessionStorage.setItem('deeploy_diagnosis_result', JSON.stringify(diagnosisPayload));
-  sessionStorage.setItem('deeploy_payment_verified', orderId);
-
-  // JD 에이전트 페이지로 이동 (같은 도메인 가정)
-  // 실제 배포 시 URL 교체
-  const jdAgentUrl = 'https://www.jdxwork.com/jd?from=diagnosis';
-  window.location.href = jdAgentUrl;
-}
-
-function buildDiagnosisPayload() {
-  const job = JOB_DB[state.job] || {};
-  const r   = state.result || {};
-  const freqMap = {daily:'매일',weekly:'주 1~3회',monthly:'월 1~4회',irregular:'비정기'};
-  const toolMap = {excel:'엑셀·시트',erp:'사내ERP',email:'이메일·메신저',saas:'SaaS툴',manual:'수작업'};
-
-  const taskDetails = Object.entries(state.deepAnswers || {}).map(([id,a]) => {
-    const task = job.tasks?.find(t=>t.id===id);
-    return {
-      name:      task?.name || id,
-      hours:     a.hours,
-      frequency: freqMap[a.frequency] || a.frequency,
-      tools:     (a.tools||[]).map(v=>toolMap[v]||v).join('·'),
-      flow:      a.flow,
-      exception: a.exception,
-      owner:     a.owner,
-      agentRisk: a.agentRisk
-    };
-  });
-
-  return {
-    reg:         state.reg,
-    job:         { id: state.job, title: job.title, icon: job.icon },
-    industry:    state.industry,
-    size:        state.size,
-    ai:          state.ai,
-    score:       r.readiness_score,
-    label:       r.readiness_label,
-    layer1:      r.quick_wins    || [],
-    layer3:      r.human_core    || [],
-    newRole:     r.redesign_role || '',
-    newTitle:    r.redesign_title|| '',
-    newDesc:     r.redesign_desc || '',
-    impact:      r.redesign_impact|| '',
-    blocker:     r.blocker_insight|| '',
-    nextStep:    r.next_step     || '',
-    context:     state.context,
-    taskDetails: taskDetails,
-    layerDist:   r.layer_distribution || {}
-  };
-}
-
-checkPaymentResult();
-</script>
-</body>
-</html>
