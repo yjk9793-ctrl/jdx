@@ -248,6 +248,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   .div-grid{grid-template-columns:1fr;}
   .kpi-grid{grid-template-columns:1fr;}
 }
+.dr-btn{font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .15s;}
+.dr-btn.active{background:rgba(74,124,255,.2);border-color:rgba(74,124,255,.5);color:#a0c0ff;}
+.dr-btn:hover{border-color:rgba(255,255,255,.3);color:var(--white);}
 </style>
 </head>
 <body>
@@ -401,6 +404,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="opt" onclick="selOpt(this,'aiLevel','advanced')"><div class="opt-main">에이전트 운영 중</div><div class="opt-sub">자동화 파이프라인이 실제 운영됨</div></div>
       </div>
     </div>
+
+    <hr class="sdiv">
+
+    <div class="fg">
+      <div class="fl" style="margin-bottom:6px;"><strong>각 직군에서 최종 판단을 누가 하나요?</strong> <span style="font-size:11px;font-weight:300;color:var(--muted);">복수 선택 · Decision OS 연계</span></div>
+      <div class="multi-opts" id="rolesStructureOpts">
+        <div class="mc" onclick="togRoles(this,'direct')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>해당 직군 담당자 직접 판단</div>
+        <div class="mc" onclick="togRoles(this,'manager')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>팀장·매니저 최종 승인</div>
+        <div class="mc" onclick="togRoles(this,'ceo')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>CEO·대표 직접 결정</div>
+        <div class="mc" onclick="togRoles(this,'committee')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>위원회·협의체 결정</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -539,6 +554,48 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="opt" onclick="selOpt(this,'teamAttitude','proactive')"><div class="opt-main">적극적</div><div class="opt-sub">팀 스스로 AI 도구를 찾아 쓰는 중</div></div>
       </div>
     </div>
+
+    <hr class="sdiv">
+
+    <div class="fg">
+      <div class="fl" style="margin-bottom:6px;"><strong>업무 영역별 현재 처리 방식은?</strong> <span style="font-size:11px;font-weight:300;color:var(--muted);">Decision OS 도메인 레이어 초기값</span></div>
+      <p style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:16px;line-height:1.6;">각 영역이 지금 어떻게 처리되는지 선택해주세요. Work Ontology 구성에 직접 활용됩니다.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;">
+          <span style="font-size:13px;font-weight:500;min-width:80px;">채용 · 선발</span>
+          <div style="display:flex;gap:6px;">
+            <button class="dr-btn" data-domain="recruit" data-val="l1" onclick="setDomainReadiness(this)">에이전트 가능</button>
+            <button class="dr-btn" data-domain="recruit" data-val="l2" onclick="setDomainReadiness(this)">협업 필요</button>
+            <button class="dr-btn" data-domain="recruit" data-val="l3" onclick="setDomainReadiness(this)">인간 전담</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;">
+          <span style="font-size:13px;font-weight:500;min-width:80px;">성과 · 평가</span>
+          <div style="display:flex;gap:6px;">
+            <button class="dr-btn" data-domain="eval" data-val="l1" onclick="setDomainReadiness(this)">에이전트 가능</button>
+            <button class="dr-btn" data-domain="eval" data-val="l2" onclick="setDomainReadiness(this)">협업 필요</button>
+            <button class="dr-btn" data-domain="eval" data-val="l3" onclick="setDomainReadiness(this)">인간 전담</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;">
+          <span style="font-size:13px;font-weight:500;min-width:80px;">보상 · 승진</span>
+          <div style="display:flex;gap:6px;">
+            <button class="dr-btn" data-domain="comp" data-val="l1" onclick="setDomainReadiness(this)">에이전트 가능</button>
+            <button class="dr-btn" data-domain="comp" data-val="l2" onclick="setDomainReadiness(this)">협업 필요</button>
+            <button class="dr-btn" data-domain="comp" data-val="l3" onclick="setDomainReadiness(this)">인간 전담</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;">
+          <span style="font-size:13px;font-weight:500;min-width:80px;">온보딩 · 교육</span>
+          <div style="display:flex;gap:6px;">
+            <button class="dr-btn" data-domain="onboard" data-val="l1" onclick="setDomainReadiness(this)">에이전트 가능</button>
+            <button class="dr-btn" data-domain="onboard" data-val="l2" onclick="setDomainReadiness(this)">협업 필요</button>
+            <button class="dr-btn" data-domain="onboard" data-val="l3" onclick="setDomainReadiness(this)">인간 전담</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -655,6 +712,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <hr class="sdiv">
 
     <div class="fg">
+      <div class="fl" style="margin-bottom:6px;"><strong>지금 CEO에게 직접 올라오는 판단은?</strong> <span style="font-size:11px;font-weight:300;color:var(--muted);">복수 선택 · Decision OS Layer 3 초기값</span></div>
+      <p style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:12px;line-height:1.6;">선택한 항목은 Work Ontology에서 Layer 3(CEO 전담)으로 자동 설정됩니다.</p>
+      <div class="multi-opts" id="ceoDecisionsOpts">
+        <div class="mc" onclick="togCeoDecisions(this,'hire_final')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>채용 최종 합격</div>
+        <div class="mc" onclick="togCeoDecisions(this,'perf_c')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>성과 C등급 처우</div>
+        <div class="mc" onclick="togCeoDecisions(this,'org_change')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>조직 개편·팀 구조 변경</div>
+        <div class="mc" onclick="togCeoDecisions(this,'budget_extra')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>예산 외 지출 승인</div>
+        <div class="mc" onclick="togCeoDecisions(this,'key_leave')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>핵심 인재 퇴직 처리</div>
+        <div class="mc" onclick="togCeoDecisions(this,'partner')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>핵심 파트너 계약</div>
+        <div class="mc" onclick="togCeoDecisions(this,'salary_raise')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>연봉 인상 결정</div>
+        <div class="mc" onclick="togCeoDecisions(this,'pivot')"><div class="mc-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>사업 방향 전환·피벗</div>
+      </div>
+    </div>
+
+    <hr class="sdiv">
+
+    <div class="fg">
       <div class="fl" style="margin-bottom:8px;"><strong>지금 가장 솔직한 고민을 적어주세요</strong></div>
       <textarea class="fi" id="ceoPain" placeholder="예: 팀원들이 AI 도구를 쓰기 시작했는데 오히려 산발적이라 통제가 안 됩니다. 체계를 잡고 싶은데 어디서부터 시작해야 할지 모르겠어요."></textarea>
     </div>
@@ -717,6 +791,10 @@ const state = {
   compAi:'', customerAi:'', futureWithoutAi:'',
   scenario:'', reinvest:[],
   authority:'', ceoLearning:'', ceoPain:'',
+  // Decision OS 연계
+  domain_readiness: { recruit:'', eval:'', comp:'', onboard:'' },
+  roles_structure: [],
+  ceo_decisions: [],
   result: null, resultSource: 'mock'
 };
 
@@ -802,6 +880,38 @@ function togMc(el, key, val) {
   else state[key] = state[key].filter(v => v !== val);
 }
 
+// 역할 구조 복수 선택 (Decision OS roles.boundary_def 연계)
+function togRoles(el, val) {
+  el.classList.toggle('sel');
+  if (!state.roles_structure) state.roles_structure = [];
+  if (el.classList.contains('sel')) {
+    if (!state.roles_structure.includes(val)) state.roles_structure.push(val);
+  } else {
+    state.roles_structure = state.roles_structure.filter(v => v !== val);
+  }
+}
+
+// 도메인별 준비도 버튼 (Decision OS decision_nodes.layer 연계)
+function setDomainReadiness(btn) {
+  const domain = btn.dataset.domain;
+  const val = btn.dataset.val;
+  btn.parentElement.querySelectorAll('.dr-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (!state.domain_readiness) state.domain_readiness = {};
+  state.domain_readiness[domain] = val;
+}
+
+// CEO 에스컬레이션 패턴 (Decision OS Layer 3 초기값)
+function togCeoDecisions(el, val) {
+  el.classList.toggle('sel');
+  if (!state.ceo_decisions) state.ceo_decisions = [];
+  if (el.classList.contains('sel')) {
+    if (!state.ceo_decisions.includes(val)) state.ceo_decisions.push(val);
+  } else {
+    state.ceo_decisions = state.ceo_decisions.filter(v => v !== val);
+  }
+}
+
 // ══════════════════════════════════════════
 // DIVISION GRID
 // ══════════════════════════════════════════
@@ -866,6 +976,9 @@ COMPETITION: ${state.compAi} | Customer AI: ${state.customerAi} | Future without
 SCENARIO: ${state.scenario} | REINVEST: ${state.reinvest.join(',')}
 AUTHORITY: ${state.authority} | CEO Learning: ${state.ceoLearning}
 CEO PAIN: ${state.ceoPain||'없음'}
+DOMAIN READINESS: 채용=${state.domain_readiness?.recruit||'미선택'} | 평가=${state.domain_readiness?.eval||'미선택'} | 보상=${state.domain_readiness?.comp||'미선택'} | 온보딩=${state.domain_readiness?.onboard||'미선택'}
+CEO DECISIONS (Layer 3): ${(state.ceo_decisions||[]).join(', ')||'미선택'}
+ROLES STRUCTURE: ${(state.roles_structure||[]).join(', ')||'미선택'}
 
 OUTPUT only this JSON (all text in Korean):
 {
@@ -957,6 +1070,9 @@ async function saveTeamDiagnosis() {
           savable_amount:   r.cost_simulation?.savable_amount || '',
           replaceable_head: r.replaceable_head || 0,
           headline:         r.headline || '',
+          domain_readiness: state.domain_readiness || {},
+          roles_structure:  state.roles_structure || [],
+          ceo_decisions:    state.ceo_decisions || [],
           cohort_code:      state.reg.cohort_code || '',
           raw_result:       r
         }
