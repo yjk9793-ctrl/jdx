@@ -606,6 +606,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="opt" data-val="active" onclick="selectOpt(this,'ai');checkScreen2()">적극적으로 도입 중</div>
     <div class="opt" data-val="agent" onclick="selectOpt(this,'ai');checkScreen2()">이미 에이전트 운영 중</div>
   </div>
+  <div style="margin-top:28px;">
+    <div class="context-label" style="margin-bottom:6px;"><strong>주로 판단하는 업무 영역</strong> <span style="font-size:11px;color:var(--muted);font-weight:300;">복수 선택 가능 · Decision OS 연계에 활용됩니다</span></div>
+    <div class="options" id="domainOpts" style="gap:8px;flex-wrap:wrap;">
+      <div class="opt multi-opt" data-val="recruit" onclick="toggleDomain(this)"><span class="opt-label">채용 · 선발</span></div>
+      <div class="opt multi-opt" data-val="eval" onclick="toggleDomain(this)"><span class="opt-label">성과 · 평가</span></div>
+      <div class="opt multi-opt" data-val="comp" onclick="toggleDomain(this)"><span class="opt-label">보상 · 승진</span></div>
+      <div class="opt multi-opt" data-val="onboard" onclick="toggleDomain(this)"><span class="opt-label">온보딩 · 교육</span></div>
+      <div class="opt multi-opt" data-val="org" onclick="toggleDomain(this)"><span class="opt-label">조직 설계</span></div>
+      <div class="opt multi-opt" data-val="ops" onclick="toggleDomain(this)"><span class="opt-label">팀 운영 · 관리</span></div>
+      <div class="opt multi-opt" data-val="strategy" onclick="toggleDomain(this)"><span class="opt-label">HR 전략 · 기획</span></div>
+      <div class="opt multi-opt" data-val="other" onclick="toggleDomain(this)"><span class="opt-label">기타</span></div>
+    </div>
+  </div>
+
   <div class="btn-row">
     <button class="btn btn-ghost" onclick="goScreen(1)">← 이전</button>
     <button class="btn btn-primary" id="btn2" disabled onclick="goScreen(3)">다음 →</button>
@@ -1070,7 +1084,9 @@ const state = {
     futureJob: null
   },
   result: null,
-  currentScreen: 0
+  currentScreen: 0,
+  // Decision OS 연계
+  domain: []
 };
 
 // ══════════════════════════════════════════
@@ -1154,6 +1170,28 @@ function checkScreen2() {
   const jobtitle = document.getElementById('reg_jobtitle')?.value.trim();
   document.getElementById('btn2').disabled = !(jobtitle && state.size && state.ai);
   if (jobtitle) state.reg.jobtitle = jobtitle;
+}
+
+// 도메인 복수 선택 (Decision OS 연계)
+function toggleDomain(el) {
+  const val = el.dataset.val;
+  el.classList.toggle('selected');
+  if (state.domain.includes(val)) {
+    state.domain = state.domain.filter(v => v !== val);
+  } else {
+    state.domain.push(val);
+  }
+}
+
+// 심층 질문 data_inputs 복수 선택
+function toggleDataInput(taskId, el, val) {
+  el.classList.toggle('selected');
+  const arr = state.deepAnswers[taskId].data_inputs;
+  if (el.classList.contains('selected')) {
+    if (!arr.includes(val)) arr.push(val);
+  } else {
+    state.deepAnswers[taskId].data_inputs = arr.filter(v => v !== val);
+  }
 }
 
 function showErr(field, show) {
@@ -1330,7 +1368,7 @@ function renderDeepQuestions() {
 
   let html = '';
   limited.forEach((t, idx) => {
-    state.deepAnswers[t.id] = { hours: 5, flow: null, exception: 3, owner: null, agentRisk: null, frequency: null, tools: [] };
+    state.deepAnswers[t.id] = { hours: 5, flow: null, exception: 3, owner: null, agentRisk: null, frequency: null, tools: [], escalation_cond: '', data_inputs: [] };
     html += `
     <div class="task-deep-card">
       <div class="task-deep-name">
@@ -1450,6 +1488,40 @@ function renderDeepQuestions() {
         </div>
       </div>
 
+      <div class="q-block" style="border-top:1px solid rgba(255,255,255,.06);margin-top:8px;padding-top:16px;">
+        <div style="font-size:10px;font-family:'Syne',sans-serif;letter-spacing:2px;color:rgba(122,171,240,.5);text-transform:uppercase;margin-bottom:14px;">Decision OS 연계 정보</div>
+
+        <div class="q-label" style="margin-bottom:6px;"><strong>이 업무, 어떤 조건에서 위로 올리나요?</strong> <span style="font-size:11px;font-weight:300;color:var(--muted);">에스컬레이션 조건</span></div>
+        <input type="text"
+          style="width:100%;padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#f0eee8;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;margin-bottom:18px;"
+          placeholder="예: 예산 10% 초과 시 / 3명 이상 반대 시 / 법적 이슈 발생 시"
+          oninput="state.deepAnswers['${t.id}'].escalation_cond = this.value"
+          onfocus="this.style.borderColor='rgba(122,171,240,.4)'"
+          onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+
+        <div class="q-label" style="margin-bottom:8px;"><strong>이 판단 내릴 때 참고하는 정보는?</strong> <span style="font-size:11px;font-weight:300;color:var(--muted);">복수 선택</span></div>
+        <div class="radio-group" style="gap:6px;">
+          <div class="radio-opt multi-opt" onclick="toggleDataInput('${t.id}',this,'perf')">
+            <div class="radio-dot"></div>전월 실적·수치
+          </div>
+          <div class="radio-opt multi-opt" onclick="toggleDataInput('${t.id}',this,'peer')">
+            <div class="radio-dot"></div>동료·팀원 의견
+          </div>
+          <div class="radio-opt multi-opt" onclick="toggleDataInput('${t.id}',this,'system')">
+            <div class="radio-dot"></div>시스템·HR 데이터
+          </div>
+          <div class="radio-opt multi-opt" onclick="toggleDataInput('${t.id}',this,'intuition')">
+            <div class="radio-dot"></div>경험·직관
+          </div>
+          <div class="radio-opt multi-opt" onclick="toggleDataInput('${t.id}',this,'external')">
+            <div class="radio-dot"></div>외부 기준·벤치마크
+          </div>
+          <div class="radio-opt multi-opt" onclick="toggleDataInput('${t.id}',this,'boss')">
+            <div class="radio-dot"></div>상사·경영진 지시
+          </div>
+        </div>
+      </div>
+
     </div>`;
   });
 
@@ -1558,7 +1630,8 @@ async function runAnalysis() {
     return `- [${t.name}]
   · 주간시간: ${a.hours||5}h | 발생주기: ${freqMap[a.frequency]||'미응답'} | 주도구: ${toolsText}
   · 결과흐름: ${a.flow||'미응답'} | 패턴일관성: ${a.exception||3}/10
-  · 책임구조: ${ownerMap[a.owner]||'미응답'} | 전환가능성: ${agentMap[a.agentRisk]||'미응답'}`;
+  · 책임구조: ${ownerMap[a.owner]||'미응답'} | 전환가능성: ${agentMap[a.agentRisk]||'미응답'}
+  · [Decision OS] 에스컬레이션 조건: ${a.escalation_cond||'미입력'} | 참고 데이터: ${(a.data_inputs||[]).join('·')||'미선택'}`;
   }).join('\n');
 
   const prompt = `당신은 Deeploy의 직무 온톨로지 분석 엔진입니다.
@@ -1573,6 +1646,7 @@ async function runAnalysis() {
 업종: ${state.industry} | 규모: ${state.size} | AI 현황: ${state.ai}
 직무: ${job.title} | 팀 인원: ${state.context.teamSize}명
 응답자 직무·직책: ${state.reg.jobtitle} | 경력 연차: ${state.reg.years}년차
+주요 판단 도메인: ${state.domain.length>0?state.domain.join(', '):'미선택'}
 
 [태스크별 심층 응답]
 ${taskSummary}
@@ -1783,6 +1857,12 @@ async function saveIndividualDiagnosis() {
           },
           quick_wins:  r.quick_wins || [],
           human_core:  r.human_core || [],
+          domain:      state.domain || [],
+          task_details: Object.entries(state.deepAnswers||{}).map(([id,a])=>({
+            task_id: id,
+            escalation_cond: a.escalation_cond||'',
+            data_inputs: a.data_inputs||[]
+          })),
           cohort_code: reg.cohort_code || '',
           raw_result:  r
         }
