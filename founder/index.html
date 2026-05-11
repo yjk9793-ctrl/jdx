@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>창업자 AI 준비도 진단 — Deeploy × jdxwork</title>
+  <meta name="description" content="스타트업 대표를 위한 AI 준비도 진단. 매일 하는 판단 구조와 HR 에이전트 니즈를 워크 온톨로지 엔진이 분석합니다." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0a;
+      --surface:  #0d0d0d;
+      --border:   #1c1c1c;
+      --border2:  #242424;
+      --text:     #e8e4dc;
+      --muted:    #666;
+      --dim:      #3a3a3a;
+      --cyan:     #00BFFF;
+      --blue:     #1a6ef5;
+      --blue-bg:  #1a3a6e;
+      --blue-text:#7ab8ff;
+      --red:      #aa4444;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── 스크롤바 ── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+    /* ── 헤더 ── */
+    #header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid #161616;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.96);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    .logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+    }
+
+
+    /* ── 프로그레스 바 ── */
+    #progress-wrap {
+      height: 2px;
+      background: #111;
+      width: 100%;
+      display: none;
+    }
+    #progress-bar {
+      height: 2px;
+      background: var(--text);
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    /* ── 메인 ── */
+    #main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 64px 24px 120px;
+    }
+
+    /* ── 섹션 공통 ── */
+    .section { display: none; }
+    .section.active { display: block; animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── 타이포그래피 ── */
+    .act-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--dim);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .tag-label {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .hero-title {
+      font-size: clamp(34px, 6.5vw, 58px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+      color: var(--text);
+    }
+    .hero-sub {
+      font-size: 15px;
+      line-height: 1.95;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .hero-meta {
+      font-size: 12px;
+      color: var(--dim);
+      margin-bottom: 52px;
+    }
+    .section-title {
+      font-size: clamp(26px, 5vw, 42px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+    .section-sub {
+      font-size: 13px;
+      color: #4e4e4e;
+      margin-bottom: 44px;
+      line-height: 1.85;
+    }
+
+    /* ── 버튼 ── */
+    .cta-btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 700;
+      transition: opacity 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.8; }
+
+    /* ── 폼 필드 ── */
+    .form-group { margin-bottom: 22px; }
+    .field-label-sm {
+      display: block;
+      font-size: 12px;
+      color: #5a5a5a;
+      margin-bottom: 8px;
+    }
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus { border-color: #2e2e2e; }
+    input.error-field, textarea.error-field { border-color: var(--red) !important; }
+
+    .error-msg {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 6px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* ── 칩 (선택 버튼) ── */
+    .field-block { margin-bottom: 36px; }
+    .field-block-label {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 14px;
+      line-height: 1.65;
+    }
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 8px 15px;
+      background: transparent;
+      border: 1px solid #1e1e1e;
+      border-radius: 100px;
+      color: #484848;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1.5;
+    }
+    .chip:hover { border-color: #3a3a3a; color: #aaa; }
+    .chip.selected {
+      background: var(--blue-bg);
+      color: var(--blue-text);
+      border-color: var(--blue);
+    }
+
+    /* ── 텍스트에리어 ── */
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      line-height: 1.85;
+    }
+    .char-count {
+      font-size: 11px;
+      color: #2e2e2e;
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    /* ── 구분선 ── */
+    .divider { height: 1px; background: #141414; margin: 32px 0; }
+
+    /* ── 네비게이션 ── */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 52px;
+      gap: 12px;
+    }
+    .nav-prev {
+      padding: 11px 22px;
+      background: transparent;
+      border: 1px solid #1a1a1a;
+      border-radius: 3px;
+      color: var(--dim);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .nav-prev:hover { opacity: 0.7; }
+    .nav-next {
+      padding: 11px 26px;
+      background: var(--blue);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 700;
+      transition: opacity 0.2s;
+    }
+    .nav-next:hover { opacity: 0.8; }
+
+    /* ── 개인정보 동의 ── */
+    .privacy-box {
+      background: var(--surface);
+      border: 1px solid #1e1e1e;
+      border-radius: 6px;
+      padding: 20px 22px;
+      margin-bottom: 28px;
+      margin-top: 8px;
+    }
+    .privacy-title {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .privacy-row {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .privacy-key { color: #444; min-width: 72px; flex-shrink: 0; }
+    .privacy-note {
+      font-size: 11px;
+      color: var(--dim);
+      line-height: 1.7;
+      margin: 12px 0 18px;
+      padding-top: 10px;
+      border-top: 1px solid #181818;
+    }
+    .privacy-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .check-box {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #2e2e2e;
+      border-radius: 3px;
+      background: #111;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      font-size: 11px;
+      color: #fff;
+    }
+    .check-box.on { background: var(--blue); border-color: var(--blue); }
+    .check-label { font-size: 13px; color: #888; }
+    .check-label span { color: #cc4444; }
+
+    /* ── 분석 애니메이션 ── */
+    .analyze-item {
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+      color: #777;
+      margin-bottom: 22px;
+      opacity: 0.18;
+      transition: opacity 0.5s;
+    }
+    .analyze-item.done { opacity: 1; }
+    .analyze-dot { font-size: 16px; color: #333; margin-right: 14px; }
+    .analyze-item.done .analyze-dot { color: #4ade80; }
+
+    /* ── 결과 ── */
+    .result-card {
+      background: var(--surface);
+      border: 1px solid #1a1a1a;
+      border-radius: 5px;
+      padding: 26px 28px;
+      margin-top: 28px;
+    }
+    .result-label {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .result-profile {
+      font-size: 19px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .score-wrap { margin-top: 24px; }
+    .score-bar {
+      height: 4px;
+      background: #1a1a1a;
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      background: var(--text);
+      border-radius: 2px;
+      transition: width 1.2s ease;
+      width: 0%;
+    }
+    .score-note { font-size: 12px; color: #555; margin-top: 8px; }
+    .rec-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid #141414;
+      font-size: 14px;
+      color: #888;
+      line-height: 1.7;
+    }
+    .rec-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid #252525;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #444;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .result-meta {
+      margin-top: 32px;
+      padding: 18px 22px;
+      background: #0d0d0d;
+      border: 1px solid #161616;
+      border-radius: 3px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.8;
+    }
+    .result-meta strong { color: #888; }
+    .result-btns { margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-secondary {
+      display: inline-block;
+      padding: 15px 30px;
+      background: transparent;
+      color: #555;
+      border: 1px solid #222;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn-secondary:hover { opacity: 0.7; }
+
+    /* ── 에이전트 조건부 섹션 ── */
+    .agent-conditional { display: none; }
+    .agent-conditional.show { display: block; }
+
+    /* ── 반응형 ── */
+    @media (max-width: 600px) {
+      #header { padding: 16px 20px; }
+      #main { padding: 48px 16px 100px; }
+      .nav-prev, .nav-next { font-size: 12px; padding: 10px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header id="header">
+    <span class="logo">DEEPLOY</span>
+    <span style="font-size:12px; color:#3a3a3a; letter-spacing:0.1em;">창업자 AI 준비도 진단</span>
+  </header>
+
+  <!-- 프로그레스 바 -->
+  <div id="progress-wrap">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- 메인 -->
+  <main id="main">
+
+    <!-- 0. INTRO -->
+    <div id="s-intro" class="section active">
+      <p class="tag-label">창업자 AI 준비도 진단</p>
+      <h1 class="hero-title">당신은 하루에<br>몇 개의 판단을<br>혼자 하고 있나요?</h1>
+      <p class="hero-sub">
+        스타트업 대표는 평균 하루 40~70개의 의사결정을 합니다.<br>
+        그 판단들이 어디에 쌓이고, 무엇이 에이전트로 이관될 수 있는지<br>
+        특히 <strong style="color:#c8c4bc">HR과 조직 운영 판단</strong>에서 어떤 에이전트가 필요한지<br>
+        딥플로이의 워크 온톨로지 엔진이 분석합니다.
+      </p>
+      <p class="hero-meta">소요 시간 약 10분 · 무료 · 총 8개 섹션</p>
+      <button class="cta-btn" onclick="goNext()">지금 바로 진단하기 →</button>
+    </div>
+
+    <!-- 1. INFO -->
+    <div id="s-info" class="section">
+      <p class="act-label">시작 전 — 간단 정보</p>
+      <h2 class="section-title">결과를<br>보내드릴게요</h2>
+      <p class="section-sub">진단 완료 후 맞춤 리포트를 이메일로 보내드립니다.</p>
+
+      <div class="form-group">
+        <label class="field-label-sm">성명 *</label>
+        <input type="text" id="f-name" placeholder="이름을 입력해주세요">
+        <p class="error-msg" id="err-name">이름을 입력해주세요</p>
+      </div>
+      <div class="form-group">
+        <label class="field-label-sm">이메일 *</label>
+        <input type="email" id="f-email" placeholder="이메일을 입력해주세요">
+        <p class="error-msg" id="err-email">올바른 이메일을 입력해주세요</p>
+      </div>
+      <div class="form-group">
+        <label class="field-label-sm">회사명 *</label>
+        <input type="text" id="f-company" placeholder="회사명을 입력해주세요">
+        <p class="error-msg" id="err-company">회사명을 입력해주세요</p>
+      </div>
+
+      <!-- 개인정보 동의 -->
+      <div class="privacy-box">
+        <p class="privacy-title">개인정보 수집·이용 안내</p>
+        <div class="privacy-row"><span class="privacy-key">수집 항목</span><span>성명, 이메일, 회사명</span></div>
+        <div class="privacy-row"><span class="privacy-key">수집 목적</span><span>진단 결과 발송 및 Deeploy 서비스 안내</span></div>
+        <div class="privacy-row"><span class="privacy-key">보유 기간</span><span>수집일로부터 1년 (철회 시 즉시 삭제)</span></div>
+        <p class="privacy-note">귀하는 동의를 거부할 권리가 있으며, 거부 시 진단 결과 이메일 발송이 제한됩니다.</p>
+        <label class="privacy-check" onclick="togglePrivacy()">
+          <div class="check-box" id="privacy-box"></div>
+          <span class="check-label">개인정보 수집·이용에 동의합니다. <span>(필수)</span></span>
+        </label>
+        <p class="error-msg" id="err-privacy">개인정보 수집·이용에 동의해주세요</p>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 2. CONTEXT -->
+    <div id="s-context" class="section">
+      <p class="act-label">1막 — 창업의 배경</p>
+      <h2 class="section-title">창업의<br>현재 위치를<br>알려주세요</h2>
+
+      <div class="field-block">
+        <p class="field-block-label">창업 단계 *</p>
+        <div class="chip-wrap" id="stage-chips">
+          <button class="chip" onclick="selectSingle(this,'stage')">아이디어/프리시드</button>
+          <button class="chip" onclick="selectSingle(this,'stage')">시드 (MVP 개발 중)</button>
+          <button class="chip" onclick="selectSingle(this,'stage')">시드 (첫 매출 발생)</button>
+          <button class="chip" onclick="selectSingle(this,'stage')">시리즈 A 준비 중</button>
+          <button class="chip" onclick="selectSingle(this,'stage')">시리즈 A 이후</button>
+        </div>
+        <p class="error-msg" id="err-stage">창업 단계를 선택해주세요</p>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">팀 규모 *</p>
+        <div class="chip-wrap" id="team-size-chips">
+          <button class="chip" onclick="selectSingle(this,'team_size')">1인 (나 혼자)</button>
+          <button class="chip" onclick="selectSingle(this,'team_size')">2~3명</button>
+          <button class="chip" onclick="selectSingle(this,'team_size')">4~7명</button>
+          <button class="chip" onclick="selectSingle(this,'team_size')">8~15명</button>
+          <button class="chip" onclick="selectSingle(this,'team_size')">15명 이상</button>
+        </div>
+        <p class="error-msg" id="err-team_size">팀 규모를 선택해주세요</p>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">주요 도메인 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'domain')">B2B SaaS</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">B2C 앱/플랫폼</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">커머스</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">AI/딥테크</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">에듀테크</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">헬스케어</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">콘텐츠/미디어</button>
+          <button class="chip" onclick="toggleMulti(this,'domain')">기타</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">현재 매출 상태</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="selectSingle(this,'revenue_status')">매출 없음</button>
+          <button class="chip" onclick="selectSingle(this,'revenue_status')">초기 파일럿 매출</button>
+          <button class="chip" onclick="selectSingle(this,'revenue_status')">월 정기 매출 발생 중</button>
+          <button class="chip" onclick="selectSingle(this,'revenue_status')">BEP 도달 또는 이후</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 3. DAILY DECISIONS -->
+    <div id="s-daily_decisions" class="section">
+      <p class="act-label">2막 — 매일 하는 판단들</p>
+      <h2 class="section-title">당신의 하루를<br>채우는 판단들</h2>
+      <p class="section-sub">솔직하게 고를수록 더 정확하게 보입니다.</p>
+
+      <div class="field-block">
+        <p class="field-block-label">매일 또는 자주 하는 판단 유형 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">제품 방향 및 기능 우선순위</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">채용 / 팀원 온보딩</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">고객 제안 및 영업 협상</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">투자자 커뮤니케이션</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">마케팅 메시지 및 채널 선택</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">예산 배분 및 지출 승인</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">파트너십 / 계약 조건</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">팀 갈등 중재 및 피드백</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">기술 아키텍처 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'decision_types')">법무·컴플라이언스 판단</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">전체 판단 중 혼자 최종 결정하는 비율</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="selectSingle(this,'alone_ratio')">90% 이상</button>
+          <button class="chip" onclick="selectSingle(this,'alone_ratio')">50~70%</button>
+          <button class="chip" onclick="selectSingle(this,'alone_ratio')">30~50%</button>
+          <button class="chip" onclick="selectSingle(this,'alone_ratio')">30% 미만</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">가장 힘든 판단은 무엇인가요?</p>
+        <textarea id="hardest_decision" maxlength="200" placeholder="예: 채용 결정을 내릴 때 기준이 없어서 늘 불안합니다..." oninput="updateCharCount(this,'cc-hd')"></textarea>
+        <p class="char-count" id="cc-hd">0 / 200자</p>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 4. HR DECISIONS -->
+    <div id="s-hr_decisions" class="section">
+      <p class="act-label">3막 — HR 판단과 조직 운영</p>
+      <h2 class="section-title">HR 판단과<br>조직 운영에서<br>무슨 일이 일어나나요?</h2>
+      <p class="section-sub">창업자가 가장 많은 에너지를 쓰면서도 가장 도움을 못 받는 영역입니다.</p>
+
+      <div class="field-block">
+        <p class="field-block-label">현재 직접 담당하는 HR 판단 영역 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">채용 공고 작성 및 채널 선정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">서류 심사 및 1차 스크리닝</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">면접 질문 설계 및 평가 기준 수립</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">최종 합격 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">연봉 협상 및 오퍼 조율</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">온보딩 프로세스 설계 및 운영</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">팀원 목표(OKR/KPI) 설정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">성과 평가 및 피드백 면담</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">팀원 역할 재배치 / 조직 개편</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">퇴직·해고 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">팀 문화 및 행동 규범 정의</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">급여·복지 정책 설계</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">팀 갈등 중재</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_decision_types')">리더십 역량 개발 계획</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">HR 판단 중 가장 어렵고 시간이 걸리는 것 (복수 선택, 최대 3개)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">기준 없이 채용 결정을 내려야 할 때</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">성과가 부진한 팀원을 어떻게 할지 결정할 때</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">연봉·처우를 어떻게 책정할지 기준이 없을 때</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">팀원 간 갈등을 어떻게 해결할지</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">조직이 커지면서 역할 재정의가 필요할 때</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">팀 분위기가 무너지는 걸 감지했을 때</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">핵심 인재가 이탈하려는 신호를 읽을 때</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_hardest')">리더 후보를 어떻게 키울지</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">HR에서 가장 힘든 순간을 직접 써주세요 (선택)</p>
+        <textarea id="hr_hardest_open" maxlength="250" placeholder="예: 채용 기준이 없어서 면접 때마다 다른 기준으로 보게 됩니다..." oninput="updateCharCount(this,'cc-hh')"></textarea>
+        <p class="char-count" id="cc-hh">0 / 250자</p>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">HR 운영에 현재 사용 중인 도구 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">없음 (노션/엑셀로만 관리)</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">노션 / 컨플루언스</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">구글 스프레드시트</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">사람인 / 원티드</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">리멤버 / 링크드인</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">잔디 / 슬랙</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">HR SaaS (클라우드HR 등)</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">ChatGPT / Claude 등 AI 직접 활용</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_current_tools')">전문 HR 컨설턴트 외부 의뢰</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">HR에서 가장 지원이 필요한 부분 (복수 선택, 최대 3개)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">채용 프로세스 설계 및 자동화</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">면접 평가 기준 수립</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">온보딩 표준화</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">성과 관리 체계 설계</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">팀원 피드백 및 1on1 운영</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">조직 문화 설계</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">연봉·처우 벤치마킹</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">HR 데이터 정리 및 분석</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_support_needed')">퇴직·이탈 리스크 감지</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 5. AGENT USAGE -->
+    <div id="s-agent_usage" class="section">
+      <p class="act-label">4막 — 에이전트 사용 현황</p>
+      <h2 class="section-title">지금 에이전트를<br>쓰고 계신가요?</h2>
+      <p class="section-sub">사용 경험이 없어도 괜찮습니다. 솔직한 현황이 가장 중요합니다.</p>
+
+      <div class="field-block">
+        <p class="field-block-label">현재 AI 에이전트 사용 여부</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="selectSingle(this,'agent_using'); toggleAgentConditional()">적극적으로 사용 중</button>
+          <button class="chip" onclick="selectSingle(this,'agent_using'); toggleAgentConditional()">가끔 쓰고 있음</button>
+          <button class="chip" onclick="selectSingle(this,'agent_using'); toggleAgentConditional()">검토 중이지만 아직 안 씀</button>
+          <button class="chip" onclick="selectSingle(this,'agent_using'); toggleAgentConditional()">전혀 사용 안 함</button>
+        </div>
+      </div>
+
+      <div class="agent-conditional" id="agent-cond">
+        <div class="field-block">
+          <p class="field-block-label">사용 중인 AI 툴 (복수 선택)</p>
+          <div class="chip-wrap">
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">ChatGPT</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">Claude</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">Gemini</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">Perplexity</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">Notion AI</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">Cursor / GitHub Copilot</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">n8n / Make (자동화)</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">Zapier</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools')">HeyGen / ElevenLabs</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_tools'); toggleOtherInput()">기타</button>
+          </div>
+          <input type="text" id="agent_tools_other" placeholder="직접 입력" style="display:none;margin-top:10px">
+        </div>
+
+        <div class="field-block">
+          <p class="field-block-label">주로 어떤 업무에 사용하나요? (복수 선택)</p>
+          <div class="chip-wrap">
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">문서·보고서 초안 작성</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">이메일·메시지 작성</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">채용 공고 및 JD 작성</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">면접 질문 생성</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">성과 평가 피드백 작성</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">코드 작성 / 디버깅</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">데이터 분석 및 요약</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">회의록 자동 정리</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">리서치 및 정보 수집</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">콘텐츠·마케팅 자료 제작</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">계약서·법무 문서 검토</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">고객 응대 자동화</button>
+            <button class="chip" onclick="toggleMulti(this,'agent_usage_areas')">슬랙 등 업무 알림 자동화</button>
+          </div>
+        </div>
+
+        <div class="field-block">
+          <p class="field-block-label">사용 빈도</p>
+          <div class="chip-wrap">
+            <button class="chip" onclick="selectSingle(this,'agent_usage_freq')">거의 매일 (하루 1회 이상)</button>
+            <button class="chip" onclick="selectSingle(this,'agent_usage_freq')">주 3~4회</button>
+            <button class="chip" onclick="selectSingle(this,'agent_usage_freq')">주 1~2회</button>
+            <button class="chip" onclick="selectSingle(this,'agent_usage_freq')">월 몇 번</button>
+          </div>
+        </div>
+
+        <div class="field-block">
+          <p class="field-block-label">전반적인 만족도</p>
+          <div class="chip-wrap">
+            <button class="chip" onclick="selectSingle(this,'agent_satisfaction')">매우 만족 — 없으면 일 못 함</button>
+            <button class="chip" onclick="selectSingle(this,'agent_satisfaction')">만족 — 꽤 도움이 됨</button>
+            <button class="chip" onclick="selectSingle(this,'agent_satisfaction')">보통 — 쓰긴 하지만 아쉬움</button>
+            <button class="chip" onclick="selectSingle(this,'agent_satisfaction')">불만족 — 기대보다 못 함</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 6. AGENT DETAIL -->
+    <div id="s-agent_detail" class="section">
+      <p class="act-label">5막 — 에이전트 경험 심층</p>
+      <h2 class="section-title">에이전트를<br>쓰면서<br>어떤 경험을 했나요?</h2>
+      <p class="section-sub">좋은 것도, 불편한 것도 모두 말씀해주세요. 이 답변이 딥플로이 제품 설계에 직접 반영됩니다.</p>
+
+      <div id="agent-good-block" class="field-block" style="display:none">
+        <p class="field-block-label">에이전트를 쓰면서 가장 좋았던 점 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">반복 작업을 빠르게 처리해줌</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">초안 작성 시간이 크게 줄었음</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">더 다양한 관점이 나옴</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">24시간 쓸 수 있어서 좋음</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">판단 전에 정리가 잘 됨</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">팀에 위임하기 어려운 일을 빠르게 처리</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_good')">비용 대비 효율이 높음</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field-block">
+        <p class="field-block-label" id="agent-pain-label">에이전트를 쓰면서 불편하거나 아쉬운 점 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">맥락을 계속 다시 설명해야 함</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">회사 내부 상황을 모름 (인물, 히스토리 등)</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">결과물 퀄리티가 부족해 그대로 쓰기 어려움</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">어떤 프롬프트를 써야 할지 매번 고민됨</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">여러 툴이 파편화되어 통합이 안 됨</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">보안·기밀 정보를 입력하기 불안함</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">실수했을 때 책임 소재가 불분명함</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">학습 비용이 높음 (쓸 줄 알아야 잘 씀)</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">팀원마다 활용 수준이 달라 협업이 어색함</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_pain')">자동화 연결이 어려움 (슬랙, 노션 등)</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">불편한 점을 직접 써주세요 (선택)</p>
+        <textarea id="agent_pain_open" maxlength="250" placeholder="예: 채용 결정에 쓰려고 했는데, 우리 회사 상황을 모르니 너무 일반적인 답변만 나와서..." oninput="updateCharCount(this,'cc-ap')"></textarea>
+        <p class="char-count" id="cc-ap">0 / 250자</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field-block">
+        <p class="field-block-label">꼭 필요한데 아직 없거나 부족한 기능 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">우리 회사 히스토리·맥락을 기억하는 기능</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">판단 이력을 누적·학습하는 기능</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">여러 에이전트가 연결되어 흐름이 이어지는 기능</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">결과물을 팀원과 공유·협업하는 기능</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">HR 특화 기능 (채용·평가·온보딩 전용)</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">내 판단 스타일을 학습하는 개인화</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">데이터 기반 의사결정 추천</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">자동 실행 (승인 후 즉시 Slack/이메일 발송)</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">모바일에서 자연스럽게 쓸 수 있는 UX</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_missing')">회의·통화 내용을 실시간으로 정리하는 기능</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">꼭 있었으면 하는 기능을 직접 써주세요 (선택)</p>
+        <textarea id="agent_missing_open" maxlength="250" placeholder="예: 분기마다 팀원 성과를 자동으로 정리해주고, 면담 시 참고할 질문을 미리 뽑아주는 기능이 있으면..." oninput="updateCharCount(this,'cc-am')"></textarea>
+        <p class="char-count" id="cc-am">0 / 250자</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div id="agent-trust-block" class="field-block" style="display:none">
+        <p class="field-block-label">에이전트 결과물을 얼마나 신뢰하나요?</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="selectSingle(this,'agent_trust')">거의 그대로 사용함</button>
+          <button class="chip" onclick="selectSingle(this,'agent_trust')">가볍게 수정 후 사용</button>
+          <button class="chip" onclick="selectSingle(this,'agent_trust')">많이 수정해야 쓸 수 있음</button>
+          <button class="chip" onclick="selectSingle(this,'agent_trust')">참고만 하고 내가 다시 씀</button>
+          <button class="chip" onclick="selectSingle(this,'agent_trust')">신뢰도가 낮아 거의 안 씀</button>
+        </div>
+        <div class="divider"></div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">앞으로 기꺼이 맡기고 싶은 것 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">회의록 및 후속 액션 정리</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">투자자 업데이트 초안</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">주간 OKR 진행 점검</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">채용 JD 및 1차 스크리닝</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">성과 피드백 초안</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">고객 문의 1차 응답</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">경쟁사 모니터링 요약</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">재무 현황 자동 리포트</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">계약서 초안 리뷰</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_want')">SNS·콘텐츠 초안</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">반대로 절대 에이전트에게 넘기기 싫은 것 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">핵심 인재 최종 채용 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">투자 조건 협상</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">제품 방향 및 피봇 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">팀 문화 및 가치 정의</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">고객과의 관계 구축</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">팀원 해고 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'agent_hesitate')">없음 — 다 맡길 수 있다</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 7. HR AGENT -->
+    <div id="s-hr_agent" class="section">
+      <p class="act-label">6막 — HR 에이전트 니즈</p>
+      <h2 class="section-title">HR 에이전트,<br>어떤 모습이어야<br>할까요?</h2>
+      <p class="section-sub">채용부터 성과 관리까지, HR 에이전트에 대한 솔직한 기대를 들려주세요.</p>
+
+      <div class="field-block">
+        <p class="field-block-label">HR 에이전트가 대신해줬으면 하는 것 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">채용 공고 자동 작성 및 복수 채널 배포</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">이력서 1차 스크리닝 및 적합도 점수화</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">면접 질문 자동 생성 (직무별 맞춤)</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">면접 평가지 자동 취합 및 비교</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">오퍼 레터 초안 작성</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">신규 입사자 온보딩 체크리스트 자동 발송</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">수습 평가 리마인더 및 결과 수집</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">팀원 목표(OKR) 작성 보조 및 진행 트래킹</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">정기 1on1 면담 질문 자동 생성</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">성과 평가 피드백 초안 작성</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">연봉 시장가 자동 리서치 및 제안</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">팀원 이탈 리스크 신호 감지</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">팀 분위기/몰입도 주기적 체크</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">퇴직 인터뷰 자동 진행 및 인사이트 정리</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_want')">HR 데이터 대시보드 자동 업데이트</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">HR에서 에이전트에게 절대 넘기기 싫은 것 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">최종 채용 합격 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">팀원 해고·퇴직 통보</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">연봉 최종 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">성과 평가 최종 등급 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">팀 갈등 중재 및 대화</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">조직 문화 방향 설정</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_hesitate')">핵심 인재와의 관계 유지</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">이상적인 HR 에이전트는 어떤 모습인가요? 자유롭게 써주세요</p>
+        <textarea id="hr_agent_ideal" maxlength="400" style="min-height:130px"
+          placeholder="예: 월요일 아침마다 이번 주 HR 이슈(수습 만료 예정자, 면접 일정, OKR 마감)를 요약해서 슬랙으로 보내주고, 필요한 서류는 자동으로 초안을 만들어주면 좋겠습니다..."
+          oninput="updateCharCount(this,'cc-hi')"></textarea>
+        <p class="char-count" id="cc-hi">0 / 400자</p>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">HR 에이전트 도입 시 가장 우려되는 점 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">팀원 개인정보 보안 문제</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">에이전트 결정의 공정성·신뢰성</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">팀원이 불편하게 느낄 수 있음</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">내 HR 판단력이 약해질 것 같음</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">법적 리스크 (근로기준법 등)</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">도입·운영 비용 부담</button>
+          <button class="chip" onclick="toggleMulti(this,'hr_agent_concern')">특별히 우려 없음 — 빨리 쓰고 싶음</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">다음 →</button>
+      </div>
+    </div>
+
+    <!-- 8. PAIN -->
+    <div id="s-pain" class="section">
+      <p class="act-label">7막 — 가장 아픈 지점</p>
+      <h2 class="section-title">솔직하게<br>털어놓아도<br>괜찮아요</h2>
+      <p class="section-sub">실제 고통 지점을 알아야 더 정확한 분석이 가능합니다.</p>
+
+      <div class="field-block">
+        <p class="field-block-label">지금 창업에서 가장 에너지를 빼앗는 영역 (복수 선택)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">반복 운영 업무 (보고, 회의, 정산 등)</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">채용 및 팀 관리</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">고객 응대 및 영업</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">투자 및 자금 조달</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">제품 방향 결정</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">정보 과부하 (읽어야 할 것이 너무 많음)</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">혼자 결정해야 하는 외로움</button>
+          <button class="chip" onclick="toggleMulti(this,'pain_areas')">팀원 성과 관리</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">가장 아픈 지점을 직접 써주세요 (선택)</p>
+        <textarea id="pain_open" maxlength="200" placeholder="예: 제품 우선순위를 매주 바꾸게 되는데, 기준이 없어서 팀이 혼란스러워합니다..." oninput="updateCharCount(this,'cc-po')"></textarea>
+        <p class="char-count" id="cc-po">0 / 200자</p>
+      </div>
+
+      <div class="nav">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">마지막 섹션으로 →</button>
+      </div>
+    </div>
+
+    <!-- 9. SUPPORT -->
+    <div id="s-support" class="section">
+      <p class="act-label">8막 — 지금 가장 시급한 지원</p>
+      <h2 class="section-title">지금 당장<br>가장 시급하게<br>지원받고 싶은 것</h2>
+
+      <div class="field-block">
+        <p class="field-block-label">지금 가장 필요한 지원 (복수 선택, 최대 3개)</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">제품 방향 및 로드맵 설계</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">팀 구성·채용</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">투자 유치 준비</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">첫 고객 확보 및 영업</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">운영 자동화 (에이전트 도입)</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">조직 구조 및 역할 정의</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">재무 모델링 및 자금 계획</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">마케팅 및 브랜딩</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">멘토·네트워크 연결</button>
+          <button class="chip" onclick="toggleMulti(this,'support_urgent')">심리적 지지 / 번아웃 예방</button>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">딥플로이 제품이 어떻게 도와줬으면 하는지 직접 써주세요 (선택)</p>
+        <textarea id="support_open" maxlength="250" placeholder="예: 매주 월요일 아침에 이번 주 가장 중요한 판단 3개를 정리해주는 에이전트가 있으면 좋겠습니다..." oninput="updateCharCount(this,'cc-so')"></textarea>
+        <p class="char-count" id="cc-so">0 / 250자</p>
+      </div>
+
+      <div class="field-block">
+        <p class="field-block-label">3년 후 당신의 창업은 어떤 모습이어야 하나요?</p>
+        <div class="chip-wrap">
+          <button class="chip" onclick="selectSingle(this,'future_vision')">10명 이하 팀으로 유니콘 급 임팩트</button>
+          <button class="chip" onclick="selectSingle(this,'future_vision')">안정적인 수익 구조로 지속 성장</button>
+          <button class="chip" onclick="selectSingle(this,'future_vision')">시리즈 B 이상 유치 후 스케일업</button>
+          <button class="chip" onclick="selectSingle(this,'future_vision')">엑싯 (M&A 또는 IPO)</button>
+          <button class="chip" onclick="selectSingle(this,'future_vision')">아직 잘 모르겠다</button>
+        </div>
+      </div>
+
+      <div class="nav" style="margin-top:40px">
+        <button class="nav-prev" onclick="goPrev()">← 이전</button>
+        <button class="nav-next" onclick="goNext()">내 판단 구조 분석하기 →</button>
+      </div>
+    </div>
+
+    <!-- 10. ANALYZING -->
+    <div id="s-analyzing" class="section">
+      <p class="act-label">분석하는 중...</p>
+      <h2 class="section-title" style="margin-bottom:48px">Deeploy 워크 온톨로지<br>엔진이 분류하고 있습니다</h2>
+      <div id="analyze-list">
+        <div class="analyze-item" id="al-0"><span class="analyze-dot">○</span>창업 맥락 분석 중</div>
+        <div class="analyze-item" id="al-1"><span class="analyze-dot">○</span>HR 판단 구조 매핑 중</div>
+        <div class="analyze-item" id="al-2"><span class="analyze-dot">○</span>에이전트 사용 패턴 분류 중</div>
+        <div class="analyze-item" id="al-3"><span class="analyze-dot">○</span>HR 에이전트 적용 가능성 산출 중</div>
+        <div class="analyze-item" id="al-4"><span class="analyze-dot">○</span>워크 온톨로지 설계 중</div>
+      </div>
+    </div>
+
+    <!-- 11. RESULT -->
+    <div id="s-result" class="section">
+      <p class="act-label">진단 결과</p>
+      <h2 class="section-title"><span id="result-name"></span>님의<br>창업자 판단 프로필</h2>
+
+      <div class="result-card">
+        <p class="result-label">진단된 프로필</p>
+        <p class="result-profile" id="result-profile"></p>
+        <div class="score-wrap">
+          <p class="result-label">HR 에이전트 준비도</p>
+          <div class="score-bar"><div class="score-fill" id="score-fill"></div></div>
+          <p class="score-note" id="score-note"></p>
+        </div>
+      </div>
+
+      <div style="margin-top:40px">
+        <p class="result-label">딥플로이가 추천하는 다음 단계</p>
+        <div id="rec-list"></div>
+      </div>
+
+      <div class="result-meta">
+        진단 결과와 맞춤 가이드를 <strong id="result-email"></strong>로 보내드립니다.
+      </div>
+
+      <div class="result-btns">
+        <button class="cta-btn" onclick="window.open('https://www.jdxwork.com','_blank')">딥플로이 서비스 둘러보기 →</button>
+        <button class="btn-secondary" onclick="resetAll()">다시 진단하기</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ── 상태 ──────────────────────────────────────────────────────────────────
+    const STEPS = [
+      'intro','info','context','daily_decisions','hr_decisions',
+      'agent_usage','agent_detail','hr_agent','pain','support',
+      'analyzing','result'
+    ];
+    let cur = 0;
+    let privacyAgreed = false;
+    const form = {
+      stage:'', team_size:'', revenue_status:'', alone_ratio:'',
+      agent_using:'', agent_usage_freq:'', agent_satisfaction:'',
+      agent_trust:'', future_vision:'',
+      domain:[], decision_types:[], hr_decision_types:[], hr_hardest:[],
+      hr_current_tools:[], hr_support_needed:[], agent_tools:[],
+      agent_usage_areas:[], agent_good:[], agent_pain:[], agent_missing:[],
+      agent_want:[], agent_hesitate:[], hr_agent_want:[], hr_agent_hesitate:[],
+      hr_agent_concern:[], pain_areas:[], support_urgent:[],
+    };
+
+    // ── 칩 선택 ───────────────────────────────────────────────────────────────
+    function selectSingle(btn, field) {
+      const wrap = btn.parentElement;
+      wrap.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      btn.classList.add('selected');
+      form[field] = btn.textContent.trim();
+    }
+
+    function toggleMulti(btn, field) {
+      btn.classList.toggle('selected');
+      const val = btn.textContent.trim();
+      const idx = form[field].indexOf(val);
+      if (idx === -1) form[field].push(val);
+      else form[field].splice(idx, 1);
+    }
+
+    // ── 개인정보 동의 ─────────────────────────────────────────────────────────
+    function togglePrivacy() {
+      privacyAgreed = !privacyAgreed;
+      const box = document.getElementById('privacy-box');
+      box.classList.toggle('on', privacyAgreed);
+      box.textContent = privacyAgreed ? '✓' : '';
+    }
+
+    // ── 에이전트 조건부 표시 ──────────────────────────────────────────────────
+    function toggleAgentConditional() {
+      const uses = form.agent_using === '적극적으로 사용 중' || form.agent_using === '가끔 쓰고 있음';
+      document.getElementById('agent-cond').classList.toggle('show', uses);
+    }
+
+    function toggleOtherInput() {
+      const has = form.agent_tools.includes('기타');
+      document.getElementById('agent_tools_other').style.display = has ? 'block' : 'none';
+    }
+
+    function updateAgentDetailBlocks() {
+      const uses = form.agent_using === '적극적으로 사용 중' || form.agent_using === '가끔 쓰고 있음';
+      document.getElementById('agent-good-block').style.display = uses ? 'block' : 'none';
+      document.getElementById('agent-trust-block').style.display = uses ? 'block' : 'none';
+      if (!uses) {
+        document.getElementById('agent-pain-label').textContent = '에이전트 사용을 망설이게 하는 이유 (복수 선택)';
+      }
+    }
+
+    // ── 글자수 카운터 ─────────────────────────────────────────────────────────
+    function updateCharCount(el, counterId) {
+      const max = el.getAttribute('maxlength');
+      document.getElementById(counterId).textContent = `${el.value.length} / ${max}자`;
+    }
+
+    // ── 유효성 검사 ───────────────────────────────────────────────────────────
+    function validate() {
+      const step = STEPS[cur];
+      let ok = true;
+
+      const clearErr = (...ids) => ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('show'); el.previousElementSibling && el.previousElementSibling.classList.remove('error-field'); }
+      });
+      const showErr = (errId, fieldId) => {
+        document.getElementById(errId).classList.add('show');
+        if (fieldId) { const f = document.getElementById(fieldId); if(f) f.classList.add('error-field'); }
+        ok = false;
+      };
+
+      if (step === 'info') {
+        clearErr('err-name','err-email','err-company','err-privacy');
+        const name = document.getElementById('f-name').value.trim();
+        const email = document.getElementById('f-email').value.trim();
+        const company = document.getElementById('f-company').value.trim();
+        if (!name) showErr('err-name','f-name');
+        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) showErr('err-email','f-email');
+        if (!company) showErr('err-company','f-company');
+        if (!privacyAgreed) showErr('err-privacy', null);
+        if (ok) { form.name = name; form.email = email; form.company = company; }
+      }
+
+      if (step === 'context') {
+        clearErr('err-stage','err-team_size');
+        if (!form.stage) showErr('err-stage', null);
+        if (!form.team_size) showErr('err-team_size', null);
+      }
+
+      return ok;
+    }
+
+    // ── 프로그레스 바 ─────────────────────────────────────────────────────────
+    function updateProgress() {
+      const wrap = document.getElementById('progress-wrap');
+      const bar  = document.getElementById('progress-bar');
+      const total = STEPS.length - 3;
+      const idx   = Math.max(0, cur - 1);
+      if (cur > 0 && cur < STEPS.length - 2) {
+        wrap.style.display = 'block';
+        bar.style.width = Math.min(100, Math.round(idx / total * 100)) + '%';
+      } else {
+        wrap.style.display = 'none';
+      }
+    }
+
+    // ── 섹션 전환 ─────────────────────────────────────────────────────────────
+    function showStep(idx) {
+      STEPS.forEach(id => {
+        const el = document.getElementById('s-' + id);
+        if (el) el.classList.remove('active');
+      });
+      const next = document.getElementById('s-' + STEPS[idx]);
+      if (next) { next.classList.add('active'); }
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goNext() {
+      if (!validate()) return;
+      if (STEPS[cur] === 'agent_detail') updateAgentDetailBlocks();
+      if (cur < STEPS.length - 1) {
+        cur++;
+        showStep(cur);
+        if (STEPS[cur] === 'agent_detail') updateAgentDetailBlocks();
+        if (STEPS[cur] === 'analyzing') startAnalysis();
+      }
+    }
+
+    function goPrev() {
+      if (cur > 0) { cur--; showStep(cur); }
+    }
+
+    // ── 분석 애니메이션 ───────────────────────────────────────────────────────
+    function startAnalysis() {
+      let i = 0;
+      const items = document.querySelectorAll('.analyze-item');
+      items.forEach(el => { el.classList.remove('done'); el.querySelector('.analyze-dot').textContent = '○'; });
+      const iv = setInterval(() => {
+        if (i < items.length) {
+          items[i].classList.add('done');
+          items[i].querySelector('.analyze-dot').textContent = '✓';
+          i++;
+        } else {
+          clearInterval(iv);
+          setTimeout(() => { showResult(); cur++; showStep(cur); }, 700);
+        }
+      }, 850);
+    }
+
+    // ── 결과 생성 ─────────────────────────────────────────────────────────────
+    function showResult() {
+      const hrAgentScore = Math.min(100,
+        form.hr_agent_want.length * 5 +
+        (form.agent_using === '적극적으로 사용 중' ? 20 : form.agent_using === '가끔 쓰고 있음' ? 10 : 0) +
+        (form.hr_agent_concern.includes('특별히 우려 없음 — 빨리 쓰고 싶음') ? 15 : 0)
+      );
+      const usesAgent = form.agent_using === '적극적으로 사용 중' || form.agent_using === '가끔 쓰고 있음';
+      const highLoad  = form.alone_ratio === '90% 이상';
+
+      let profile, recs;
+      if (highLoad && !usesAgent) {
+        profile = '모든 판단을 혼자 감당 중인 과부하 창업자';
+        recs = ['Decision OS — 일상 판단 30%를 구조화해 에이전트에 이관','HR 에이전트 파일럿 — 채용 JD·면접 질문부터 자동화 시작','워크 온톨로지 설계 세션 — 창업자 판단 패턴을 1:1로 매핑'];
+      } else if (usesAgent && form.agent_pain.length >= 3) {
+        profile = '에이전트는 쓰지만 맥락 단절로 고통받는 창업자';
+        recs = ['워크 온톨로지 연결 — 회사 맥락을 에이전트에 누적하는 구조 설계','Flow Agent — 파편화된 툴들을 Slack 중심으로 연결·자동화','HR 에이전트 연동 — 채용·평가·온보딩을 하나의 흐름으로 통합'];
+      } else if (form.hr_support_needed.length >= 3) {
+        profile = 'HR 병목이 성장을 막고 있는 창업자';
+        recs = ['JD Generator — 채용 공고를 워크 온톨로지 기반으로 자동 설계','HR 에이전트 로드맵 — 채용→온보딩→성과관리 순서로 자동화','ADR 진단 — 현재 조직 구조의 갭을 정확히 파악'];
+      } else {
+        profile = 'AI 전환을 준비 중인 초기 창업자';
+        recs = ['ADR 진단 — 지금 조직 구조의 갭을 먼저 파악','Decision OS 체험 — 무료로 첫 판단 구조화 시작','Deeploy 워크숍 참여 — 같은 단계 창업자들과 사례 공유'];
+      }
+
+      document.getElementById('result-name').textContent    = form.name;
+      document.getElementById('result-profile').textContent = profile;
+      document.getElementById('result-email').textContent   = form.email;
+
+      const scoreNote = hrAgentScore >= 70 ? '도입 준비 충분' : hrAgentScore >= 40 ? '일부 영역 선도입 권장' : '기초 설계 먼저 필요';
+      document.getElementById('score-note').textContent = `${hrAgentScore}% — ${scoreNote}`;
+
+      setTimeout(() => {
+        document.getElementById('score-fill').style.width = hrAgentScore + '%';
+      }, 400);
+
+      const recList = document.getElementById('rec-list');
+      recList.innerHTML = recs.map((r, i) => `
+        <div class="rec-item">
+          <div class="rec-num">${i + 1}</div>
+          <span>${r}</span>
+        </div>
+      `).join('');
+    }
+
+    // ── 리셋 ─────────────────────────────────────────────────────────────────
+    function resetAll() {
+      cur = 0;
+      privacyAgreed = false;
+      Object.keys(form).forEach(k => { form[k] = Array.isArray(form[k]) ? [] : ''; });
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('input[type=text], input[type=email], textarea').forEach(el => el.value = '');
+      document.querySelectorAll('.char-count').forEach(el => { const m = el.id; const max = el.textContent.split('/')[1]?.trim() || ''; el.textContent = `0 / ${max}`; });
+      document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('show'));
+      const pb = document.getElementById('privacy-box');
+      pb.classList.remove('on'); pb.textContent = '';
+      document.getElementById('score-fill').style.width = '0%';
+      document.getElementById('agent-cond').classList.remove('show');
+      showStep(0);
+    }
+
+    // ── 초기화 ───────────────────────────────────────────────────────────────
+    showStep(0);
+  </script>
+</body>
+</html>
