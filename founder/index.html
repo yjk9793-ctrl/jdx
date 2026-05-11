@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>창업자 AI 준비도 서베이 — Deeploy × jdxwork</title>
   <meta name="description" content="딥플로이가 창업자의 솔직한 경험을 듣습니다. AI 활용, HR 운영, 에이전트 니즈에 대한 서베이입니다." />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
@@ -248,6 +248,7 @@
     .nav {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-top: 52px;
       gap: 12px;
     }
@@ -442,9 +443,140 @@
 
     /* ── 반응형 ── */
     @media (max-width: 600px) {
-      #header { padding: 16px 20px; }
-      #main { padding: 48px 16px 100px; }
-      .nav-prev, .nav-next { font-size: 12px; padding: 10px 18px; }
+
+      /* 헤더 */
+      #header {
+        padding: 14px 20px;
+        gap: 6px;
+      }
+      .logo { font-size: 16px; }
+      #header span:last-child { font-size: 11px !important; }
+
+      /* 메인 여백 */
+      #main {
+        padding: 36px 20px 100px;
+      }
+
+      /* 인트로 */
+      .tag-label {
+        font-size: 10px;
+        margin-bottom: 16px;
+      }
+      .hero-title {
+        font-size: clamp(30px, 8vw, 42px);
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+      .hero-sub {
+        font-size: 14px;
+        line-height: 1.8;
+        margin-bottom: 14px;
+      }
+      .hero-meta {
+        font-size: 11px;
+        margin-bottom: 36px;
+      }
+      .cta-btn {
+        width: 100%;
+        text-align: center;
+        padding: 16px 24px;
+        font-size: 15px;
+        border-radius: 10px;
+      }
+
+      /* 섹션 제목 */
+      .act-label { margin-bottom: 14px; }
+      .section-title {
+        font-size: clamp(24px, 7vw, 34px);
+        margin-bottom: 10px;
+        line-height: 1.25;
+      }
+      .section-sub {
+        font-size: 13px;
+        margin-bottom: 32px;
+      }
+
+      /* 폼 필드 */
+      .form-group { margin-bottom: 18px; }
+      .field-label-sm { font-size: 12px; margin-bottom: 7px; }
+      input[type="text"], input[type="email"] {
+        font-size: 16px; /* iOS 줌 방지 */
+        padding: 14px 16px;
+        border-radius: 6px;
+      }
+
+      /* 칩 */
+      .field-block { margin-bottom: 28px; }
+      .field-block-label {
+        font-size: 13px;
+        margin-bottom: 12px;
+        line-height: 1.6;
+      }
+      .chip-wrap { gap: 7px; }
+      .chip {
+        font-size: 13px;
+        padding: 9px 14px;
+        border-radius: 100px;
+        line-height: 1.4;
+      }
+
+      /* 텍스트에리어 */
+      textarea {
+        font-size: 15px; /* iOS 줌 방지 */
+        min-height: 90px;
+        padding: 12px 14px;
+        border-radius: 6px;
+      }
+
+      /* 개인정보 동의 */
+      .privacy-box { padding: 16px 16px; }
+      .privacy-title { font-size: 10px; }
+      .privacy-row { font-size: 12px; gap: 8px; }
+      .privacy-key { min-width: 60px; }
+      .privacy-note { font-size: 11px; }
+      .check-label { font-size: 13px; }
+
+      /* 네비게이션 */
+      .nav {
+        margin-top: 40px;
+        gap: 10px;
+      }
+      .nav-prev {
+        font-size: 13px;
+        padding: 13px 18px;
+        border-radius: 8px;
+        flex: 0 0 auto;
+      }
+      .nav-next {
+        font-size: 14px;
+        padding: 13px 20px;
+        border-radius: 10px;
+        flex: 1;
+        text-align: center;
+      }
+
+      /* 분석 대기 */
+      .analyze-item { font-size: 14px; margin-bottom: 18px; }
+
+      /* 결과 감사 페이지 */
+      .result-btns { flex-direction: column; }
+      .btn-secondary {
+        width: 100%;
+        text-align: center;
+        padding: 14px 20px;
+        border-radius: 10px;
+      }
+
+      /* 구분선 */
+      .divider { margin: 24px 0; }
+    }
+
+    /* 아이폰 SE 등 초소형 */
+    @media (max-width: 375px) {
+      #main { padding: 28px 16px 90px; }
+      .hero-title { font-size: 28px; }
+      .section-title { font-size: 24px; }
+      .chip { font-size: 12px; padding: 8px 12px; }
     }
   </style>
 </head>
@@ -1066,7 +1198,7 @@
           소중한 응답은 딥플로이 제품 개선에 직접 반영됩니다.<br>
           입력하신 이메일로 관련 소식을 전해드리겠습니다.
         </p>
-        <div style="margin-top:48px; padding:20px 28px; background:#0d0d0d; border:1px solid #1a1a1a; border-radius:6px; display:inline-block; text-align:left;">
+        <div style="margin-top:48px; padding:20px 28px; background:#0d0d0d; border:1px solid #1a1a1a; border-radius:6px; display:inline-block; text-align:left; max-width:100%; box-sizing:border-box;">
           <p style="font-size:10px; letter-spacing:0.15em; color:#3a3a3a; text-transform:uppercase; margin-bottom:8px;">응답 완료</p>
           <p style="font-size:13px; color:#666;" id="result-email-msg"></p>
         </div>
