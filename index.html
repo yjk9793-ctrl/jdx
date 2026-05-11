@@ -456,26 +456,116 @@
     .reveal-d3 { transition-delay: 0.3s; }
 
     /* ── 반응형 ── */
+    /* ── 태블릿 (≤900px) ── */
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-left { padding: 100px 24px 40px; }
+      /* 헤더 */
+      header { padding: 16px 32px; }
+
+      /* 히어로 — 1컬럼 */
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 80px; }
+      .hero::before, .hero::after { display: none; }
+      .hero-left { padding: 40px 32px 48px; }
       .hero-right { display: none; }
-      .cards { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+
+      /* AX 글자 태블릿 */
+      .hero-title .ax-word { font-size: clamp(64px, 14vw, 110px); }
+      .hero-title .sub-line { font-size: clamp(24px, 5vw, 44px); }
+
+      /* 카드 섹션 */
+      .cards { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
+      .card:last-child { grid-column: 1 / -1; max-width: 360px; margin: 0 auto; width: 100%; }
+
+      /* 프로세스 */
+      .process-flow { grid-template-columns: repeat(3, 1fr); }
+      .process-line { display: none; }
+
+      /* 문의 */
       .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-      .process-flow { grid-template-columns: repeat(3,1fr); }
+
+      /* CTA */
+      .cta-btns { gap: 10px; }
     }
+
+    /* ── 모바일 (≤600px) ── */
     @media (max-width: 600px) {
+      /* 헤더 */
       header { padding: 14px 20px; }
       header nav a:not(.nav-cta) { display: none; }
-      .hero-left { padding: 90px 20px 40px; }
-      .hero-stats { gap: 16px; }
+      .nav-cta { padding: 7px 14px; font-size: 12px !important; }
+
+      /* 히어로 */
+      .hero { padding-top: 70px; }
+      .hero-left { padding: 32px 20px 44px; }
+
+      /* AX 크기 모바일 */
+      .hero-title { margin-bottom: 20px; }
+      .hero-title .ax-word { font-size: clamp(56px, 16vw, 88px); }
+      .hero-title .sub-line { font-size: clamp(20px, 5.5vw, 34px); margin-top: 2px; }
+
+      /* 배지 */
+      .hero-badge { font-size: 10px; padding: 5px 12px; }
+
+      /* 서브 텍스트 */
+      .hero-sub { font-size: 14px; line-height: 1.8; margin-bottom: 24px; }
+
+      /* 스탯 */
+      .hero-stats { gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+      .hero-stat-num { font-size: 18px; }
+      .hero-stat-label { font-size: 9px; }
+
+      /* 가치 카드 */
+      .hero-values { gap: 8px; margin-bottom: 28px; }
+      .hero-value { padding: 10px 14px; }
+      .hero-value-icon { font-size: 16px; }
+      .hero-value-title { font-size: 12px; }
+      .hero-value-desc { font-size: 10px; }
+      .hero-value-arrow { display: none; }
+
+      /* 버튼 */
+      .hero-btns { flex-direction: column; gap: 10px; }
+      .hero-btn-primary, .hero-btn-ghost { text-align: center; padding: 13px 20px; font-size: 14px; }
+      .hero-btn-primary { box-shadow: 0 4px 16px rgba(26,110,245,0.4); }
+
+      /* 진단 카드 섹션 */
+      .cards-section { padding: 64px 16px; }
+      .cards { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+      .card:last-child { grid-column: auto; max-width: 100%; }
+      .section-title { font-size: clamp(22px, 6vw, 32px); margin-bottom: 36px; }
+
+      /* 카드 내부 */
+      .card-body { padding: 20px 18px 18px; }
+      .card-title { font-size: 18px; }
+
+      /* 프로세스 */
+      .process-section { padding: 64px 16px; }
+      .process-flow { grid-template-columns: repeat(2, 1fr); gap: 24px 0; }
+      .process-line { display: none; }
+      .process-step { align-items: flex-start; padding: 0 8px; }
+      .process-content { text-align: left; }
+
+      /* 문의 섹션 */
+      .contact-section { padding: 64px 16px; }
       .form-row { grid-template-columns: 1fr; }
-      .cta-btns { flex-direction: column; align-items: center; }
+      .form-box { padding: 24px 18px; }
+
+      /* CTA */
+      .cta-section { padding: 64px 20px; }
+      .cta-title { font-size: clamp(18px, 5vw, 28px); }
+      .cta-btns { flex-direction: column; align-items: center; gap: 10px; }
+      .cta-btn { width: 100%; max-width: 280px; justify-content: center; }
+
+      /* 푸터 */
       footer { padding: 24px 20px; }
-      .footer-inner { flex-direction: column; text-align: center; }
-      .process-flow { grid-template-columns: repeat(2,1fr); }
-      .hero-btns { flex-direction: column; }
-      .hero-btn-primary, .hero-btn-ghost { text-align: center; }
+      .footer-inner { flex-direction: column; text-align: center; gap: 8px; }
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+    }
+
+    /* ── 소형 모바일 (≤380px) ── */
+    @media (max-width: 380px) {
+      .hero-title .ax-word { font-size: 52px; }
+      .hero-title .sub-line { font-size: 19px; }
+      .hero-stats { gap: 10px; }
+      .hero-stat-divider { display: none; }
     }
   </style>
 </head>
