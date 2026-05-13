@@ -455,6 +455,48 @@
     }
     .btn-secondary:hover { opacity: 0.7; }
 
+    /* ── 결과 페이지 바로가기 버튼 ── */
+    .result-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 40px;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .result-link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      background: #0d0d0d;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .result-link-btn:hover { border-color: #333; background: #111; }
+    .result-link-btn .rl-label {
+      font-size: 13px; font-weight: 700;
+      color: #c8c4bc; letter-spacing: 0.01em;
+    }
+    .result-link-btn .rl-url {
+      font-size: 11px; color: #3a3a3a;
+      letter-spacing: 0.06em; margin-top: 3px;
+    }
+    .result-link-btn .rl-left { text-align: left; }
+    .result-link-btn .rl-arrow {
+      font-size: 16px; color: #333;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .result-link-btn:hover .rl-arrow { color: #f59e0b; transform: translateX(3px); }
+    .result-link-btn.primary-link { border-color: #2a2a2a; }
+    .result-link-btn.primary-link .rl-label { color: #f59e0b; }
+    .result-link-btn.primary-link .rl-arrow { color: #f59e0b; }
+    .result-link-btn.primary-link:hover { border-color: #f59e0b44; background: #0f0d09; }
+
     /* ── 에이전트 조건부 섹션 ── */
     .agent-conditional { display: none; }
     .agent-conditional.show { display: block; }
@@ -1172,7 +1214,32 @@
         <p style="font-size:14px; color:#5a5a5a; line-height:1.9; margin-top:20px;">
           소중한 응답은 딥플로이 제품 개선에 직접 반영됩니다.
         </p>
-        <div style="margin-top:40px;">
+        <!-- 바로가기 버튼 3개 -->
+        <div class="result-links">
+          <a href="https://www.jdxwork.com" target="_blank" class="result-link-btn primary-link">
+            <div class="rl-left">
+              <div class="rl-label">AX 진단센터 홈</div>
+              <div class="rl-url">jdxwork.com</div>
+            </div>
+            <span class="rl-arrow">→</span>
+          </a>
+          <a href="https://www.jdxwork.com/individual" target="_blank" class="result-link-btn">
+            <div class="rl-left">
+              <div class="rl-label">개인 AX 진단</div>
+              <div class="rl-url">jdxwork.com/individual</div>
+            </div>
+            <span class="rl-arrow">→</span>
+          </a>
+          <a href="https://www.jdxwork.com/teamos" target="_blank" class="result-link-btn">
+            <div class="rl-left">
+              <div class="rl-label">팀OS 진단</div>
+              <div class="rl-url">jdxwork.com/teamos</div>
+            </div>
+            <span class="rl-arrow">→</span>
+          </a>
+        </div>
+
+        <div style="margin-top:32px;">
           <button class="btn-secondary" onclick="resetAll()">처음으로 돌아가기</button>
         </div>
       </div>
