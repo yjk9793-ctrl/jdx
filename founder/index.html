@@ -5,26 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>창업자 AI 준비도 서베이 — Deeploy × jdxwork</title>
   <meta name="description" content="딥플로이가 창업자의 솔직한 경험을 듣습니다. AI 활용, HR 운영, 에이전트 니즈에 대한 서베이입니다." />
-
-<!-- ── Open Graph (카카오톡·페이스북·링크드인 공유) ── -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.jdxwork.com/founder/">
-<meta property="og:site_name" content="JDXwork by Deeploy">
-<meta property="og:title" content="창업자 AI 준비도 서베이 — Deeploy">
-<meta property="og:description" content="스타트업을 운영하며 겪는 솔직한 이야기를 들려주세요. 정답은 없습니다. 솔직한 답변이 가장 큰 도움이 됩니다.">
-<meta property="og:image" content="https://www.jdxwork.com/founder/og-founder.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="창업자 AI 준비도 서베이 — Deeploy">
-<meta property="og:image:secure_url" content="https://www.jdxwork.com/founder/og-founder.png">
-<meta property="og:locale" content="ko_KR">
-
-<!-- ── Twitter Card ── -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://www.jdxwork.com/founder/">
-<meta name="twitter:title" content="창업자 AI 준비도 서베이 — Deeploy">
-<meta name="twitter:description" content="스타트업을 운영하며 겪는 솔직한 이야기를 들려주세요. 정답은 없습니다.">
-<meta name="twitter:image" content="https://www.jdxwork.com/founder/og-founder.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
   <style>
@@ -630,48 +610,6 @@
       <button class="cta-btn" onclick="goNext()">서베이 시작하기 →</button>
     </div>
 
-    <!-- 1. INFO -->
-    <div id="s-info" class="section">
-      <p class="act-label">시작 전 — 간단 정보</p>
-      <h2 class="section-title">결과를<br>보내드릴게요</h2>
-      <p class="section-sub">서베이 완료 후 맞춤 리포트를 이메일로 보내드립니다.</p>
-
-      <div class="form-group">
-        <label class="field-label-sm">성명 *</label>
-        <input type="text" id="f-name" placeholder="이름을 입력해주세요">
-        <p class="error-msg" id="err-name">이름을 입력해주세요</p>
-      </div>
-      <div class="form-group">
-        <label class="field-label-sm">이메일 *</label>
-        <input type="email" id="f-email" placeholder="이메일을 입력해주세요">
-        <p class="error-msg" id="err-email">올바른 이메일을 입력해주세요</p>
-      </div>
-      <div class="form-group">
-        <label class="field-label-sm">회사명 *</label>
-        <input type="text" id="f-company" placeholder="회사명을 입력해주세요">
-        <p class="error-msg" id="err-company">회사명을 입력해주세요</p>
-      </div>
-
-      <!-- 개인정보 동의 -->
-      <div class="privacy-box">
-        <p class="privacy-title">개인정보 수집·이용 안내</p>
-        <div class="privacy-row"><span class="privacy-key">수집 항목</span><span>성명, 이메일, 회사명</span></div>
-        <div class="privacy-row"><span class="privacy-key">수집 목적</span><span>서베이 완료 발송 및 Deeploy 서비스 안내</span></div>
-        <div class="privacy-row"><span class="privacy-key">보유 기간</span><span>수집일로부터 1년 (철회 시 즉시 삭제)</span></div>
-        <p class="privacy-note">귀하는 동의를 거부할 권리가 있으며, 거부 시 서베이 완료 이메일 발송이 제한됩니다.</p>
-        <label class="privacy-check" onclick="togglePrivacy()">
-          <div class="check-box" id="privacy-box"></div>
-          <span class="check-label">개인정보 수집·이용에 동의합니다. <span>(필수)</span></span>
-        </label>
-        <p class="error-msg" id="err-privacy">개인정보 수집·이용에 동의해주세요</p>
-      </div>
-
-      <div class="nav">
-        <button class="nav-prev" onclick="goPrev()">← 이전</button>
-        <button class="nav-next" onclick="goNext()">다음 →</button>
-      </div>
-    </div>
-
     <!-- 2. CONTEXT -->
     <div id="s-context" class="section">
       <p class="act-label">1막 — 창업의 배경</p>
@@ -1203,7 +1141,6 @@
       <div id="analyze-list">
         <div class="analyze-item" id="al-0"><span class="analyze-dot">○</span>응답 내용 확인 중</div>
         <div class="analyze-item" id="al-1"><span class="analyze-dot">○</span>서베이 데이터 저장 중</div>
-        <div class="analyze-item" id="al-2"><span class="analyze-dot">○</span>이메일 주소 확인 중</div>
         <div class="analyze-item" id="al-3"><span class="analyze-dot">○</span>참여 완료 처리 중</div>
         <div class="analyze-item" id="al-4"><span class="analyze-dot">○</span>마무리 중</div>
       </div>
@@ -1215,13 +1152,8 @@
         <p style="font-size:36px; margin-bottom:36px;">🙏</p>
         <h2 class="section-title" style="text-align:center;">서베이에 참석해<br>주셔서 감사합니다.</h2>
         <p style="font-size:14px; color:#5a5a5a; line-height:1.9; margin-top:20px;">
-          소중한 응답은 딥플로이 제품 개선에 직접 반영됩니다.<br>
-          입력하신 이메일로 관련 소식을 전해드리겠습니다.
+          소중한 응답은 딥플로이 제품 개선에 직접 반영됩니다.
         </p>
-        <div style="margin-top:48px; padding:20px 28px; background:#0d0d0d; border:1px solid #1a1a1a; border-radius:6px; display:inline-block; text-align:left; max-width:100%; box-sizing:border-box;">
-          <p style="font-size:10px; letter-spacing:0.15em; color:#3a3a3a; text-transform:uppercase; margin-bottom:8px;">응답 완료</p>
-          <p style="font-size:13px; color:#666;" id="result-email-msg"></p>
-        </div>
         <div style="margin-top:40px;">
           <button class="btn-secondary" onclick="resetAll()">처음으로 돌아가기</button>
         </div>
@@ -1233,12 +1165,11 @@
   <script>
     // ── 상태 ──────────────────────────────────────────────────────────────────
     const STEPS = [
-      'intro','info','context','daily_decisions','hr_decisions',
+      'intro','context','daily_decisions','hr_decisions',
       'agent_usage','agent_detail','hr_agent','pain','support',
       'analyzing','result'
     ];
     let cur = 0;
-    let privacyAgreed = false;
     const form = {
       stage:'', team_size:'', revenue_status:'', alone_ratio:'',
       agent_using:'', agent_usage_freq:'', agent_satisfaction:'',
@@ -1266,13 +1197,6 @@
       else form[field].splice(idx, 1);
     }
 
-    // ── 개인정보 동의 ─────────────────────────────────────────────────────────
-    function togglePrivacy() {
-      privacyAgreed = !privacyAgreed;
-      const box = document.getElementById('privacy-box');
-      box.classList.toggle('on', privacyAgreed);
-      box.textContent = privacyAgreed ? '✓' : '';
-    }
 
     // ── 에이전트 조건부 표시 ──────────────────────────────────────────────────
     function toggleAgentConditional() {
@@ -1315,18 +1239,6 @@
         ok = false;
       };
 
-      if (step === 'info') {
-        clearErr('err-name','err-email','err-company','err-privacy');
-        const name = document.getElementById('f-name').value.trim();
-        const email = document.getElementById('f-email').value.trim();
-        const company = document.getElementById('f-company').value.trim();
-        if (!name) showErr('err-name','f-name');
-        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) showErr('err-email','f-email');
-        if (!company) showErr('err-company','f-company');
-        if (!privacyAgreed) showErr('err-privacy', null);
-        if (ok) { form.name = name; form.email = email; form.company = company; }
-      }
-
       if (step === 'context') {
         clearErr('err-stage','err-team_size');
         if (!form.stage) showErr('err-stage', null);
@@ -1364,10 +1276,12 @@
 
     function goNext() {
       if (!validate()) return;
-      if (STEPS[cur] === 'agent_detail') updateAgentDetailBlocks();
+      // agent_usage에서 다음 누를 때: agent_detail 표시 조건 미리 업데이트
+      if (STEPS[cur] === 'agent_usage') updateAgentDetailBlocks();
       if (cur < STEPS.length - 1) {
         cur++;
         showStep(cur);
+        // agent_detail 진입 시 한 번 더 확인
         if (STEPS[cur] === 'agent_detail') updateAgentDetailBlocks();
         if (STEPS[cur] === 'analyzing') startAnalysis();
       }
@@ -1396,21 +1310,17 @@
 
     // ── 결과 생성 ─────────────────────────────────────────────────────────────
     function showResult() {
-      document.getElementById('result-email-msg').textContent = form.email + '으로 소식을 전해드립니다.';
+      // 이메일 전송 없음 — 감사 메시지만 표시
     }
 
     // ── 리셋 ─────────────────────────────────────────────────────────────────
     function resetAll() {
       cur = 0;
-      privacyAgreed = false;
       Object.keys(form).forEach(k => { form[k] = Array.isArray(form[k]) ? [] : ''; });
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-      document.querySelectorAll('input[type=text], input[type=email], textarea').forEach(el => el.value = '');
-      document.querySelectorAll('.char-count').forEach(el => { const m = el.id; const max = el.textContent.split('/')[1]?.trim() || ''; el.textContent = `0 / ${max}`; });
+      document.querySelectorAll('input[type=text], textarea').forEach(el => el.value = '');
+      document.querySelectorAll('.char-count').forEach(el => { const max = el.textContent.split('/')[1]?.trim() || ''; el.textContent = `0 / ${max}`; });
       document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('show'));
-      const pb = document.getElementById('privacy-box');
-      pb.classList.remove('on'); pb.textContent = '';
-      document.getElementById('result-email-msg').textContent = '';
       document.getElementById('agent-cond').classList.remove('show');
       showStep(0);
     }
